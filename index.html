@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Phone</title>
+	<meta name="author" content="David Verweij">
+	<meta name="description" content="A simple webpage to connect to your Google Sheets app">
+	<meta name="keywords" content="phone, upcycle, Google Sheets, IoT, IFTTT">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="robots" content="noindex">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+	<main class="content">
+		<div class="container">
+			<form>
+				<h1>Connect your Google Sheet</h1>
+				<input type="text" id="link" placeholder="Google Sheet Link"/>
+				<button onClick="insert_value()">Connect</button>
+			</form>
+		</div>
+	</main>
+	<script src="scripts.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+</body>
+</html>
