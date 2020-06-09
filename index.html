@@ -16,14 +16,14 @@
 <body>
 	<main class="content">
 		<div class="container">
-			<form>
+			<div id="form">
 				<h1>Connect your Google Sheet</h1>
-				<input type="text" id="link" placeholder="Google Sheet Link"/>
-				<button onClick="insert_value()">Connect</button>
-			</form>
+				<input type="text" name="scriptUrl" id="scriptUrl" placeholder="Google Sheet Link"/>
+				<input type="text" name="data" id="data" placeholder="data"/>
+				<button onClick="sendSheet()">Connect</button>
+			</div>
 		</div>
 	</main>
 	<script src="scripts.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
 </body>
 </html>

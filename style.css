@@ -18,7 +18,7 @@ main {
   height:100vh;
 }
 
-form {
+#form {
   margin: 70px auto;
   background: #2b6c57;
   width: 347px;
@@ -30,7 +30,7 @@ form {
   -o-border-radius: 6px;
   border-radius: 6px;
 }
-form > h1 {
+#form > h1 {
   color: #f4f4f4;
   text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.7);
   font-weight: 400;
