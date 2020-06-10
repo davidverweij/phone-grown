@@ -50,13 +50,12 @@ function sendSheet() {
     xhr.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
         // succes! Store the sheet link for future references in the cookie
-        // TODO: check for actual success..
-        console.log(this.responseText);
-        console.log(this.getResponseHeader("Location"));
+        // TODO: check for actual success.. (e.g. send back an appropriate response)
         setCookie("gSheetLink", scriptUrl, 365);
+
       }
     };
-    xhr.open("GET", "http://tinyurl.com/" + scriptUrl + "?" + data, true); // true for asynchronous
+    xhr.open("GET", "https://www.tinyurl.com/" + scriptUrl + "?" + data, true); // true for asynchronous
     xhr.send();
   } else {
     alert("Please enter a Code");
