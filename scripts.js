@@ -42,23 +42,24 @@ function generateIdentifier() {
 */
 
 function sendSheet() {
-  var form_data = document.getElementById("data").value;
-  var form_url = document.getElementById("scriptUrl").value
-  if (form_data != "" && form_url != "") {
-    var data = "data=" + document.getElementById("data").value + "&hashId=" + hashedID;
-    var scriptUrl = document.getElementById("scriptUrl").value;
+  var scriptUrl = document.getElementById("scriptUrl").value
+  if (scriptUrl != "") {
+    var data = "hashId=" + hashedID;
+
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
         // succes! Store the sheet link for future references in the cookie
         // TODO: check for actual success..
+        console.log(this.responseText);
+        console.log(this.getResponseHeader("Location"));
         setCookie("gSheetLink", scriptUrl, 365);
       }
     };
-    xhr.open("GET", scriptUrl + "?" + data, true); // true for asynchronous
+    xhr.open("GET", "http://tinyurl.com/" + scriptUrl + "?" + data, true); // true for asynchronous
     xhr.send();
   } else {
-    alert("Please fill in both fields");
+    alert("Please enter a Code");
   }
 }
 
