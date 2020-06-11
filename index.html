@@ -18,11 +18,14 @@
 		<div class="container">
 			<div id="form">
 				<h1>Connect your Google Sheet</h1>
-				<input type="text" name="scriptUrl" id="scriptUrl" placeholder="Google Sheet Code"/>
-				<button onClick="sendSheet()">Connect</button>
+				<input type="text" name="scriptUrl" id="scriptUrl"/>
+				<button id="button" onClick="connectToGsheet(document.getElementById('scriptUrl').value)">Connect</button>
+				<div id="loader"></div>
 			</div>
 		</div>
 	</main>
+	<script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-firestore.js"></script>
 	<script src="scripts.js"></script>
 </body>
 </html>

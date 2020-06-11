@@ -1,71 +1,90 @@
-var hashedID, gSheetLink;
+var hashedId, gSheetLink;
 
 document.addEventListener("DOMContentLoaded", function() {
-  hashedID = getCookie("hashedID");
-  gSheetLink = getCookie("gSheetLink");
-  if (gSheetLink == ""){
-    // document.getElementById("form").style.display = "block";
-    // need the link anyway - might as well refresh the hash
-    // setCookie("gSheetLink", variable, 365);
-  }
+
+  // retreive stored information in cookies if present
+  hashedId = getCookie("hashedId"), gSheetLink = getCookie("gSheetLink");
+
+  // if no link to a GSheet is found, prompt for a new one
+  if (typeof(gSheetLink) == "undefined")
+    promptConnectUI(true);
+
   // if no ID is found, or a wrong formatted one, generate a new one.
-  if (!(/\b[A-Za-z0-9]{16}\b/gm.test(hashedID))) {
-    generateIdentifier();
-  }
+  if (typeof(hashedId) == "undefined" | !(/\b[A-Za-z0-9]{16}\b/gm.test(hashedId)))
+    hashedId = generateHashedIdentifier();
+
 });
 
-function generateIdentifier() {
-  // get current time in milliseconds
-  var date = new Date();
-  var ISOtimestamp = date.toISOString();
+function promptConnectUI(bool){
+  document.getElementById('form').style.display = (bool ? "block" : "none");
+}
 
-  // get current IP address
+function generateHashedIdentifier() {
+
+  // get current time in milliseconds
+  var now = (new Date()).toISOString();
+
+  // prepare REST GET request and response
   var xhr = new XMLHttpRequest();
   xhr.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
+
+      // upon succes, trim the response (ip) and create hash with timestamp
       var ip = (/^ip=(.*$)/gm.exec(this.responseText))[1];
-      setCookie("hashedID", generateHash(ip, ISOtimestamp), 365);
-      hashedID = getCookie("hashedID");
+      var newHashId = generateHash(ip + ";" + now);
+      setCookie("hashedId", newHashId);
+      return newHashId;
     }
   };
-  xhr.open("GET", "https://www.cloudflare.com/cdn-cgi/trace", true); // true for asynchronous
+
+  // send GET request
+  xhr.open("GET", "https://www.cloudflare.com/cdn-cgi/trace", true); // get IP
   xhr.send();
 
-  function generateHash(ip, timestamp) {
-    var hashed = hash64((ip[1] + ";" + ISOtimestamp));
-    return hashed;
-  }
 }
 
-/**
-* Connect with the Google Sheet via the 'webapp'
-*/
+function connectToGsheet(url) {
+  if (typeof(url) != "undefined" && url != "") {
+    document.getElementById('button').style.display = "none";
+    document.getElementById('loader').style.display = "block";
 
-function sendSheet() {
-  var scriptUrl = document.getElementById("scriptUrl").value
-  if (scriptUrl != "") {
-    var data = "hashId=" + hashedID;
+    var data = "hashId=" + getCookie("hashedId");
 
+    // prepare REST GET request and response
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
-        // succes! Store the sheet link for future references in the cookie
-        // TODO: check for actual success..
-        console.log(this.responseText);
-        setCookie("gSheetLink", scriptUrl, 365);
+        var result = JSON.parse(this.responseText);
+        console.log(result);
+        // if a successful connect, store the link for future use
+        if (result.result == "success") {
+          setCookie("gSheetLink", url);
+
+          // update UI to show connected
+          document.getElementById('loader').style.display = "none";
+          document.getElementById('form').getElementsByTagName("h1")[0].innerHTML = "Connected!";
+          setTimeout(function() {promptConnectUI(false);}, 3000)
+
+        }
       }
     };
-    xhr.open("GET", scriptUrl + "?" + data, true); // true for asynchronous
+
+    // send GET request
+    xhr.open("GET", "https://tinyurl.com/" + url + "?" + data, true); // true for asynchronous
     xhr.send();
   } else {
-    alert("Please enter a Code");
+    alert("empty url");
   }
 }
 
+
+
 /**
- * Calculate a 64 bit FNV-1a hash, based on  https://stackoverflow.com/a/22429679/7053198
- */
-function hash64(str) {
+*   HELPER METHODS
+**/
+
+function generateHash(str) {
+  // Calculate a 64 bit FNV-1a hash, based on  https://stackoverflow.com/a/22429679/7053198
   var h1 = hashFnv32a(str, true); // returns 32 bit (as 8 byte hex string)
   return h1 + hashFnv32a(h1 + str, true); // 64 bit (as 16 byte hex string)
 
@@ -86,28 +105,32 @@ function hash64(str) {
   }
 }
 
-/**
-*  Function check for an existing hash identifier, or override if not present
-*/
+function setCookie(name, value, options = {}) {
+  options = {
+    path: '/',
+    secure: true,
+    'max-age': 31536000, // one year in seconds
+    'samesite': 'strict',
+  };
 
-function setCookie(cname, cvalue, exdays) {
-  var d = new Date();
-  d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-  var expires = "expires="+d.toUTCString();
-  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-}
+  let updatedCookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
 
-function getCookie(cname) {
-  var name = cname + "=";
-  var ca = document.cookie.split(';');
-  for(var i = 0; i < ca.length; i++) {
-    var c = ca[i];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1);
-    }
-    if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
+  for (let optionKey in options) {
+    updatedCookie += "; " + optionKey;
+    let optionValue = options[optionKey];
+    if (optionValue !== true) {
+      updatedCookie += "=" + optionValue;
     }
   }
-  return "";
+
+  document.cookie = updatedCookie;
+}
+
+// returns the cookie with the given name,
+// or undefined if not found
+function getCookie(name) {
+  let matches = document.cookie.match(new RegExp(
+    "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+  ));
+  return matches ? decodeURIComponent(matches[1]) : undefined;
 }
