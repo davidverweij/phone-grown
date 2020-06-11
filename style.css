@@ -19,6 +19,7 @@ main {
 }
 
 #form {
+
   margin: 70px auto;
   background: #2b6c57;
   width: 347px;
@@ -92,4 +93,25 @@ button {
 button:active {
   top: 3px;
   box-shadow: none;
+}
+#loader {
+  display: none;
+  margin: 40px auto 0px auto;
+  width: 1px;
+  border: 16px solid #2b6c57;
+  border-radius: 50%;
+  border-top: 16px solid white;
+  border-bottom: 16px solid white;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
