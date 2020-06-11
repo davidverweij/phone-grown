@@ -8,8 +8,8 @@ document.addEventListener("DOMContentLoaded", function() {
     // need the link anyway - might as well refresh the hash
     // setCookie("gSheetLink", variable, 365);
   }
-  if (hashedID == "" || hashedID == "undefined") {
-    // create new hash
+  // if no ID is found, or a wrong formatted one, generate a new one.
+  if (!(/\b[A-Za-z0-9]{16}\b/gm.test(hashedID))) {
     generateIdentifier();
   }
 });
@@ -50,12 +50,12 @@ function sendSheet() {
     xhr.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
         // succes! Store the sheet link for future references in the cookie
-        // TODO: check for actual success.. (e.g. send back an appropriate response)
+        // TODO: check for actual success..
+        console.log(this.responseText);
         setCookie("gSheetLink", scriptUrl, 365);
-
       }
     };
-    xhr.open("GET", "https://www.tinyurl.com/" + scriptUrl + "?" + data, true); // true for asynchronous
+    xhr.open("GET", scriptUrl + "?" + data, true); // true for asynchronous
     xhr.send();
   } else {
     alert("Please enter a Code");
