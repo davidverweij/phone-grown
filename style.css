@@ -18,8 +18,14 @@ main {
   height:100vh;
 }
 
-#form {
+#status {
+  position: absolute;
+  right: 2%;
+  bottom: 2%;
+}
 
+#form {
+  display:none;
   margin: 70px auto;
   background: #2b6c57;
   width: 347px;
