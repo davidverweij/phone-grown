@@ -7,6 +7,10 @@
     "executeAs": "USER_DEPLOYING"
   },
   "exceptionLogging": "STACKDRIVER",
-  "oauthScopes": ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/script.external_request"],
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/spreadsheets", 
+    "https://www.googleapis.com/auth/script.external_request",
+    "https://www.googleapis.com/auth/script.container.ui"
+  ],
   "runtimeVersion": "V8"
 }
