@@ -10,9 +10,12 @@
 var script = PropertiesService.getScriptProperties();        // secure 'local' storage of values repeatadly needed
 var homesheet = {
   'name'          : '2. Home',           // the main sheet to interact with
-  'data'          : '1. Incoming Data',  // the data sheet (must be first!) 
-  'template'      : '[Phone Template]',  // name convention for templates
-  'device'        : '[Device]',          // name convention for connected devices
+  'datasheet'     : '1. Incoming Data',  // the data sheet (must be first!) 
+  'device'        : '3. Phone',          // name convention for connected device
+  'template'      : '[Template]',        // name convention for templates
+  'data'          : '[Data]',            // name concention for data sheets
+  'devicelist'    :  [23, 2, 10],        // location of the devices on the sheet {row, column, maxnumber}
+  'datalist'      :  [6, 8, 10]          // location of the devices on the sheet {row, column, maxnumber}
 };
 var database = {                                             // settings and naming convention for database details
   'signup'        : 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=',                                    
@@ -20,8 +23,7 @@ var database = {                                             // settings and nam
   'url'           : 'https://firestore.googleapis.com/v1/projects/sheetablephone/databases/(default)/documents/anonymous/',
   'id'            : 'AIzaSyAAtx_UIictBak4_bZ5tPuRVMOagCUan_w',                                                             
   
-  /* below some naming conventions to access script values storage consistently (no typos) */
-  
+  // naming conventions
   'userid'        : 'uid',                      
   'auth_token'    : 'token',
   'refresh_token' : 'r_token',
@@ -35,24 +37,53 @@ var database = {                                             // settings and nam
 //  3. Copy the 'Current web app URL' and paste this in the 'Home' sheet
 //  4. Enter the resulting code into the browser on your old phone. Enjoy!
 
-/**
-* A special function that runs when the spreadsheet is open, used to add a
-* custom menu to the spreadsheet.
-*/
-function onOpen() {
-  var menuItems = [
-    {name: '⚙️ Setup', functionName: 'setup'},
-    {name: '📱 Add Phone', functionName: 'addphone'}
-  ];
-  SpreadsheetApp.getActive().addMenu('♻️📱 PhoneGrown', menuItems);
 
+/**
+ * Add menu items when the Google Sheet is opened.
+ */
+function onOpen() {
+  var menuItems = [{name: '⚙️ Setup', functionName: 'setup'},{name: '📱 Setup Phone', functionName: 'addphone'}];
+  SpreadsheetApp.getActive().addMenu('♻️📱 PhoneGrown', menuItems);
 }
 
+/**
+ * Changes were made to the Sheet. I.e. new data came in.
+ * @param {Event} e - The event object containing details
+ */
+function somethingChanged(e){            
+  if (e.changeType == "REMOVE_GRID"){                 // A sheet was deleted!
+    updateDataSheets();                               // Update representation of data sheets
+  } else if (e.changeType == "INSERT_ROW") {          // New data came in! 
+    var doc = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = doc.getSheetByName(homesheet.datasheet);
+    var newRows = sheet.getLastRow();
+     
+    if (newRows > 0){                                           // Check if we actually have new data, else ignore
+      var lastColumn = sheet.getLastColumn();
+      var range = sheet.getRange(1, 1, newRows, lastColumn);
+      var array = range.getValues();
+      
+      for (var i = 0; i < newRows; i++) {        
+        var data_sheetname = homesheet.data + ' ' + array[i][0];
+        var data_sheet = doc.getSheetByName(data_sheetname);    // get the specific data sheet
+        
+        if (data_sheet == null){                                // create the sheet if it doesn't exist  
+          data_sheet = doc.insertSheet(data_sheetname, doc.getNumSheets()).setTabColor("4a85e7");
+          updateDataSheets();
+          sortSheets();
+        }
+        prependRow(data_sheet,array[i]);                        // move one row of data to its sheet
+      }
+      sheet.deleteRows(1, newRows);                             // delete the original data   
+      pingDatabase();                                           // ping the database, so the phone can retreive the new data
+    }
+  }
+}
 
-/*
-*   This function gets called by visiting the webapp url. This is used by the IFTTT.com
-*   triggers to to clean up the data and by the phone to collect the new data.
-*/
+/**
+ * The webapp was contacted (HTTPS). Check if this is a phone and reply with details
+ * @param {Event} e - The event object containing details
+ */
 function doGet(e) {                        
   
   var lock = LockService.getPublicLock();  // prevent simultaneuous access to this script
@@ -60,70 +91,63 @@ function doGet(e) {
   
   try {
     var doc = SpreadsheetApp.openById(script.getProperty("key"));  // get this sheet's ID
-    var sheet = doc.getSheetByName(homesheet.data);                // get the incoming data sheet
-    var result = {"result" : "success"};
-    var origin = e.parameter.origin;   
-    
-    // It's the phone calling in. Let's reply with the latest 'background'
-    if (typeof(origin) != "undefined" && origin == "phone"){     
-      result.databasePing = script.getProperty(database.userid);  // send back the database id
-    } 
-    
-    // It's the IFTTT trigger calling in. Let's clean up the data, and ping the database, so the
-    // phone knows to collect the new data soon.
-    else {                                                        // IFTTT trigger to clean up data
-      var newRows = sheet.getLastRow();
-      
-      if (newRows > 0){                                           // Check if we actually have new data
-        var lastColumn = sheet.getLastColumn();
-        var range = sheet.getRange(1, 1, newRows, lastColumn);
-        var array = range.getValues();
-        
-        for (var i = 0; i < newRows; i++) {
-          
-          var data_sheetname = "Data - " + array[i][0];
-          var data_sheet = doc.getSheetByName(data_sheetname);    // get the specific data sheet
-          
-          if (data_sheet == null)                                 // create the sheet if it doesn't exist  
-            data_sheet = doc.insertSheet(data_sheetname);
-          
-          data_sheet.appendRow(array[i]);                         // move one row of data to its sheet
-        }
-        sheet.deleteRows(1, newRows);                             // delete the original data   
-        
-        pingDatabase();                                           // ping the database, so the phone can retreive the new data
-      }
+    var sheet = doc.getSheetByName(homesheet.datasheet);           // get the incoming data sheet
+    var result = {"result" : "error - wrong use of the webapp"};
+    if (typeof(e) != 'undefined') {
+      var origin = e.parameter.origin;   
+      if (typeof(origin) != "undefined" && origin == "phone"){     
+        result.databasePing = script.getProperty(database.userid);  // send back the database id
+      } 
     }
-    
-    return ContentService                                         // return json success results
-    .createTextOutput(JSON.stringify(result))
-    .setMimeType(ContentService.MimeType.JSON);
-  } catch(e){
-    
+    return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.JSON);
+  } catch(e){ 
     console.log(e);
-    return ContentService
-    .createTextOutput(JSON.stringify({"result":"error", "error": e}))
-    .setMimeType(ContentService.MimeType.JSON);
+    return ContentService.createTextOutput(JSON.stringify({"result":"error", "error": e})).setMimeType(ContentService.MimeType.JSON);
   } finally {
     lock.releaseLock(); //release lock
   } 
 }
 
-function findSheets(sheets, keyString){
-  var foundSheets = [];
-  for (var i = 0; i < sheets.length; i++){
-    var name = sheets[i].getName();
-    if (name.includes(keyString))
-      foundSheets.push(name.trim()); 
-  }
-  return foundSheets;
+/**
+ * Find all sheets that store incoming data, and update the home sheet.
+ */
+function updateDataSheets(){
+  var doc = SpreadsheetApp.getActiveSpreadsheet();
+  var sheets = doc.getSheets();
+  var home = doc.getSheetByName(homesheet.name);
+  
+  var datasheets = findSheets(sheets, homesheet.data);                // find all sheets that relate to devices
+  var datasheetsColumned = datasheets.map(x => [x]);
+  
+  var filler = new Array(homesheet.datalist[2] - datasheetsColumned.length).fill([""]);  // filler, ranges need to match in length
+  var datasheetsrange = datasheetsColumned.concat(filler);
+  var range = home.getRange(homesheet.datalist[0], homesheet.datalist[1], homesheet.datalist[2]);
+  
+  var values = range.setValues(datasheetsrange); 
 }
 
+/**
+ * Sort all sheet alphabetically
+ */
+function sortSheets(){
+  var doc = SpreadsheetApp.getActiveSpreadsheet();
+  var sheets = doc.getSheets();
+  sheets.sort(function (a, b) {
+    return (a.getSheetName().toUpperCase() < b.getSheetName().toUpperCase()) ? -1 : 1;
+  });
+  for (var i in sheets){
+    doc.setActiveSheet(sheets[i]);
+    doc.moveActiveSheet(sheets.length);
+  }
+}
+
+/**
+ * Open a dialog box that allows the creation of a fresh phone based on template
+ */
 function addphone(){
-  var spreadsheet = SpreadsheetApp.getActive();
-  var sheets = spreadsheet.getSheets();
+  var doc = SpreadsheetApp.getActiveSpreadsheet();
+  var sheets = doc.getSheets();
   var templates = findSheets(sheets, homesheet.template);
-  //  var devices = findSheets(sheets, homesheet.device);
 
   var html='';
   if (templates.length > 0){ 
@@ -134,22 +158,40 @@ function addphone(){
     html = 'Sorry, but I could not find any template sheets. These should start with "' + homesheet.template + '"';
   }
   
-  var output = HtmlService.createHtmlOutput(html);
+  var output = HtmlService.createHtmlOutput(html)
+  .setWidth(200);
   
-  SpreadsheetApp.getUi().showModalDialog(output, 'Which template would you like to use?');
-
-  
+  SpreadsheetApp.getUi().showModalDialog(output, 'Which template would you like to use?'); 
 }
 
+/**
+ * Method called from the dialogbox, deletes an existing phone sheet and replaces it
+ */
 function phoneFromTemplate(name){
-  console.log(name);
+  var doc = SpreadsheetApp.getActiveSpreadsheet();  
+  var template = doc.getSheetByName(name);                     
+ 
+  var sheet = doc.getSheetByName(homesheet.device);
+  if (sheet != null){                                
+    doc.deleteSheet(sheet);
+  }
+  
+  template.copyTo(doc).setName(homesheet.device).setTabColor("ff00ff");
+
+  sortSheets();
 }
 
+/**
+ * Sets up the script to connect to the database anonymously, 
+ * and start listening to changes to the sheet (for incoming data).
+ */
 function setup() {
   // yet TODO: check if requests succeed and fix / inform google sheet user
+  var thisSheet = SpreadsheetApp.getActiveSpreadsheet();
   
-  // 1. Store the ID to this spreadsheet in this script
-  script.setProperty("key", SpreadsheetApp.getActiveSpreadsheet().getId());
+  // 1. Store the ID to this spreadsheet in this script, and create variable to use
+  script.setProperty("key", thisSheet.getId());
+  script.setProperty("devices", new Array(10).fill(['']));
   
   // 2. Create a new anonymous user in the Firestore Database 
   var signin_options  = {'method' : 'post','contentType': 'application/json','payload' : '{"returnSecureToken":true}'};
@@ -173,10 +215,28 @@ function setup() {
   };
   var setup_response = UrlFetchApp.fetch(database.url + "?documentId=" + script.getProperty(database.userid), setup_options);
   console.log(setup_response.getContentText());   // For debugging purposes only
+  
+  // 5. Install a trigger that listen to spreadsheet changes by the user (e.g. adding/removing sheets or deleting columns)
+  ScriptApp.newTrigger("somethingChanged")
+  .forSpreadsheet(thisSheet)
+  .onChange()
+  .create();
 }
 
+/**
+ * Insert data row at the first line (prepend)
+ * @param {Sheet} sheet - The destination sheet to prepend the data to
+ * @param {Array} rowData - The data to prepend
+ */
+function prependRow(sheet, rowData) {
+  sheet.insertRowBefore(1).getRange(1, 1, 1, rowData.length).setValues([rowData]);
+}
+
+/**
+ * Update the temporary token to keep a valid authentication with the database
+ * Note: this method does not seem to work properly...
+ */
 function refreshDatabaseToken() {
-  // TODO: refreshed token is not (yet) accepted by Firestore..
   
   // 1. Get a new token 
   var refresh_options = {'method' : 'post','contentType': 'application/x-www-form-urlencoded ','payload' : 'grant_type=refresh_token&refresh_token=' + script.getProperty(database.refresh_token)};
@@ -189,9 +249,12 @@ function refreshDatabaseToken() {
   console.log(refresh_response.getContentText());   // for debugging purposes only
 }
 
+/**
+ * Update a value in the database which should trigger the phone to get new data
+ */
 function pingDatabase() {
   
-  // Update the database with a new timestamp (a.k.a. 'ping')
+  // 1. Update the database with a new timestamp (a.k.a. 'ping')
   var ping_options = {
     'method' : 'patch',                // writing is a 'post' operation
     'headers': {'Authorization': 'Bearer ' + script.getProperty(database.auth_token) + ''}, 
@@ -200,5 +263,33 @@ function pingDatabase() {
     'muteHttpExceptions': true
   };
   var ping_response = UrlFetchApp.fetch(database.url + script.getProperty(database.userid), ping_options);
-  console.log(ping_response.getContentText());   // For debugging purposes only
+}
+
+
+/**
+ * Change the color of a range of cells
+ */
+function setColor(inputrange){
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getActiveSheet();
+  var range = sheet.getRange(inputrange);
+  range.setBackground("red");
+}
+
+/**
+ * Find all the sheet following a specific naming convention
+ * @param {Sheet[]} sheets - An array of sheet to look through
+ * @param {String} keyString - The naming convention to look for
+ * @param {Boolean} column - If true return as a 2D array (needed to write to a range of cells)
+ */
+function findSheets(sheets, keyString, column = false){
+  var foundSheets = [];
+  for (var i = 0; i < sheets.length; i++){
+    var name = sheets[i].getName();
+    if (name.includes(keyString)){
+      if (column) foundSheets.push([name.trim()]); 
+      else foundSheets.push(name.trim()); 
+      }
+  }
+  return foundSheets;
 }
