@@ -16,10 +16,13 @@
 <body>
 	<main class="content">
 		<div class="container">
+			<div id="ambientdisplay">
+			</div>
 			<div id="form">
 				<h1>Connect your Google Sheet</h1>
-				<input type="text" name="scriptUrl" id="scriptUrl"/>
+				<input type="text" name="scriptUrl" id="scriptUrl"/ placeholder="Personal ID">
 				<button id="button" onClick="connectToGsheet(document.getElementById('scriptUrl').value)">Connect</button>
+				<h5>Note: this tool is still in development, and as such the connection will only sustain for one hour.</h4>
 				<div id="loader"></div>
 			</div>
 		</div>

@@ -17,12 +17,27 @@ main {
   justify-content: center;
   height:100vh;
 }
+#ambientdisplay{
+  width:100vw;
+  height:100vh;
+  display:none;
+}
+#ambientdisplay div {
+  width:100%;
+  height: 100%;
+  background-color: black;
+}
+#status {
+  position: absolute;
+  right: 2%;
+  bottom: 2%;
+}
 
 #form {
-
+  display:none;
   margin: 70px auto;
   background: #2b6c57;
-  width: 347px;
+  width: 300px;
   text-align: center;
   padding: 40px;
   -webkit-border-radius: 6px;
@@ -37,12 +52,17 @@ main {
   font-weight: 400;
   margin-bottom: 20px;
 }
+#form >h5 {
+  color: white;
+font-weight: 200;
+margin-top: 41px;
+}
 input {
   background: rgba(0, 0, 0, 0.2);
   color: #fff;
   text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
   display: block;
-  width: 269px;
+  width: 222px;
   padding: 15px;
   margin-bottom: 10px;
   -webkit-border-radius: 6px;
@@ -79,7 +99,7 @@ button {
   margin-top: 15px;
   margin-bottom: 15px;
   padding: 17px;
-  width: 270px;
+  width: 223px;
   border-radius: 6px;
   -webkit-transition: all 0.1s ease-in-out;
   -moz-transition: all 0.1s ease-in-out;
