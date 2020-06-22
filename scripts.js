@@ -12,22 +12,8 @@ const db = firebase.firestore();
 const status = document.getElementById("status");
 
 document.addEventListener("DOMContentLoaded", function() {
-
-  // retreive stored information in cookies if present
-  databasePing = getCookie("databasePing");
-  gSheetLink = getCookie("gSheetLink");
-
-  // if no link to a GSheet is found, prompt for a new one
-  if (typeof(gSheetLink) == "undefined") {
     promptConnectUI(true);
-  } else if (typeof(databasePing) == "undefined") {
-    // do something!
-  } else { // all good, start listening to the database
-    startDatabaseListener();
-  }
-
-
-  // TODO: if no databasePing present, request a new one!
+  
 
 });
 
