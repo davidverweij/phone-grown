@@ -4,8 +4,8 @@
 
 // TODO: Explain database and safety thereof! (link to github?)
 // TODO: refresh token before lifetime (e.g. everyday? Or every 50 to 'ping' we are alive? Or based on a setting in the google sheet? (prevent redundant communication)
-// NOTE: onEdit() is not triggered if the sheet is changed through an API. Current solution is another IFTTT trigger instead of polling (due to limited runtime: https://developers.google.com/apps-script/guides/services/quotas)
 // using firebase authentication, avoiding service account and also adheres to firebase rules!
+// TODO: Sort Function seems to break?
 
 var script = PropertiesService.getScriptProperties();        // secure 'local' storage of values repeatadly needed
 var homesheet = {
@@ -15,7 +15,10 @@ var homesheet = {
   'template'      : '[Template]',        // name convention for templates
   'data'          : '[Data]',            // name concention for data sheets
   'devicelist'    :  [23, 2, 10],        // location of the devices on the sheet {row, column, maxnumber}
-  'datalist'      :  [6, 8, 10]          // location of the devices on the sheet {row, column, maxnumber}
+  'datalist'      :  [6, 8, 10],         // location of the devices on the sheet {row, column, maxnumber}
+  'colorlist'     :  [20, 19, 8],        // rows that could be used as colorouput
+  'phone'         :  [20, 14, 8],        // column with reference to the phone ranges 
+  'fullphone'     :  "A1:A1"             // cell in the phone sheet storing full phone size
 };
 var database = {                                             // settings and naming convention for database details
   'signup'        : 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=',                                    
@@ -27,6 +30,14 @@ var database = {                                             // settings and nam
   'userid'        : 'uid',                      
   'auth_token'    : 'token',
   'refresh_token' : 'r_token',
+};
+
+// used in the custom formula
+var operators = {
+  'is bigger than': function(a, b) { return a > b },
+  'is smaller than': function(a, b) { return a < b },
+  'is exactly': function(a, b) { return a == b },
+  'is not': function(a, b) { return a != b },
 };
 
 
@@ -44,13 +55,14 @@ var database = {                                             // settings and nam
 function onOpen() {
   var menuItems = [{name: '⚙️ Setup', functionName: 'setup'},{name: '📱 Setup Phone', functionName: 'addphone'}];
   SpreadsheetApp.getActive().addMenu('♻️📱 PhoneGrown', menuItems);
+  sortSheets();
 }
 
 /**
  * Changes were made to the Sheet. I.e. new data came in.
  * @param {Event} e - The event object containing details
  */
-function somethingChanged(e){            
+function somethingChanged(e){ 
   if (e.changeType == "REMOVE_GRID"){                 // A sheet was deleted!
     updateDataSheets();                               // Update representation of data sheets
   } else if (e.changeType == "INSERT_ROW") {          // New data came in! 
@@ -75,10 +87,39 @@ function somethingChanged(e){
         prependRow(data_sheet,array[i]);                        // move one row of data to its sheet
       }
       sheet.deleteRows(1, newRows);                             // delete the original data   
-      pingDatabase();                                           // ping the database, so the phone can retreive the new data
     }
+  } else if (e.changeType == "OTHER" || e.changeType == "FORMAT"){
+    var doc = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = doc.getSheetByName(homesheet.name);
+    var colorpreview = sheet.getRange(homesheet.colorlist[0],homesheet.colorlist[1],homesheet.colorlist[2]);
+    var colorvalues = colorpreview.getValues();
+    colorpreview.setBackgrounds(colorvalues);
+    colorpreview.setFontColors(colorvalues);
+
+    var phonerange = sheet.getRange(homesheet.phone[0],homesheet.phone[1], homesheet.phone[2]); 
+    var phonevalues = phonerange.getValues();
+    
+    var fullPhone = doc.getRange(homesheet.device + "!" + homesheet.fullphone).getValue();
+    var fullPhoneRange = doc.getRange(homesheet.device + "!" + fullPhone);
+    fullPhoneRange.setBackground("black");
+    
+    for (i in phonevalues) {
+      if (phonevalues[i][0] != ""){
+        var area = phonevalues[i][0].match(/\[(.*?)\]/gm)[0];
+        area = area.replace(/\[|\]/gm,'');
+        if (area != "") {
+          var tempRange = doc.getRange(homesheet.device + "!" + area);
+          tempRange.setBackground(colorvalues[i][0]);
+        }
+      }
+    }
+    pingDatabase();                                           // ping the database, so the phone can retreive the new data
+  } else {
+    console.log(e.changeType);
   }
+  
 }
+
 
 /**
  * The webapp was contacted (HTTPS). Check if this is a phone and reply with details
@@ -95,8 +136,16 @@ function doGet(e) {
     var result = {"result" : "error - wrong use of the webapp"};
     if (typeof(e) != 'undefined') {
       var origin = e.parameter.origin;   
-      if (typeof(origin) != "undefined" && origin == "phone"){     
-        result.databasePing = script.getProperty(database.userid);  // send back the database id
+      var data = e.parameter.data;
+      if (typeof(origin) != "undefined" && typeof(data) != "undefined" && origin == "phone"){     
+        result.result = "succes!";
+        sheet.getRange(2, 24).setValue((new Date()).toString());
+        if (data == "database"){
+          result.databasePing = script.getProperty(database.userid);                                      // send back the database id
+        } 
+        var fullPhone = doc.getRange(homesheet.device + "!" + homesheet.fullphone).getValue();          // get phone sheet size
+        var fullPhoneBackgrounds = doc.getRange(homesheet.device + "!" + fullPhone).getBackgrounds();   // return all background
+        result.background = fullPhoneBackgrounds;
       } 
     }
     return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.JSON);
@@ -139,6 +188,7 @@ function sortSheets(){
     doc.setActiveSheet(sheets[i]);
     doc.moveActiveSheet(sheets.length);
   }
+  doc.setActiveSheet(doc.getSheetByName(homesheet.name));
 }
 
 /**
@@ -162,6 +212,25 @@ function addphone(){
   .setWidth(200);
   
   SpreadsheetApp.getUi().showModalDialog(output, 'Which template would you like to use?'); 
+}
+
+function customFormula(value, operator, reference, colorrange){
+  if (operator != "" && typeof(operators[operator]) != "undefined"){
+    if (operators[operator](value, reference)){
+      var doc = SpreadsheetApp.getActiveSpreadsheet();
+      var sheet = doc.getActiveSheet();
+      var color = sheet.getRange(colorrange).getBackground();
+      return color;
+    }
+  }
+  return "black";
+}
+
+function getBackgroundColor(range){
+  var doc = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = doc.getActiveSheet();
+  var cell = sheet.getRange(range);
+  return(cell.getBackground());
 }
 
 /**
@@ -219,7 +288,7 @@ function setup() {
   // 5. Install a trigger that listen to spreadsheet changes by the user (e.g. adding/removing sheets or deleting columns)
   ScriptApp.newTrigger("somethingChanged")
   .forSpreadsheet(thisSheet)
-  .onChange()
+  .onChange()        // onEdit() is not called if the API makes changes, onChange() is - but it is limited (no event data)
   .create();
 }
 
