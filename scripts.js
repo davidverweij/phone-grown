@@ -12,8 +12,8 @@ const db = firebase.firestore();
 const status = document.getElementById("status");
 
 document.addEventListener("DOMContentLoaded", function() {
-    promptConnectUI(true);
-  
+  promptConnectUI(true);
+
 
 });
 
@@ -46,13 +46,27 @@ function connectToGsheet(url) {
             startDatabaseListener();
           }, 3000)
 
-        } else {
-
-          // something went wrong.. error! / try again
-
         }
       }
     };
+    xhr.onloadend = function() {
+      if (this.status == 404) {
+        console.log("Website not Found");
+        document.getElementById('button').style.display = "block";
+        document.getElementById('loader').style.display = "none";
+        document.getElementById('form').getElementsByTagName("h1")[0].innerHTML = "Something went wrong. Please try again."
+        document.getElementById('form').getElementsByTagName("h5")[0].innerHTML = "Did you type in only the personal ID?"
+        // something went wrong.. error! / try again
+      }
+    }
+    xhr.onerror = function() {
+      console.log("Website not accessible (e.g. cross-origin block, unsafe link?)");
+      document.getElementById('button').style.display = "block";
+      document.getElementById('loader').style.display = "none";
+      document.getElementById('form').getElementsByTagName("h1")[0].innerHTML = "Something went wrong. Please try again."
+      document.getElementById('form').getElementsByTagName("h5")[0].innerHTML = "Did you type in only the personal ID?"
+      // something went wrong.. error! / try again
+    }
 
     // send GET request
     xhr.open("GET", "https://tinyurl.com/" + url + "?origin=phone&data=database", true); // true for asynchronous
