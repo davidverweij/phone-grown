@@ -23,17 +23,7 @@ document.addEventListener("DOMContentLoaded", function() {
   } else if (typeof(databasePing) == "undefined") {
     // do something!
   } else { // all good, start listening to the database
-    db.collection("anonymous").doc(databasePing)
-      .onSnapshot(function(doc) {
-        // currently randomly chooses a background color
-        document.body.style.background = "rgb(" +
-          Math.floor(Math.random() * 256) + "," +
-          Math.floor(Math.random() * 256) + "," +
-          Math.floor(Math.random() * 256) + ")";
-        // get new data from gSheetLink
-        status.innerHTML = "Last changed on " + (new Date()).toUTCString();
-
-      });
+    startDatabaseListener();
   }
 
 
@@ -55,29 +45,76 @@ function connectToGsheet(url) {
     xhr.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
         var result = JSON.parse(this.responseText);
-        console.log(result);
+        // console.log(result);
         // if a successful connect, store the link for future use
-        if (result.result == "success") {
+        if (result.result == "succes!") {
           setCookie("gSheetLink", url);
           setCookie("databasePing", result.databasePing);
 
           // update UI to show connected
           document.getElementById('loader').style.display = "none";
-          document.getElementById('form').getElementsByTagName("h1")[0].innerHTML = "Connected!";
+          document.getElementById('form').innerHTML = "<h1>Connected!</h1>";
           setTimeout(function() {
             promptConnectUI(false);
+            updateAmbientDisplay(result.background);
+            startDatabaseListener();
           }, 3000)
+
+        } else {
+
+          // something went wrong.. error! / try again
 
         }
       }
     };
 
     // send GET request
-    xhr.open("GET", "https://tinyurl.com/" + url, true); // true for asynchronous
+    xhr.open("GET", "https://tinyurl.com/" + url + "?origin=phone&data=database", true); // true for asynchronous
     xhr.send();
   } else {
     alert("empty url");
   }
+}
+
+function startDatabaseListener() {
+  db.collection("anonymous").doc(getCookie("databasePing"))
+    .onSnapshot(function(doc) {
+
+      // prepare REST GET request and response
+      var xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          var result = JSON.parse(this.responseText);
+          // console.log(result);
+          // if a successful connect, store the link for future use
+          if (result.result == "succes!") {
+            updateAmbientDisplay(result.background);
+          } else {
+
+            // something went wrong.. error! / try again
+
+          }
+        }
+      };
+      // send GET request
+      xhr.open("GET", "https://tinyurl.com/" + getCookie("gSheetLink") + "?origin=phone&data=update", true); // true for asynchronous
+      xhr.send();
+
+
+    });
+}
+
+function updateAmbientDisplay(backgrounds) {
+  let height = backgrounds.length,
+    width = backgrounds[0].length;
+  let html = "";
+  for (let i in backgrounds)
+    for (let j in backgrounds[i])
+      html += "<div style='background-color:" + backgrounds[i][j] + "'></div>";
+
+  document.getElementById('ambientdisplay').style.gridTemplateColumns = "repeat(" + width + ", 1fr)";
+  document.getElementById('ambientdisplay').innerHTML = html;
+  document.getElementById('ambientdisplay').style.display = "grid";
 }
 
 
