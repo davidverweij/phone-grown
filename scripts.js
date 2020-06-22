@@ -20,6 +20,12 @@ document.addEventListener("DOMContentLoaded", function() {
 function promptConnectUI(bool) {
   document.getElementById('form').style.display = (bool ? "block" : "none");
 }
+function promptUIAgain(){
+  document.getElementById('button').style.display = "block";
+  document.getElementById('loader').style.display = "none";
+  document.getElementById('form').getElementsByTagName("h1")[0].innerHTML = "Something went wrong. Please try again."
+  document.getElementById('form').getElementsByTagName("h5")[0].innerHTML = "Did you type in only the personal ID?"
+}
 
 function connectToGsheet(url) {
   if (typeof(url) != "undefined" && url != "") {
@@ -46,26 +52,21 @@ function connectToGsheet(url) {
             startDatabaseListener();
           }, 3000)
 
+        } else { // retry..
+          console.log("Waited too long, or access denied by user");
+          promptUIAgain();
         }
       }
     };
     xhr.onloadend = function() {
       if (this.status == 404) {
         console.log("Website not Found");
-        document.getElementById('button').style.display = "block";
-        document.getElementById('loader').style.display = "none";
-        document.getElementById('form').getElementsByTagName("h1")[0].innerHTML = "Something went wrong. Please try again."
-        document.getElementById('form').getElementsByTagName("h5")[0].innerHTML = "Did you type in only the personal ID?"
-        // something went wrong.. error! / try again
+        promptUIAgain();
       }
     }
     xhr.onerror = function() {
       console.log("Website not accessible (e.g. cross-origin block, unsafe link?)");
-      document.getElementById('button').style.display = "block";
-      document.getElementById('loader').style.display = "none";
-      document.getElementById('form').getElementsByTagName("h1")[0].innerHTML = "Something went wrong. Please try again."
-      document.getElementById('form').getElementsByTagName("h5")[0].innerHTML = "Did you type in only the personal ID?"
-      // something went wrong.. error! / try again
+      promptUIAgain();
     }
 
     // send GET request
