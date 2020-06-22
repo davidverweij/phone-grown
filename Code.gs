@@ -2,10 +2,17 @@
 * @OnlyCurrentDoc Limits the script to only accessing the current sheet.
 */
 
-// TODO: Explain database and safety thereof! (link to github?)
-// TODO: refresh token before lifetime (e.g. everyday? Or every 50 to 'ping' we are alive? Or based on a setting in the google sheet? (prevent redundant communication)
-// using firebase authentication, avoiding service account and also adheres to firebase rules!
-// TODO: Sort Function seems to break?
+
+/*
+ * AUTHOR: David Verweij
+ * VERSION: 1 (June 2020)
+ * NOTE: This program is still in development. It builds upon connectivity that will cease to work end of June latest.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS 
+ * IN THE SOFTWARE.
+*/
 
 var script = PropertiesService.getScriptProperties();        // secure 'local' storage of values repeatadly needed
 var homesheet = {
@@ -132,14 +139,14 @@ function doGet(e) {
   
   try {
     var doc = SpreadsheetApp.openById(script.getProperty("key"));  // get this sheet's ID
-    var sheet = doc.getSheetByName(homesheet.datasheet);           // get the incoming data sheet
+    var sheet = doc.getSheetByName(homesheet.name);           // get the incoming data sheet
     var result = {"result" : "error - wrong use of the webapp"};
     if (typeof(e) != 'undefined') {
       var origin = e.parameter.origin;   
       var data = e.parameter.data;
       if (typeof(origin) != "undefined" && typeof(data) != "undefined" && origin == "phone"){     
         result.result = "succes!";
-        sheet.getRange(2, 24).setValue((new Date()).toString());
+        sheet.getRange(31, 2).setValue((new Date()).toLocaleDateString('en-GB', { timeZone: 'UTC' }));
         if (data == "database"){
           result.databasePing = script.getProperty(database.userid);                                      // send back the database id
         } 
