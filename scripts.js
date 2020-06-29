@@ -3,9 +3,9 @@ var gSheetLink, databasePing; // the link to the google sheet and database refer
 
 // Initialize Database connection
 firebase.initializeApp({
-  apiKey: "AIzaSyAAtx_UIictBak4_bZ5tPuRVMOagCUan_w",
-  authDomain: "sheetablephone.firebaseapp.com",
-  projectId: "sheetablephone",
+  apiKey: "AIzaSyCAHz6izwenF8F84SoQqRCekYhNeAe7u68",
+  authDomain: "phone-grown.firebaseapp.com",
+  projectId: "phone-grown",
 });
 
 const db = firebase.firestore();
