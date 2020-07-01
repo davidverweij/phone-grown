@@ -35,7 +35,8 @@ You can follow along with a phone of any age, as long as it can connect to the W
 
 #### Update to the latest security settings
 
-Most phones do not receive security updates after ~3 years[^security] and become vulnerable for security breaches and 'hacks'. If you are not using the phone for any other purposes, we suggest to 'factory reset' your phone. **This will delete all files, apps and data on the phone**, and can often be done from the phone's `Settings` menu. Whether you did a factory reset or not, it is always good practice to update the software and security updates to the latest version (as far as it goes). Here is how to do that for [Android](https://support.google.com/android/answer/7680439?hl=en-GB) or [iOS](https://support.apple.com/en-gb/HT204204).
+Most phones do not receive security updates after ~3 years<sup>[1](#secutiry)</sup> and become vulnerable for security breaches and 'hacks'. If you are not using the phone for any other purposes, we suggest to 'factory reset' your phone. **This will delete all files, apps and data on the phone**, and can often be done from the phone's `Settings` menu. Whether you did a factory reset or not, it is always good practice to update the software and security updates to the latest version (as far as it goes). Here is how to do that for [Android](https://support.google.com/android/answer/7680439?hl=en-GB) or [iOS](https://support.apple.com/en-gb/HT204204).
+
 
 #### Keep the screen awake
 
@@ -49,19 +50,54 @@ All that is left is to keep the charger plugged in at all times. Where possible,
 >
 > **A rough calculation (2kWh, < €1/£1 per year)**\
 Let's take a 'new' Samsung Galaxy S6 (2015) with a battery of 2550 mAH (3.85V). If the phone would be fully drained (and charged) each day, it would take up to 5.5 Wh, or 2 kWh per year. With a current average energy cost of [less than €0,30 / £0,30](https://ec.europa.eu/eurostat/statistics-explained/index.php/Electricity_price_statistics) per kWh, it would cost no more than one euro or pound each year.
+
 </i></details>
 
 
 ## Step 2: Copy the Google Sheet and set it up  
-Rather than using specially-built apps,
-If you're curious, copy the Google Sheet by clicking on [this link] - the copy is then all yours! You can follow the guide inside that Google Sheet, or have a look and explore its setup. There is no coding experience required, but if you are interested feel free to poke around (it is your personal copy, and thus won’t affect the original)!
+Rather than using specially-built apps, we will set up a connection with data sources and determine how the phone's screen responds all through a Google Sheet. This should give you full control and visibility of what is going on 'behind the scenes', and we think the spreadsheet layout should feel feel somewhat familiar. Even more so, because you will create a copy of the template below, no-one else but you will have access to the data and functionality you are about to set up.
+
+&#9658; [Copy the Google Sheet from here]().
+
+In your copy of the Google Sheet, a few additional steps are outlined. Follow these and your phone will soon visibly respond to input from 'outside'!
 
 
 ## Step 3: Connect your 'old' phone
+>This step is also mentioned within your copy of the Google Sheet
+
 On your old phone, visit [phonegrown.site/phone](www.phonegrown.site/phone). This website (which is hosted on the open source platform GitHub) presents you with a input field. Enter the 'ID' as shown in the Google Sheet and press connect. You should see a confirmation on the phone as well as in the Google Sheet.
 
-## Step 4: Connect to data sources
-You
+Test your setup by clicking the tick box `☐` in the *Test Rule* in the Google Sheet. Change the *Area of the Phone* and *Color* and see how your phone changes along.
+
+## Step 4: Connect to data sources (using IFTTT.com)
+There are various ways in which we could let your phone 'listen' to various data sources. In this tutorial, will be using *If This, Then That ( [ifttt.com](www.ifttt.com) )*. If This Than That is a [service that connects numerous services and devices](https://help.ifttt.com/hc/en-us/articles/115010325748), allowing you to create certain interactive rules. For example, *if* you come home, *then* it can automatically turn on the lights. Most rules are bound to specific products from specific brands (e.g. Gmail, Phillips), though there are a handful of *'generic'* sources, such as the weather or RSS feeds. Following the example below will set up your phone's screen to respond when there is a new article on bbc.co.uk (or most other news or blog sites you might like). It is a good starter to get to know the Google Sheet template, and enable you to comfortably explore different data sources on your own.
+
+> **Note**: If you follow this approach, you will need (to create) an IFTTT.com account. Some services require you to log in (often with your Google Account), and require access to some of your information. Read more on [IFTTT's privacy policy](https://ifttt.com/terms) and [Google's advice on third party access](https://support.google.com/accounts/answer/3466521).  
+
+### Change the colour of the phone if the BBC publishes a new article
+IFTTT works by selecting a 'trigger', the *if this*, and indicating what it should do when the trigger occurs, the *then that*. In this example we want to know when a new article is published on bbc.co.uk, and - **as with all triggers for IFTTT** we want to feed this information into our Google Sheet. T
+
+
+http://feeds.bbci.co.uk/news/world/europe/rss.xml
+
+##### Other examples using IFTTT.com
+<details>
+<summary>Blink 5 times each hour</summary>
+
+> Something about Date & Time trigger, additional rule
+
+</details>
+
+<details>
+<summary>Turn blue when it is going to rain, yellow if it clears up</summary>
+
+> Something about Date & Time trigger, additional rule
+
+</details>
+
+
+### Using...  If This Then That (IFTTT.com)
+Lorem Ipsum
 
 
 
@@ -82,5 +118,4 @@ You
 - smart use of energy (not screen always on), detecting movement (when is it relevant?), etc.
 - explore reuse of other types of devices in a safe way
 
-
-[^security] For iOS devices this is roughly after 5 year since its release, for Android this is often shorter (~3 years). You can read more about [the safety of using older phones here](https://www.tomsguide.com/uk/us/old-phones-unsafe,news-24846.html?region-switch=1593506477).
+<a name="secutiry"><sup>[1]</sup></a> For iOS devices this is roughly after 5 year since its release, for Android this is often shorter (~3 years). You can read more about [the safety of using older phones here](https://www.tomsguide.com/uk/us/old-phones-unsafe,news-24846.html?region-switch=1593506477).
