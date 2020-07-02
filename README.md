@@ -70,12 +70,13 @@ On your old phone, visit [phonegrown.site/phone](http://www.phonegrown.site/phon
 Test your setup by clicking the tick box `☐` in the *Test Rule* in the Google Sheet. Change the *Area of the Phone* and *Color* and see how your phone changes along.
 
 ## Step 4: Connect to data sources (using IFTTT.com)
-There are various ways in which we could let your phone 'listen' to various data sources. In this tutorial, we will be using *If This, Then That ( [ifttt.com](http://www.ifttt.com) )*. If This Than That is a [service that connects numerous services and devices](https://help.ifttt.com/hc/en-us/articles/115010325748), allowing you to create certain interactive rules. For example, *if* you come home, *then* it can automatically turn on the lights. Most rules are bound to specific products from specific brands (e.g. Gmail, Phillips), though there are a handful of *'generic'* sources, such as the weather or RSS feeds. Following the example below will set up your phone's screen to respond when there is a new article on the BBC (or almost any other news or blog sites). It is a good starter to get to know the Google Sheet template, and enables you to comfortably explore different data sources on your own.
+There are various ways in which we could let your phone 'listen' to various data sources. In this tutorial, we will be using *If This, Then That ( [ifttt.com](http://www.ifttt.com) )*. If This Than That is a [service that connects numerous services and devices](https://help.ifttt.com/hc/en-us/articles/115010325748), allowing you to create certain interactive rules, called `Applets`. For example, *if* you come home, *then* it can automatically turn on the lights. Most rules are bound to specific products from specific brands (e.g. Gmail, Phillips), though there are a handful of *'generic'* sources, such as the weather or RSS feeds. Setting up any IFTTT 'applet' consists of two steps. Step 1 is setting up a 'trigger' of your choice. In our case, **Step 2 will be the same for any trigger you choose** - as we will be using IFTTT's provided Google Sheet integration to connect to our Google Sheet.
 
 > **Note**: If you follow this approach, you will need (to create) an IFTTT.com account. Some services require you to log in (often with your Google Account), and require access to some of your information. Read more on [IFTTT's privacy policy](https://ifttt.com/terms) and [Google's advice on third party access](https://support.google.com/accounts/answer/3466521).  
 
-### Change the colour of the phone when ____ publishes a new article
-IFTTT works by selecting a 'trigger', the *if this*, and indicating what it should do when the trigger occurs, the *then that*. In this example we want to know when a new article is published on bbc.co.uk, and then send this information to our Google Sheet. Follow along with these steps:
+Following the example below will **set up your phone's screen to respond when there is a new article on the BBC** (or almost any other news or blog sites). It is a good starter to get to know the Google Sheet template, and enables you to comfortably explore different data sources on your own.
+
+#### First, let's set up the IFTTT 'Applet'
 
 &#9658; [See a GIF/Video instruction here](Images/Screen-Recording-IFTTT.gif).
 
@@ -87,15 +88,23 @@ IFTTT works by selecting a 'trigger', the *if this*, and indicating what it shou
 
 1. Click on `[+] That`, find and choose `Google Sheets`. Choose `Add row to spreadsheet`.
 
-1. Adjust the fields to match the Phone Grown Google Sheet you copied:
- - The name should be exactly as the name of your copy, which you can find in the top left of the Google Sheet.
+1. Adjust the **all three fields** to match the Phone Grown Google Sheet you copied **exactly**:
 
- - **Important!** We need to add a recognisable name in the `Formatted Row`, in order for the Phone Grown spreadsheet to recognise the data coming in. For example, add something like `RSS Feed`, followed by 3 vertical lines `|||` at the beginning of the `Formatted Row`.
+  - The `Spreadsheet name` should be exactly as the name of your copy, which you can find in the top left of the Google Sheet. If you haven't changed the name, it will be something like *Copy of Phone Grown ..*
+
+ - We need to add a recognisable name in the `Formatted Row`, in order for the Phone Grown spreadsheet to recognise the data coming in. For example, add something like `RSS Feed`, followed by 3 vertical lines `|||` at the beginning of the `Formatted Row`, i.e. `RSS Feed ||| `.
+
  - The `Drive Folder Path` should be the entire path where you stored you copy of the Phone Grown spreadsheet. If you didn't 'move' the spreadsheet after you copied, it is most likely in the 'main' folder. If so, leave this field *empty*.
+
+1. Copy all the text in the `Formatted Row`, we will need this later. You can paste it here temporarily if you want:
+<input type="text" id="name" size="70" placeholder="RSS Feed ||| {{ ..."  name="name"/>
 
 1. Click `Create Action` and you are all set! You can change the name of this *Applet* if you want.
 
-1. Next up is to wait for the BBC (or any RSS compati)
+#### Then, let's set up the appropriate response by the phone
+
+As with any data source you set up, often the only way to see a result is to
+Next up is to wait for the BBC (or any RSS compatible website you chose) to publish a new article! As with any
 
 Then, adjust each of the fields with the name of this Google Sheet Document, and also important, the folder this document (in Google Drive) is stored in. If you did not select/moved this copy it is most likely in the main folder of your main folder, so you can empty that field.
 
