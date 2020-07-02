@@ -35,7 +35,7 @@ You can follow along with a phone of any age, as long as it can connect to the W
 
 #### Update to the latest security settings
 
-Most phones do not receive security updates after ~3 years<sup>[1](#secutiry)</sup> and become vulnerable for security breaches and 'hacks'. If you are not using the phone for any other purposes, we suggest to 'factory reset' your phone. **This will delete all files, apps and data on the phone**, and can often be done from the phone's `Settings` menu. Whether you did a factory reset or not, it is always good practice to update the software and security updates to the latest version (as far as it goes). Here is how to do that for [Android](https://support.google.com/android/answer/7680439?hl=en-GB) or [iOS](https://support.apple.com/en-gb/HT204204).
+Most phones do not receive security updates after ~3 years<sup>[1](#security)</sup> and become vulnerable for security breaches and 'hacks'. If you are not using the phone for any other purposes, we suggest to 'factory reset' your phone. **This will delete all files, apps and data on the phone**, and can often be done from the phone's `Settings` menu. Whether you did a factory reset or not, it is always good practice to update the software and security updates to the latest version (as far as it goes). Here is how to do that for [Android](https://support.google.com/android/answer/7680439?hl=en-GB) or [iOS](https://support.apple.com/en-gb/HT204204).
 
 
 #### Keep the screen awake
@@ -65,17 +65,44 @@ In your copy of the Google Sheet, a few additional steps are outlined. Follow th
 ## Step 3: Connect your 'old' phone
 >This step is also mentioned within your copy of the Google Sheet
 
-On your old phone, visit [phonegrown.site/phone](www.phonegrown.site/phone). This website (which is hosted on the open source platform GitHub) presents you with a input field. Enter the 'ID' as shown in the Google Sheet and press connect. You should see a confirmation on the phone as well as in the Google Sheet.
+On your old phone, visit [phonegrown.site/phone](http://www.phonegrown.site/phone). This website (which is hosted on the open source platform GitHub) presents you with a input field. Enter the 'ID' as shown in the Google Sheet and press connect. You should see a confirmation on the phone as well as in the Google Sheet.
 
 Test your setup by clicking the tick box `☐` in the *Test Rule* in the Google Sheet. Change the *Area of the Phone* and *Color* and see how your phone changes along.
 
 ## Step 4: Connect to data sources (using IFTTT.com)
-There are various ways in which we could let your phone 'listen' to various data sources. In this tutorial, will be using *If This, Then That ( [ifttt.com](www.ifttt.com) )*. If This Than That is a [service that connects numerous services and devices](https://help.ifttt.com/hc/en-us/articles/115010325748), allowing you to create certain interactive rules. For example, *if* you come home, *then* it can automatically turn on the lights. Most rules are bound to specific products from specific brands (e.g. Gmail, Phillips), though there are a handful of *'generic'* sources, such as the weather or RSS feeds. Following the example below will set up your phone's screen to respond when there is a new article on bbc.co.uk (or most other news or blog sites you might like). It is a good starter to get to know the Google Sheet template, and enable you to comfortably explore different data sources on your own.
+There are various ways in which we could let your phone 'listen' to various data sources. In this tutorial, we will be using *If This, Then That ( [ifttt.com](http://www.ifttt.com) )*. If This Than That is a [service that connects numerous services and devices](https://help.ifttt.com/hc/en-us/articles/115010325748), allowing you to create certain interactive rules. For example, *if* you come home, *then* it can automatically turn on the lights. Most rules are bound to specific products from specific brands (e.g. Gmail, Phillips), though there are a handful of *'generic'* sources, such as the weather or RSS feeds. Following the example below will set up your phone's screen to respond when there is a new article on the BBC (or almost any other news or blog sites). It is a good starter to get to know the Google Sheet template, and enables you to comfortably explore different data sources on your own.
 
 > **Note**: If you follow this approach, you will need (to create) an IFTTT.com account. Some services require you to log in (often with your Google Account), and require access to some of your information. Read more on [IFTTT's privacy policy](https://ifttt.com/terms) and [Google's advice on third party access](https://support.google.com/accounts/answer/3466521).  
 
-### Change the colour of the phone if the BBC publishes a new article
-IFTTT works by selecting a 'trigger', the *if this*, and indicating what it should do when the trigger occurs, the *then that*. In this example we want to know when a new article is published on bbc.co.uk, and - **as with all triggers for IFTTT** we want to feed this information into our Google Sheet. T
+### Change the colour of the phone when ____ publishes a new article
+IFTTT works by selecting a 'trigger', the *if this*, and indicating what it should do when the trigger occurs, the *then that*. In this example we want to know when a new article is published on bbc.co.uk, and then send this information to our Google Sheet. Follow along with these steps:
+
+&#9658; [See a GIF/Video instruction here](Images/Screen-Recording-IFTTT.gif).
+
+1. Go to [ifttt.com/create](http://ifttt.com/create) and log in (create an account if needed).
+
+1. Click on `[+] This`, find and choose `RSS`. Choose `New Feed Item`.
+
+1. Enter a RSS compatible link of a website of your interest. In this example, we use `http://feeds.bbci.co.uk/news/world/europe/rss.xml` which 'triggers' for each new BBC article about Europe.
+
+1. Click on `[+] That`, find and choose `Google Sheets`. Choose `Add row to spreadsheet`.
+
+1. Adjust the fields to match the Phone Grown Google Sheet you copied:
+ - The name should be exactly as the name of your copy, which you can find in the top left of the Google Sheet.
+
+ - **Important!** We need to add a recognisable name in the `Formatted Row`, in order for the Phone Grown spreadsheet to recognise the data coming in. For example, add something like `RSS Feed`, followed by 3 vertical lines `|||` at the beginning of the `Formatted Row`.
+ - The `Drive Folder Path` should be the entire path where you stored you copy of the Phone Grown spreadsheet. If you didn't 'move' the spreadsheet after you copied, it is most likely in the 'main' folder. If so, leave this field *empty*.
+
+1. Click `Create Action` and you are all set! You can change the name of this *Applet* if you want.
+
+1. Next up is to wait for the BBC (or any RSS compati)
+
+Then, adjust each of the fields with the name of this Google Sheet Document, and also important, the folder this document (in Google Drive) is stored in. If you did not select/moved this copy it is most likely in the main folder of your main folder, so you can empty that field.
+
+
+
+
+**as with all triggers for IFTTT use Google Sheets**
 
 
 http://feeds.bbci.co.uk/news/world/europe/rss.xml
@@ -118,4 +145,4 @@ Lorem Ipsum
 - smart use of energy (not screen always on), detecting movement (when is it relevant?), etc.
 - explore reuse of other types of devices in a safe way
 
-<a name="secutiry"><sup>[1]</sup></a> For iOS devices this is roughly after 5 year since its release, for Android this is often shorter (~3 years). You can read more about [the safety of using older phones here](https://www.tomsguide.com/uk/us/old-phones-unsafe,news-24846.html?region-switch=1593506477).
+<a name="security"><sup>[1]</sup></a> For iOS devices this is roughly after 5 year since its release, for Android this is often shorter (~3 years). You can read more about [the safety of using older phones here](https://www.tomsguide.com/uk/us/old-phones-unsafe,news-24846.html?region-switch=1593506477).
