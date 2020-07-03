@@ -72,7 +72,7 @@ Test your setup by clicking the tick box `☐` in the *Test Rule* in the Google 
 ## Step 4: Connect to data sources (using IFTTT.com)
 There are various ways in which we could let your phone 'listen' to various data sources. In this tutorial, we will be using *If This, Then That ( [ifttt.com](http://www.ifttt.com) )*. If This Than That is a [service that connects numerous services and devices](https://help.ifttt.com/hc/en-us/articles/115010325748), allowing you to create certain interactive rules, called `Applets`. For example, *if* you come home, *then* it can automatically turn on the lights. Most rules are bound to specific products from specific brands (e.g. Gmail, Phillips), though there are a handful of *'generic'* sources, such as the weather or RSS feeds. Setting up any IFTTT 'applet' consists of two steps. Step 1 is setting up a 'trigger' of your choice. In our case, **Step 2 will be the same for any trigger you choose** - as we will be using IFTTT's provided Google Sheet integration to connect to our Google Sheet.
 
-> **Note**: If you follow this approach, you will need (to create) an IFTTT.com account. Some services require you to log in (often with your Google Account), and require access to some of your information. Read more on [IFTTT's privacy policy](https://ifttt.com/terms) and [Google's advice on third party access](https://support.google.com/accounts/answer/3466521).  
+> If you follow this approach, you will need (to create) an IFTTT.com account. Some services require you to log in (often with your Google Account), and require access to some of your information. Read more on [IFTTT's privacy policy](https://ifttt.com/terms) and [Google's advice on third party access](https://support.google.com/accounts/answer/3466521).  
 
 Following the example below will **set up your phone's screen to respond when there is a new article on the BBC** (or almost any other news or blog sites). It is a good starter to get to know the Google Sheet template, and enables you to comfortably explore different data sources on your own.
 
@@ -103,8 +103,9 @@ Following the example below will **set up your phone's screen to respond when th
 #### Part B: setting up the response of the phone
 As with any data source, often the only way to see a result is to wait for it to do something - depending on the source this can take anywhere between seconds or days. Instead, we will do one more step that allows us to test your newly created IFTTT applet without waiting!
 
+1. Open up your copy of the Phone Grown Google Sheet again. In the menu at the top, click '♻️📱 Phone Grown > 📈 New Data Source'. In the popup, paste your copy of the `Formatted Row` (from step 6 above).
+> Although this step is technically not required, it sets the 'header' row for the incoming data. This makes it more clear what data is in each column, and allows us to test it as well.
 
-1. Open up your copy of the Phone Grown Google Sheet again. One the `2. Home` tab, paste you copy of the `Formatted Row` (from step 6 above) in the box on the right. The Google Sheet then prepares another tab for any incoming data from this source - and allows us to test it.
 1.  
 
 
