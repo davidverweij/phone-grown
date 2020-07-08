@@ -1,6 +1,6 @@
 /*
  * AUTHOR: David Verweij
- * VERSION: 1 (June 2020)
+ * VERSION: 1 (July 2020)
  * NOTE: This program is still in development.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -13,24 +13,13 @@
 
 
 /**
- * Add menu items when the Google Sheet is opened.
- */
-function onOpen() {
-  var menuItems = [{name: '⚙️ Setup', functionName: 'setup'},{name: '📱 Setup Phone', functionName: 'dialog_addPhone'}, {name: '📈 New Data Source', functionName: 'dialog_newSource'}];
-  SpreadsheetApp.getActive().addMenu('♻️📱 PhoneGrown', menuItems);
-  sortSheets();
-}
-
-/**
  * Changes were made to the Sheet. I.e. new data came in.
  * @param {Event} e - The event object containing details
  */
 function somethingChanged(e){
-  if (e.changeType == "REMOVE_GRID"){                 // A sheet was deleted!
-    updateDataSheets();                               // Update representation of data sheets
-  } else if (e.changeType == "INSERT_ROW") {          // New data came in!
+  if (e.changeType == "INSERT_ROW") {          // New data came in!
     var doc = SpreadsheetApp.getActiveSpreadsheet();
-    var sheet = doc.getSheetByName(homesheet.datasheet);
+    var sheet = doc.getSheetByName(script.getProperty("incomingDataSheet"));
     var newRows = sheet.getLastRow();
 
     if (newRows > 0){                                           // Check if we actually have new data, else ignore
@@ -39,7 +28,7 @@ function somethingChanged(e){
       var array = range.getValues();
 
       for (var i = 0; i < newRows; i++) {
-        var data_sheetname = homesheet.data + ' ' + array[i][0];
+        var data_sheetname = app.data_template + ' ' + array[i][0];
         var data_sheet = doc.getSheetByName(data_sheetname);    // get the specific data sheet
 
         if (data_sheet == null){                                // create the sheet if it doesn't exist
@@ -51,32 +40,24 @@ function somethingChanged(e){
       }
       sheet.deleteRows(1, newRows);                             // delete the original data
     }
-  } else if (e.changeType == "OTHER" || e.changeType == "FORMAT"){
-    var doc = SpreadsheetApp.getActiveSpreadsheet();
-    var sheet = doc.getSheetByName(homesheet.name);
-    var colorpreview = sheet.getRange(homesheet.colorlist[0],homesheet.colorlist[1],homesheet.colorlist[2]);
-    var colorvalues = colorpreview.getValues();
-    colorpreview.setBackgrounds(colorvalues);
-    colorpreview.setFontColors(colorvalues);
+  } else if (e.changeType == "EDIT") {          // Let's check for a test or (de)activate 'signal'
+    let doc = SpreadsheetApp.getActiveSpreadsheet();
+    let sheet = doc.getSheetByName(script.getProperty("homeSheet"));
+    let lastRow = sheet.getLastRow();
+    let testColumn = script.getProperty("testColumn");
+    let range = sheet.getRange(testColumn + "1:" + testColumn + lastRow);
+    let values = range.getValues();
 
-    var phonerange = sheet.getRange(homesheet.phone[0],homesheet.phone[1], homesheet.phone[2]);
-    var phonevalues = phonerange.getValues();
-
-    var fullPhone = doc.getRange(homesheet.device + "!" + homesheet.fullphone).getValue();
-    var fullPhoneRange = doc.getRange(homesheet.device + "!" + fullPhone);
-    fullPhoneRange.setBackground("black");
-
-    for (i in phonevalues) {
-      if (phonevalues[i][0] != ""){
-        var area = phonevalues[i][0].match(/\[(.*?)\]/gm)[0];
-        area = area.replace(/\[|\]/gm,'');
-        if (area != "") {
-          var tempRange = doc.getRange(homesheet.device + "!" + area);
-          tempRange.setBackground(colorvalues[i][0]);
-        }
+    let change = false;
+    values.forEach(function(row, index) {
+      if (row[0] == true) {
+        // test it!
+        let ui = SpreadsheetApp.getUi();
+        ui.alert('Rule ' + (index - 1) + ' is now being tested for 20 seconds.');
       }
-    }
-    pingDatabase();                                           // ping the database, so the phone can retreive the new data
+    });
+    range.uncheck();
+
   } else {
     console.log(e.changeType);
   }
@@ -93,7 +74,7 @@ function doGet(e) {
 
   try {
     var doc = SpreadsheetApp.openById(script.getProperty("key"));  // get this sheet's ID
-    var sheet = doc.getSheetByName(homesheet.name);           // get the incoming data sheet
+    var sheet = doc.getSheetByName(app.home);           // get the incoming data sheet
     var result = {"result" : "error - wrong use of the webapp"};
     if (typeof(e) != 'undefined') {
       var origin = e.parameter.origin;
@@ -102,10 +83,20 @@ function doGet(e) {
         result.result = "succes!";
         sheet.getRange(31, 2).setValue((new Date()).toLocaleDateString('en-GB', { timeZone: 'UTC' }));
         if (data == "database"){
-          result.databasePing = script.getProperty(database.userid);                                      // send back the database id
+          result.databasePing = script.getProperty("userID");                                      // send back the database id
         }
-        var fullPhone = doc.getRange(homesheet.device + "!" + homesheet.fullphone).getValue();          // get phone sheet size
-        var fullPhoneBackgrounds = doc.getRange(homesheet.device + "!" + fullPhone).getBackgrounds();   // return all background
+
+        let test = script.getProperty("testBackground");
+        let fullPhoneBackgrounds = [];
+        var fullPhone = "";
+
+        if (test != null || test == false) {
+          fullPhone = test;
+          script.setProperty("testBackground", false);     // delete the test, so it only occurs once
+        } else {
+          fullPhone = doc.getRange(app.device + "!" + app.fullphone).getValue();          // get phone sheet size
+          fullPhoneBackgrounds = doc.getRange(app.device + "!" + fullPhone).getBackgrounds();   // return all background
+        }
         result.background = fullPhoneBackgrounds;
       }
     }
@@ -118,77 +109,41 @@ function doGet(e) {
   }
 }
 
-
-
-
-// Open a dialog box that allows the creation of a fresh phone based on template
-function dialog_addPhone(){
-  var doc = SpreadsheetApp.getActiveSpreadsheet();
-  var sheets = doc.getSheets();
-  var templates = findSheets(sheets, homesheet.template);
-
-  var html='';
-  if (templates.length > 0){
-    for (var i = 0; i < templates.length; i++){
-      html += '<input type="button" value="' + templates[i].replace(homesheet.template, '') + '" onclick="google.script.run.createPhoneSheet(\'' + templates[i] + '\');google.script.host.close();" />';
-    }
-  } else {
-    html = 'Sorry, but I could not find any template sheets. These should start with "' + homesheet.template + '"';
-  }
-
-  var output = HtmlService.createHtmlOutput(html)
-  .setWidth(200);
-
-  SpreadsheetApp.getUi().showModalDialog(output, 'Which template would you like to use?');
+/**
+ * Send the background to the phone to preview the result.
+ */
+function testBackground() {
+  let name = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet().getName();
+  script.setProperty("testBackground", name);                                               // store the name
+  pingDatabase();                                                                 // ping the database, so the phone can retreive the new data
 }
 
-// Open a dialog box that to enter a preformatted row from IFTTT. In essence, this created a new header row
-function dialog_newSource(){
-  var doc = SpreadsheetApp.getActiveSpreadsheet();
-  var ui = SpreadsheetApp.getUi(); // Same variations.
-
-  var result = ui.prompt(
-      'Add a new data source',
-      'Please paste the "Formatted Row" from IFTTT here:',
-      ui.ButtonSet.OK_CANCEL);
-
-  // Process the user's response.
-  var button = result.getSelectedButton();
-  var text = result.getResponseText();
-  if (button == ui.Button.OK) {
-
-    // User clicked "OK". Create the data sheet (if not already present) and add the content as header
-    var rowdata = text.replace(/{|}/g,"").split("|||");
-    var data_sheetname = homesheet.data + ' ' + rowdata[0].trim();
-    var data_sheet = doc.getSheetByName(data_sheetname);    // get the specific data sheet
-
-    if (data_sheet == null){                                // create the sheet if it doesn't exist
-      data_sheet = doc.insertSheet(data_sheetname, doc.getNumSheets()).setTabColor("4a85e7");
-      updateDataSheets();
-      sortSheets();
-    }
-    var rowdataColumned = rowdata.map(x => [x.trim(), ]);
-    var testdata = Array.from(Array(rowdata.length), function(x, index) {if(index == 0){return [rowdata[0]]} else {return ['testdata ' + index]}});
-    prependRow(data_sheet,testdata);
-    prependRow(data_sheet,rowdataColumned, 1);                        // move one row of data to its sheet
-
-  }
+/**
+ * Add another rule to the home page
+ */
+function addRule() {
+  let doc = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = doc.getSheetByName(script.getProperty("homeSheet"));
+  let lastRow = sheet.getLastRow();
+  let lastColumn = sheet.getLastColumn();
+  let ruleTemplate = parseInt(script.getProperty("firstRuleRow"));
+  sheet.getRange(ruleTemplate, 1, 1, lastColumn).copyTo(sheet.getRange(lastRow+2, 1, 1, lastColumn));
 }
 
-
-// Method called from the dialogbox, deletes an existing phone sheet and replaces it
-function createPhoneSheet(name){
-  var doc = SpreadsheetApp.getActiveSpreadsheet();
-  var template = doc.getSheetByName(name);
-
-  var sheet = doc.getSheetByName(homesheet.device);
-  if (sheet != null){
-    doc.deleteSheet(sheet);
-  }
-
-  template.copyTo(doc).setName(homesheet.device).setTabColor("ff00ff");
-
-  sortSheets();
+/**
+ * Add another background to the sheets
+ */
+function addBackground() {
+  let doc = SpreadsheetApp.getActiveSpreadsheet();
+  let sheets = doc.getSheets();
+  let name = script.getProperty("backgroundSheetName");
+  let backgrounds = findSheets(sheets, script.getProperty("backgroundSheetName"));
+  let newest = Math.max(...(backgrounds).map(x => parseInt(x.replace(name, "")))) + 1;
+  let template = doc.getSheetByName(backgrounds[0]);
+  let newName = name + " " + newest;
+  template.copyTo(doc).setName(name + " " + newest).setTabColor("ff00ff");
+  backgrounds.push(newName);
+  doc.getRange("[SETTINGS]!C2:C"+ (backgrounds.length + 1)).setValues(backgrounds.map(x => [x]));
 }
 
 /**
@@ -199,15 +154,17 @@ function setup() {
   // yet TODO: check if requests succeed and fix / inform google sheet user
   var thisSheet = SpreadsheetApp.getActiveSpreadsheet();
 
-  // 1. Store the ID to this spreadsheet in this script, and create variable to use
+  // 1. Store the ID to this spreadsheet in this script, as well as all variables in '[SETTINGS]'
   script.setProperty("key", thisSheet.getId());
+  getVariableFromSettings();
 
   // 2. Create a new anonymous user in the Firestore Database
-  newAnonymousUser();
+  // newAnonymousUser();
 
   // 5. Install a trigger that listen to spreadsheet changes by the user (e.g. adding/removing sheets or deleting columns)
-  ScriptApp.newTrigger("somethingChanged")
+  /*ScriptApp.newTrigger("somethingChanged")
   .forSpreadsheet(thisSheet)
   .onChange()        // onEdit() is not called if the API makes changes, onChange() is - but it is limited (no event data)
   .create();
+  */
 }

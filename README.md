@@ -103,15 +103,16 @@ Following the example below will **set up your phone's screen to respond when th
 #### Part B: setting up the response of the phone
 As with any data source, often the only way to see a result is to wait for it to do something - depending on the source this can take anywhere between seconds or days. Instead, we will do one more step that allows us to test your newly created IFTTT applet without waiting!
 
-1. Open up your copy of the Phone Grown Google Sheet again. In the menu at the top, click '♻️📱 Phone Grown > 📈 New Data Source'. In the popup, paste your copy of the `Formatted Row` (from step 6 above).
+1. Open up your copy of the Phone Grown Google Sheet again. In the menu at the top, click '♻️📱 Phone Grown > 📈 New Data Source'. In the popup, paste your copy of the `Formatted Row` (from step 6 above). Click `Ok`.
 > Although this step is technically not required, it sets the 'header' row for the incoming data. This makes it more clear what data is in each column, and allows us to test it as well.
 
-1.  
+1.  In the bottom section of the `Home` sheet, formulate a rule such that you get the visualisation you are interested. For example, you can turn half of the screen green for 1- minutes if there is a new article, or turn blue for ? Here are two examples:
+| IF | this cell | (current data) | is | this value | THEN | turn this area of the phone | into this color |  | LIVE OUTPUT |
+|-|-|-|-|-|-|-|-|-|-|
+| if | J7 | (07/07/2020 16:35) | bigger than | =NOW()-"00:10" | then | top [D3:G6] | ![#c5f015](https://via.placeholder.com/15/c5f015/000000?text=+) |  | ![#c5f015](https://via.placeholder.com/15/c5f015/000000?text=+) |
+| if | L7 | (test_EntryTitle) | contains | COVID | then | bottom [D7:G10] | ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) |  | ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) |
 
-
-
-Then, adjust each of the fields with the name of this Google Sheet Document, and also important, the folder this document (in Google Drive) is stored in. If you did not select/moved this copy it is most likely in the main folder of your main folder, so you can empty that field.
-
+1.
 
 
 
