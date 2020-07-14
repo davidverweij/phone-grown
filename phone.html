@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Phone Grown</title>
+	<meta name="author" content="David Verweij">
+	<meta name="description" content="A simple webpage to connect to your Google Sheets app">
+	<meta name="keywords" content="phone, upcycle, Google Sheets, IoT, IFTTT">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="robots" content="noindex">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="phone/style.css">
+	<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>♻️</text></svg>">
+</head>
+
+<body>
+	<main class="content">
+		<div class="container">
+			<div id="ambientdisplay">
+			</div>
+			<div id="form">
+				<h1>Connect your Google Sheet</h1>
+				<input type="text" name="scriptUrl" id="scriptUrl"/ placeholder="Personal ID">
+				<button id="button" onClick="connectToGsheet(document.getElementById('scriptUrl').value)">Connect</button>
+				<h5>Note: this tool is still in development, and as such the connection will only sustain for one hour.</h4>
+				<div id="loader"></div>
+			</div>
+		</div>
+	</main>
+	<script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-firestore.js"></script>
+	<script src="phone/scripts.js"></script>
+</body>
+</html>

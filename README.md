@@ -78,7 +78,7 @@ Following the example below will **set up your phone's screen to respond when th
 
 #### Part A: setting up the IFTTT 'Applet'
 
-&#9658; [See a GIF/Video instruction here](Images/Screen-Recording-IFTTT.gif).
+&#9658; [See a GIF/Video instruction here](resources/Images/Screen-Recording-IFTTT.gif).
 
 1. Go to [ifttt.com/create](http://ifttt.com/create) and log in (create an account if needed).
 
