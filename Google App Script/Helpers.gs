@@ -1,14 +1,12 @@
-var script = PropertiesService.getScriptProperties();        // secure 'local' storage of values repeatadly needed
-
 /**
  * Insert data row at the second line (prepend)
  *
  * @param {Sheet} sheet - The destination sheet to prepend the data to
  * @param {Array} rowData - The data to prepend
- * @param {Integer} row - a specific row to prepend the data to, defaults to 1
  */
-function prependRow(sheet, rowData, row = 1) {
-  sheet.insertRowBefore(row).getRange(1, 1, 1, rowData.length).setValues([rowData]);
+function prependRow(sheet, rowData, timestamp = false) {
+  if (timestamp) row.unshift(new Date);
+  sheet.insertRowBefore(2).getRange(1, 1, 1, rowData.length).setValues([rowData]);
 }
 
 /**
@@ -35,18 +33,6 @@ function clearBackground(){
 }
 
 /**
- * Get all variables from the [SETTINGS] sheet, and store these in the script properties for easy access.
- */
-function getVariableFromSettings(){
-  let doc = SpreadsheetApp.getActiveSpreadsheet();
-  let data = doc.getSheetByName("[SETTINGS]").getDataRange().getValues();
-  let newProperties = {};
-  data.forEach(element => newProperties[element[0]] = element[1]);
-  script.setProperties(newProperties);
-}
-
-
-/**
  * Find all the sheet following a specific naming convention
  *
  * @param {Sheet[]} sheets - An array of sheet to look through
@@ -63,4 +49,35 @@ function findSheets(sheets, keyString, column = false){
       }
   }
   return foundSheets;
+}
+
+function updatePhoneStatus(doc, status){
+  doc.getRange(homeSheetName + "!" + connectionStatusRange).setValue(status);
+}
+
+function activateRule(name, doc){
+  let values = doc.getSheetByName(homeSheetName).getDataRange().getValues();
+  let activate = (activateColumn.charCodeAt(0) % 32)-1;
+  let rulename = (ruleNameColumn.charCodeAt(0) % 32)-1;
+  let backgroundName = (backgroundNameColumn.charCodeAt(0) % 32)-1;
+  let durationLength = (ruleDuration[0].charCodeAt(0) % 32)-1;
+  let durationUnit = (ruleDuration[1].charCodeAt(0) % 32)-1;
+
+  values.forEach(function(row, index){
+    // converting column names to column numbers. If the trigger name corresponds, and is active - ping the database
+    if (row[rulename] == name && row[activate]){
+      let background = row[backgroundName];
+      let duration = calcDuration(row[durationLength], row[durationUnit]);
+    }
+  });
+}
+function calcDuration(length, unit){
+  let convertion = {
+    seconds : 1,
+    minutes : 60,
+    hours : 3600,
+    days : 86400,
+    indefinite : -1
+  }
+  return Math.max((length * convertion[unit]), -1);
 }

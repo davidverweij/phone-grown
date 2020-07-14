@@ -3,28 +3,36 @@
  */
 function newAnonymousUser(){
 
-  // 1. Sign in a new anonymous user in the database
-  var signin_options  = {'method' : 'post','contentType': 'application/json','payload' : '{"returnSecureToken":true}'};
-  var signin_response = UrlFetchApp.fetch(script.getProperty("databaseSignupUrl") + script.getProperty("databaseID"), signin_options);
-  var signin_data     = JSON.parse(signin_response.getContentText());
+  // (1) Sign in a new anonymous user in the database
+  let signin_options  = {'method' : 'post','contentType': 'application/json','payload' : '{"returnSecureToken":true}'};
+  let signin_response = UrlFetchApp.fetch(databaseSignupUrl + databaseID, signin_options);
+  let signin_data     = JSON.parse(signin_response.getContentText());
 
-  // 2. Store database anonymous user profile in this script
+  // (2) Store database anonymous user profile in this script
   script.setProperties({
     userID        : signin_data.localId,
     auth_token    : signin_data.idToken,
     refresh_token : signin_data.refreshToken,
   });
 
-  // 3. Create an initial entry in the database
-  var setup_options = {
+  // (3) Create an initial entry in the database
+  let setup_options = {
     'method' : 'post',                // writing is a 'post' operation
     'headers': {'Authorization': 'Bearer ' + script.getProperty("auth_token") + ''},
     'contentType': 'application/json',
-    'payload': "{'fields':{'ping':{'stringValue':'" + Math.floor((new Date()).getTime()/1000).toString() + "'},}}",
+    'payload': "{'fields':{'ping':{'integerValue':'" + Math.floor((new Date()).getTime()/1000) + "'},}}",
     'muteHttpExceptions': true
   };
-  var setup_response = UrlFetchApp.fetch(script.getProperty("databaseUrl") + "?documentId=" + script.getProperty("userID"), setup_options);
 
+  let setup_response = UrlFetchApp.fetch(databaseUrl + "?documentId=" + script.getProperty("userID"), setup_options);
+
+  if (setup_response.getResponseCode() != 200) {
+    // (2) something went wrong. Most likely too many new users or requests. Suggest to try again at a later stage.
+    script.setProperty("databaseLive", false);
+    updatePhoneStatus(SpreadsheetApp.openById(script.getProperty("key")), "Error - Cannot create a new User. Please try again in 60 minutes.");
+  } else {
+    script.setProperty("databaseLive", true);
+  }
 }
 
 /**
@@ -33,28 +41,45 @@ function newAnonymousUser(){
  */
 function refreshDatabaseToken() {
 
-  // 1. Get a new token
-  var refresh_options = {'method' : 'post','contentType': 'application/x-www-form-urlencoded ','payload' : 'grant_type=refresh_token&refresh_token=' + script.getProperty("refresh_token")};
-  var refresh_response = UrlFetchApp.fetch(script.getProperty("databaseRefreshUrl") + script.getProperty("databaseID"), refresh_options);
-  var refresh_data = JSON.parse(refresh_response);
+  // (1) Get a new token
+  let refresh_options = {'method' : 'post','contentType': 'application/x-www-form-urlencoded ','payload' : 'grant_type=refresh_token&refresh_token=' + script.getProperty("refresh_token")};
+  let refresh_response = UrlFetchApp.fetch(databaseRefreshUrl + databaseID, refresh_options);
+  let refresh_data = JSON.parse(refresh_response);
 
-  // 2. Store new token in this script
-  script.setProperty("refresh_token", refresh_data.refresh_token);
-
+  // (2) Store new tokens in this script
+  script.setProperties({
+    auth_token    : refresh_data.id_token,
+    refresh_token : refresh_data.refresh_token,
+  });
 }
 
 /**
  * Update a value in the database which should trigger the phone to get new data
+ *
+ * @param {Boolean} retry - allows recursion once
  */
-function pingDatabase() {
+function pingDatabase(retry = false) {
 
-  // 1. Update the database with a new timestamp (a.k.a. 'ping')
-  var ping_options = {
+  // (1) Update the database with a new timestamp (a.k.a. 'ping')
+  let ping_options = {
     'method' : 'patch',                // writing is a 'post' operation
     'headers': {'Authorization': 'Bearer ' + script.getProperty("auth_token") + ''},
     'contentType': 'application/json',
-    'payload': "{'name':'projects/sheetablephone/databases/(default)/documents/anonymous/" + script.getProperty("userID") +"','fields':{'ping':{'stringValue':'" + Math.floor((new Date()).getTime()/1000).toString() + "'},}}",
+    'payload': "{'name':'projects/phone-grown/databases/(default)/documents/anonymous/" + script.getProperty("userID") +"','fields':{'ping':{'integerValue':'" + Math.floor((new Date()).getTime()/1000) + "'},}}",
     'muteHttpExceptions': true
   };
-  var ping_response = UrlFetchApp.fetch(script.getProperty("databaseUrl") + script.getProperty("userID"), ping_options);
+  let ping_response = UrlFetchApp.fetch(databaseUrl + script.getProperty("userID"), ping_options);
+
+  if (ping_response.getResponseCode() != 200) {
+    // (2) something went wrong. Most likely the auth_token expired. Refresh auth_token and retry. Other cases are not caught.
+    if (!retry) {
+      refreshDatabaseToken();
+      pingDatabase(true)
+    } else {
+      console.log("Error. Unfortunately something went wrong in connecting with the Database.");
+      console.log(ping_response.getContentText());
+      script.setProperty("databaseLive", false);
+      updatePhoneStatus(SpreadsheetApp.openById(script.getProperty("key")), "Error - Cannot reach Database");
+    }
+  }
 }
