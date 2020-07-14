@@ -1,7 +1,5 @@
-/*
- * AUTHOR: David Verweij
- * VERSION: 1 (July 2020)
- * NOTE: This program is still in development.
+/* AUTHOR: David Verweij
+ * VERSION: 3 (July 2020)
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -13,98 +11,134 @@
 
 
 /**
+ * Make the 'Home Tab' active when opening the spreadsheet
+ */
+function onOpen() {
+  let doc = SpreadsheetApp.getActiveSpreadsheet();
+  doc.setActiveSheet(doc.getSheetByName(sheetNames.home));
+}
+
+
+/**
  * Changes were made to the Sheet. I.e. new data came in.
  * @param {Event} e - The event object containing details
  */
 function somethingChanged(e){
-  if (e.changeType == "INSERT_ROW") {          // New data came in!
-    var doc = SpreadsheetApp.getActiveSpreadsheet();
-    var sheet = doc.getSheetByName(script.getProperty("incomingDataSheet"));
-    var newRows = sheet.getLastRow();
 
-    if (newRows > 0){                                           // Check if we actually have new data, else ignore
-      var lastColumn = sheet.getLastColumn();
-      var range = sheet.getRange(1, 1, newRows, lastColumn);
-      var array = range.getValues();
+  switch(e.changeType){
 
-      for (var i = 0; i < newRows; i++) {
-        var data_sheetname = app.data_template + ' ' + array[i][0];
-        var data_sheet = doc.getSheetByName(data_sheetname);    // get the specific data sheet
+    // (A) One new row of data came in.
+    case "INSERT_ROW": {
+      let doc = SpreadsheetApp.getActiveSpreadsheet();
+      let sheet = doc.getSheetByName(sheetNames.dataIn);
+      let newRows = sheet.getLastRow();
 
-        if (data_sheet == null){                                // create the sheet if it doesn't exist
-          data_sheet = doc.insertSheet(data_sheetname, doc.getNumSheets()).setTabColor("4a85e7");
-          updateDataSheets();
-          sortSheets();
-        }
-        prependRow(data_sheet,array[i]);                        // move one row of data to its sheet
+      // (1) Get the data and store them elsewhere (to prevent API 2000 row limit)
+      if (newRows > 0){
+        let lastColumn = sheet.getLastColumn();
+        let values = sheet.getRange(1, 1, newRows, lastColumn).getValues();
+        let targetSheet = doc.getSheetByName(sheetNames.dataStored);
+        let ruleActivated = false;
+
+        values.forEach(function(row, index) {
+          // (2) Activate 'rules' where applicable
+          if (activateRule(row[0], doc)) ruleActivated = true;
+          // (3) Store data for future reference
+          prependRow(targetSheet, row, true);
+        });
+
+        // (4) When a rule was activated, let the phone know
+        if (ruleActivated) pingDatabase();
+
+        // (5) Clear all confirmed data
+        sheet.deleteRows(1, newRows);
       }
-      sheet.deleteRows(1, newRows);                             // delete the original data
+      break;
     }
-  } else if (e.changeType == "EDIT") {          // Let's check for a test or (de)activate 'signal'
-    let doc = SpreadsheetApp.getActiveSpreadsheet();
-    let sheet = doc.getSheetByName(script.getProperty("homeSheet"));
-    let lastRow = sheet.getLastRow();
-    let testColumn = script.getProperty("testColumn");
-    let range = sheet.getRange(testColumn + "1:" + testColumn + lastRow);
-    let values = range.getValues();
+    // (B) The user edited the spreadsheet.
+    case "EDIT": {
+      let doc = SpreadsheetApp.getActiveSpreadsheet();
+      let sheet = doc.getSheetByName(sheetNames.home);
+      let lastRow = sheet.getLastRow();
+      let range = sheet.getRange(columns.test + rows.firstRule + ":" + columns.test + lastRow);   //A1notation, e.g. 'Q1:Q7'
+      let values = range.getValues();
 
-    let change = false;
-    values.forEach(function(row, index) {
-      if (row[0] == true) {
-        // test it!
-        let ui = SpreadsheetApp.getUi();
-        ui.alert('Rule ' + (index - 1) + ' is now being tested for 20 seconds.');
-      }
-    });
-    range.uncheck();
+      // (1) Determine if test-checkbox is checkend
+      values.forEach(function(row, index) {
 
-  } else {
-    console.log(e.changeType);
+        // (2) If yes, inform the phone to update
+        if (row[0] == true) {
+          // TODO: update phone!
+          let ui = SpreadsheetApp.getUi();
+          ui.alert('Rule ' + (index + 1) + ' is now being tested for 20 seconds.');
+
+          // Logging
+          if (activeLogging) prependRow(doc.getSheetByName(sheetNames.logs), "Testing Rule " + (index + 1), true);
+        }
+      });
+
+      range.uncheck();
+      break;
+    }
+    default:
+      // for all types, see https://developers.google.com/apps-script/guides/triggers/events#change
+      // TODO: if a sheet is deleted, check if:
+      //  (1) all sheets needed are here
+      //  (2) 1. Incoming Data is the first sheet
+      //  (3) Update all background sheets to get an accurate representation
+      break;
   }
-
 }
 
+/**
+ * The webapp was contacted (HTTPS)
+ * @param {Event} e - The event object containing details
+ */
 
-// The webapp was contacted (HTTPS). Check if this is a phone and reply with details
-// @param {Event} e - The event object containing details
 function doGet(e) {
-
-  var lock = LockService.getPublicLock();  // prevent simultaneuous access to this script
-  lock.waitLock(10000);                    // wait 10 seconds before conceding defeat.
+  // (1) Prevent simultaneuous access to this script, 10 seconds before concedig defeat
+  var lock = LockService.getPublicLock().waitLock(10000);
 
   try {
-    var doc = SpreadsheetApp.openById(script.getProperty("key"));  // get this sheet's ID
-    var sheet = doc.getSheetByName(app.home);           // get the incoming data sheet
-    var result = {"result" : "error - wrong use of the webapp"};
     if (typeof(e) != 'undefined') {
-      var origin = e.parameter.origin;
-      var data = e.parameter.data;
+      let doc = SpreadsheetApp.openById(script.getProperty("key")); // getting sheet by ID instead of 'activeSpreadsheet()'
+      let origin = e.parameter.origin;
+      let data = e.parameter.data;
+      let result = {"result" : "error - wrong use of the webapp"};  // prepare reply
+
+      // the GET request's body must contain 'origin' (= phone) and a data parameter
       if (typeof(origin) != "undefined" && typeof(data) != "undefined" && origin == "phone"){
+
+        // (2) Update connection status on the home sheet
+        updatePhoneStatus(doc, "Phone seen on: " + (new Date()).toLocaleDateString('en-GB', { timeZone: 'UTC' }));
         result.result = "succes!";
-        sheet.getRange(31, 2).setValue((new Date()).toLocaleDateString('en-GB', { timeZone: 'UTC' }));
+
+        // If requested, send back the database id
         if (data == "database"){
-          result.databasePing = script.getProperty("userID");                                      // send back the database id
+          result.databasePing = script.getProperty("userID");
         }
 
-        let test = script.getProperty("testBackground");
-        let fullPhoneBackgrounds = [];
-        var fullPhone = "";
+        // (3) return any 'new' command if present. The phone will keep track of all past commands (over overlap them()
+        let todo = script.getProperty("todo");
 
-        if (test != null || test == false) {
-          fullPhone = test;
-          script.setProperty("testBackground", false);     // delete the test, so it only occurs once
-        } else {
-          fullPhone = doc.getRange(app.device + "!" + app.fullphone).getValue();          // get phone sheet size
-          fullPhoneBackgrounds = doc.getRange(app.device + "!" + fullPhone).getBackgrounds();   // return all background
+        if (todo.length != 0){
+          scritp.setProperty("todo", []);
         }
-        result.background = fullPhoneBackgrounds;
+
+        // (4) Get and respond with an array of background colors to display
+        result.background = doc.getRange(targetSheetName + "!" + backgroundRange).getBackgrounds();           // AM HERE I AM HERE
+
+        // Logging history
+        if (activeLogging) prependRow(doc.getSheetByName(logSheetName), "Testing " + name, true);
       }
     }
     return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.JSON);
-  } catch(e){
+  }
+  catch(e){
     console.log(e);
     return ContentService.createTextOutput(JSON.stringify({"result":"error", "error": e})).setMimeType(ContentService.MimeType.JSON);
-  } finally {
+  }
+  finally {
     lock.releaseLock(); //release lock
   }
 }
@@ -113,9 +147,13 @@ function doGet(e) {
  * Send the background to the phone to preview the result.
  */
 function testBackground() {
-  let name = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet().getName();
-  script.setProperty("testBackground", name);                                               // store the name
-  pingDatabase();                                                                 // ping the database, so the phone can retreive the new data
+  let doc = SpreadsheetApp.getActiveSpreadsheet();
+  let name = doc.getActiveSheet().getName();
+  script.setProperty("testBackground", name);    // store the name
+  pingDatabase();                                // ping the database, so the phone can retreive the new data
+
+  //Logging History
+  if (activeLogging) prependRow(doc.getSheetByName(logSheetName), "Testing " + name, true);
 }
 
 /**
@@ -123,11 +161,13 @@ function testBackground() {
  */
 function addRule() {
   let doc = SpreadsheetApp.getActiveSpreadsheet();
-  let sheet = doc.getSheetByName(script.getProperty("homeSheet"));
+  let sheet = doc.getSheetByName(homeSheetName);
   let lastRow = sheet.getLastRow();
   let lastColumn = sheet.getLastColumn();
-  let ruleTemplate = parseInt(script.getProperty("firstRuleRow"));
-  sheet.getRange(ruleTemplate, 1, 1, lastColumn).copyTo(sheet.getRange(lastRow+2, 1, 1, lastColumn));
+  sheet.getRange(firstRuleRow, 1, 1, lastColumn).copyTo(sheet.getRange(lastRow+2, 1, 1, lastColumn));
+
+  // Logging history
+  if (activeLogging) prependRow(doc.getSheetByName(logSheetName), "New Rule created", true);
 }
 
 /**
@@ -136,14 +176,20 @@ function addRule() {
 function addBackground() {
   let doc = SpreadsheetApp.getActiveSpreadsheet();
   let sheets = doc.getSheets();
-  let name = script.getProperty("backgroundSheetName");
-  let backgrounds = findSheets(sheets, script.getProperty("backgroundSheetName"));
-  let newest = Math.max(...(backgrounds).map(x => parseInt(x.replace(name, "")))) + 1;
+
+  // (1) Find all the background sheets, trim and search for the largets 'number'
+  let backgrounds = findSheets(sheets, backgroundSheetName);
+  let newest = Math.max(...(backgrounds).map(x => parseInt(x.replace(backgroundSheetName, "")))) + 1;
   let template = doc.getSheetByName(backgrounds[0]);
   let newName = name + " " + newest;
-  template.copyTo(doc).setName(name + " " + newest).setTabColor("ff00ff");
+
+  // (2) Create a new background based on the first, and update the list of backgrounds
+  template.copyTo(doc).setName(newName);
   backgrounds.push(newName);
-  doc.getRange("[SETTINGS]!C2:C"+ (backgrounds.length + 1)).setValues(backgrounds.map(x => [x]));
+  doc.getRange(listOfBackgrounds + (backgrounds.length + 1)).setValues(backgrounds.map(x => [x]));
+
+  // Logging History
+  if (activeLogging) prependRow(doc.getSheetByName(logSheetName), "New Background created: " + newName, true);
 }
 
 /**
@@ -151,20 +197,26 @@ function addBackground() {
  * and start listening to changes to the sheet (for incoming data).
  */
 function setup() {
-  // yet TODO: check if requests succeed and fix / inform google sheet user
-  var thisSheet = SpreadsheetApp.getActiveSpreadsheet();
+  let doc = SpreadsheetApp.getActiveSpreadsheet();
 
-  // 1. Store the ID to this spreadsheet in this script, as well as all variables in '[SETTINGS]'
-  script.setProperty("key", thisSheet.getId());
-  getVariableFromSettings();
+  // (1) Store the ID to this spreadsheet in this script
+  script.setProperty("key", doc.getId());
+  script.setProperty("testBackground", "no");
+  script.setProperties(columnsConvertedtoInt());
 
-  // 2. Create a new anonymous user in the Firestore Database
+  // (2) Create a new anonymous user in the Firestore Database
   // newAnonymousUser();
 
-  // 5. Install a trigger that listen to spreadsheet changes by the user (e.g. adding/removing sheets or deleting columns)
+  // (3) Install a trigger that listen to spreadsheet changes by the user (e.g. adding/removing sheets or deleting columns)
   /*ScriptApp.newTrigger("somethingChanged")
-  .forSpreadsheet(thisSheet)
+  .forSpreadsheet(doc)
   .onChange()        // onEdit() is not called if the API makes changes, onChange() is - but it is limited (no event data)
   .create();
   */
+
+  // (4) Update system status
+  updatePhoneStatus(doc, "Awaiting phone connection...");
+
+  // Logging History
+  if (activeLogging) prependRow(doc.getSheetByName(logSheetName), "Setup. New Anonymous User Created", true);
 }
