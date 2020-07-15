@@ -1,18 +1,18 @@
 /* AUTHOR: David Verweij
- * VERSION: 3 (July 2020)
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- *
- * @OnlyCurrentDoc Limits the script to only accessing the current sheet.
+* VERSION: 3 (July 2020)
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+* IN THE SOFTWARE.
+*
+* @OnlyCurrentDoc Limits the script to only accessing the current sheet.
 */
 
 
 /**
- * Make the 'Home Tab' active when opening the spreadsheet
- */
+* Make the 'Home Tab' active when opening the spreadsheet
+*/
 function onOpen() {
   let doc = SpreadsheetApp.getActiveSpreadsheet();
   doc.setActiveSheet(doc.getSheetByName(sheetNames.home));
@@ -20,14 +20,14 @@ function onOpen() {
 
 
 /**
- * Changes were made to the Sheet. I.e. new data came in.
- * @param {Event} e - The event object containing details
- */
+* Changes were made to the Sheet. I.e. new data came in.
+* @param {Event} e - The event object containing details
+*/
 function somethingChanged(e){
 
   switch(e.changeType){
 
-    // (A) One new row of data came in.
+      // (A) One new row of data came in.
     case "INSERT_ROW": {
       let doc = SpreadsheetApp.getActiveSpreadsheet();
       let sheet = doc.getSheetByName(sheetNames.dataIn);
@@ -55,7 +55,7 @@ function somethingChanged(e){
       }
       break;
     }
-    // (B) The user edited the spreadsheet.
+      // (B) The user edited the spreadsheet.
     case "EDIT": {
       let doc = SpreadsheetApp.getActiveSpreadsheet();
       let sheet = doc.getSheetByName(sheetNames.home);
@@ -91,9 +91,35 @@ function somethingChanged(e){
 }
 
 /**
- * The webapp was contacted (HTTPS)
- * @param {Event} e - The event object containing details
- */
+* The webapp was contacted (HTTPS)
+* @param {Event} e - The event object containing details
+*
+* Returns an object of instructions, similar to:
+*
+* {
+*   result: 'success',
+*   todo: [               // array of object representing backgrounds to show
+*      {
+*        backgrounds: [   // a grid of backgrounds colours to show
+*            [#000000, #000000, #000000, #000000],
+*            [#000000, #000000, #000000, #000000],
+*            // etc
+*        ],
+*        duration: 18000  // duration of showing in seconds
+*      },
+*      {
+*        backgrounds: [
+*            [#000000, #000000, #000000, #000000],
+*            [#000000, #000000, #000000, #000000],
+*            // etc
+*        ],
+*        duration: 18000
+*      },
+*      // etc
+*   ],
+*   databasePing: 'userIdxxx'  // optional, if requested
+* }
+*/
 
 function doGet(e) {
   // (1) Prevent simultaneuous access to this script, 10 seconds before concedig defeat
@@ -111,25 +137,22 @@ function doGet(e) {
 
         // (2) Update connection status on the home sheet
         updatePhoneStatus(doc, "Phone seen on: " + (new Date()).toLocaleDateString('en-GB', { timeZone: 'UTC' }));
-        result.result = "succes!";
+        result.result = "success";
 
         // If requested, send back the database id
         if (data == "database"){
           result.databasePing = script.getProperty("userID");
         }
 
-        // (3) return any 'new' command if present. The phone will keep track of all past commands (over overlap them()
-        let todo = script.getProperty("todo");
+        // (3a) Add backgrounds that need 'representing'. This could be empty. The phone will keep track of all past commands (over overlap them)
+        // Note: in this implementation, the todo's will keep piling up until retreived. This needs to be addressed in the future.
+        result.todo = script.getProperty("todo");
+        // (3b) Clear the list of instructions
+        script.setProperty("todo", '[]');
 
-        if (todo.length != 0){
-          scritp.setProperty("todo", []);
-        }
-
-        // (4) Get and respond with an array of background colors to display
-        result.background = doc.getRange(targetSheetName + "!" + backgroundRange).getBackgrounds();           // AM HERE I AM HERE
 
         // Logging history
-        if (activeLogging) prependRow(doc.getSheetByName(logSheetName), "Testing " + name, true);
+        if (activeLogging) prependRow(doc.getSheetByName(logSheetName), "Phone retreived instructions ", true);
       }
     }
     return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.JSON);
@@ -144,21 +167,23 @@ function doGet(e) {
 }
 
 /**
- * Send the background to the phone to preview the result.
- */
+* Send the background to the phone to preview the result.
+*/
 function testBackground() {
   let doc = SpreadsheetApp.getActiveSpreadsheet();
-  let name = doc.getActiveSheet().getName();
-  script.setProperty("testBackground", name);    // store the name
-  pingDatabase();                                // ping the database, so the phone can retreive the new data
+  let instruction = {};
+  instruction.backgrounds = doc.getActiveSheet().getRange(ranges.background).getBackgrounds();
+  instruction.duration = 20;
+  addPhoneInstruction(instruction);
+  pingDatabase();                                // ping the database, so the phone can retreive the new instruction
 
   //Logging History
   if (activeLogging) prependRow(doc.getSheetByName(logSheetName), "Testing " + name, true);
 }
 
 /**
- * Add another rule to the home page
- */
+* Add another rule to the home page
+*/
 function addRule() {
   let doc = SpreadsheetApp.getActiveSpreadsheet();
   let sheet = doc.getSheetByName(homeSheetName);
@@ -171,8 +196,8 @@ function addRule() {
 }
 
 /**
- * Add another background to the sheets
- */
+* Add another background to the sheets
+*/
 function addBackground() {
   let doc = SpreadsheetApp.getActiveSpreadsheet();
   let sheets = doc.getSheets();
@@ -193,16 +218,14 @@ function addBackground() {
 }
 
 /**
- * Sets up the script to connect to the database anonymously,
- * and start listening to changes to the sheet (for incoming data).
- */
+* Sets up the script to connect to the database anonymously,
+* and start listening to changes to the sheet (for incoming data).
+*/
 function setup() {
   let doc = SpreadsheetApp.getActiveSpreadsheet();
 
   // (1) Store the ID to this spreadsheet in this script
   script.setProperty("key", doc.getId());
-  script.setProperty("testBackground", "no");
-  script.setProperties(columnsConvertedtoInt());
 
   // (2) Create a new anonymous user in the Firestore Database
   // newAnonymousUser();
