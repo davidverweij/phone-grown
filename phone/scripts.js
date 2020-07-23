@@ -1,5 +1,6 @@
 // (1) use global variables for the googleSheet and database link and phone status / instructions
-var gSheetLink, databasePing, currentInstructions = [], timeout;
+var gSheetLink, databasePing, currentInstructions = [],
+  timeout;
 
 // (2) initiale the database object (with specific details for this projects' database) and connect
 firebase.initializeApp({
@@ -15,8 +16,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // add a listener if the user clicks on the screen
   document.getElementById("ambientdisplay").addEventListener("click", function() {
-    showUI(1);
-    console.log("click!");
+    showUI(1, (document.getElementById('menu1').style.display == "none"));
   });
 
   // add a listener if the user closes a menu
@@ -158,46 +158,69 @@ function startDatabaseListener() {
  * @param {String} instructions - a stringified array of instructions (default an empty array)
  */
 function updateAmbientDisplay(newInstructions = '[]') {
+  let now = Math.floor(Date.now() / 1000);
 
   // (1) clear the timeout to prevent parralel execution
   clearTimeout(timeout);
 
   // (2) convert new instruction durations to timestamps and add them to the existing instructions (if any)
   let todos = JSON.parse(newInstructions);
-  if (todos.length > 0){
-    let now = Date.now();
-
+  if (todos.length > 0) {
     todos.forEach((instruction) => {
       currentInstructions.push({
-        'starts' : now,
-        'ends' : now + instruction.duration,
-        'backgrounds' : instruction.backgrounds
+        'starts': now,
+        'ends': now + instruction.duration,
+        'backgrounds': instruction.backgrounds
       });
     });
   }
 
-  // (3) check all current instructions and create an appropriate display. Sort based on starttime
-  currentInstructions.sort();
+  let html = ""; // the html to populate the screen with
 
-  // I AM HERE
+  // (3a) remove expired newInstructions
+  currentInstructions = currentInstructions.filter((instruction) => {
+    return (instruction.ends > now);
+  });
 
-  // timeout - setTimeout(updateAmbientDisplay)
+  // (3) check all current instructions and create an appropriate display.
+  if (currentInstructions.length > 0) {
 
+    // (3b) construct the current view by filling all black 'pixels', starting by taking the first representation
+    let view = currentInstructions[0].backgrounds;
 
-  let height = backgrounds.length,
-    width = backgrounds[0].length;
-  let html = "";
+    view.forEach((row, rowIndex) => {
+      row.forEach((column, columnIndex) => {
 
-  // (1) create a list of <div>'s with correct background colours in HTML
-  for (let i in backgrounds)
-    for (let j in backgrounds[i])
-      html += "<div style='background-color:" + backgrounds[i][j] + "'></div>";
+        // if there is an uncoloured cell (i.e. black / #000000) it may be overriden by another instruction
+        if (column == "#000000"){
+          for (let i = 1; i < currentInstructions.length; i++){
+            if (currentInstructions[i].backgrounds[rowIndex][columnIndex] != "#000000"){
+              view[rowIndex][columnIndex] = currentInstructions[i].backgrounds[rowIndex][columnIndex];
+              break;
+            }
+          }
+        }
 
-  // (2) set a GRID layout to the correct number of columns (from the data), and update the HTML
-  document.getElementById('ambientdisplay').style.gridTemplateColumns = "repeat(" + width + ", 1fr)";
+        // instantly create HTML elements
+        html += "<div style='background-color:" + view[rowIndex][columnIndex] + "'></div>";
+      });
+    });
+
+    // (3c) set a GRID layout to the correct number of columns (from the data)
+    document.getElementById('ambientdisplay').style.gridTemplateColumns = "repeat(" + view[0].length + ", 1fr)";
+    document.getElementById('ambientdisplay').style.display = "grid";
+
+    // (3d) set a timeout to redo this calculation when an the duration of an instruction ends
+    let nextCheck = Infinity;
+    currentInstructions.forEach((instruction)=> {
+      if (instruction.ends < nextCheck) nextCheck = instruction.ends;
+    });
+    timeout = setTimeout(updateAmbientDisplay, (nextCheck-now)*1000);
+  }
+
+  // (4) update the html (empty if no instructions)
   document.getElementById('ambientdisplay').innerHTML = html;
-  document.getElementById('ambientdisplay').style.display = "grid";
-}
+
 }
 
 
