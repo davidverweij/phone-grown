@@ -22,7 +22,7 @@ function sortSheets(){
     doc.setActiveSheet(sheets[i]);
     doc.moveActiveSheet(sheets.length);
   }
-  doc.setActiveSheet(doc.getSheetByName(app.home));
+  doc.setActiveSheet(doc.getSheetByName(variables.sheetNames.home));
 }
 
 /**
@@ -51,26 +51,23 @@ function findSheets(sheets, keyString, column = false){
   return foundSheets;
 }
 
+
+/**
+ * Update the cell informing the user of the phone status
+ *
+ * @param {Google Document} doc - The document reference
+ * @param {String} status - The text to update the status with
+ */
 function updatePhoneStatus(doc, status){
-  doc.getRange(homeSheetName + "!" + connectionStatusRange).setValue(status);
+  doc.getRange(variables.A1Notations.status).setValue(status);
 }
 
-function activateRule(name, doc){
-  let values = doc.getSheetByName(homeSheetName).getDataRange().getValues();
-  let activate = (activateColumn.charCodeAt(0) % 32)-1;
-  let rulename = (ruleNameColumn.charCodeAt(0) % 32)-1;
-  let backgroundName = (backgroundNameColumn.charCodeAt(0) % 32)-1;
-  let durationLength = (ruleDuration[0].charCodeAt(0) % 32)-1;
-  let durationUnit = (ruleDuration[1].charCodeAt(0) % 32)-1;
-
-  values.forEach(function(row, index){
-    // converting column names to column numbers. If the trigger name corresponds, and is active - ping the database
-    if (row[rulename] == name && row[activate]){
-      let background = row[backgroundName];
-      let duration = calcDuration(row[durationLength], row[durationUnit]);
-    }
-  });
-}
+/**
+ * A quick conversion of the dropdown list and integer to seconds
+ *
+ * @param {Integer} length - The amount of the duration
+ * @param {String} unit - The chosen unit of duration from the dropdown
+ */
 function calcDuration(length, unit){
   let convertion = {
     seconds : 1,

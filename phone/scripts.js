@@ -177,7 +177,7 @@ function updateAmbientDisplay(newInstructions = '[]') {
   }
 
   // (3) check all current instructions and create an appropriate display. Sort based on starttime
-  currentInstructions.sort()
+  currentInstructions.sort();
 
   // I AM HERE
 
