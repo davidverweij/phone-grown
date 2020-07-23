@@ -81,5 +81,8 @@ function pingDatabase(timestamp, retry = false) {
       script.setProperty("databaseLive", false);
       updatePhoneStatus(SpreadsheetApp.openById(script.getProperty("key")), "Error - Cannot reach Database");
     }
+  } else {
+    script.setProperty("databaseLive", true);
+    updatePhoneStatus(SpreadsheetApp.openById(script.getProperty("key")), "Operational!");
   }
 }

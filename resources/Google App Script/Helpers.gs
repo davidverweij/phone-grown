@@ -5,8 +5,8 @@
  * @param {Array} rowData - The data to prepend
  */
 function prependRow(sheet, rowData, timestamp = false) {
-  if (timestamp) row.unshift(new Date);
-  sheet.insertRowBefore(2).getRange(1, 1, 1, rowData.length).setValues([rowData]);
+  if (timestamp) rowData.unshift(new Date);
+  sheet.insertRowBefore(2).getRange(2, 1, 1, rowData.length).setValues([rowData]);
 }
 
 /**
@@ -59,6 +59,7 @@ function findSheets(sheets, keyString, column = false){
  * @param {String} status - The text to update the status with
  */
 function updatePhoneStatus(doc, status){
+  let message = script.getProperty("databaseLive") ? status : status + " // Error: Database offline!";
   doc.getRange(variables.A1Notations.status).setValue(status);
 }
 
@@ -74,7 +75,24 @@ function calcDuration(length, unit){
     minutes : 60,
     hours : 3600,
     days : 86400,
-    indefinite : -1
   }
-  return Math.max((length * convertion[unit]), -1);
+  if (unit == 'indefinite') return 31536000; // indefinite ~1 year
+  else return length * convertion[unit];
+}
+
+/**
+ * Deletes a trigger.
+ *
+ * @param {string} triggerId The Trigger ID.
+ */
+function deleteTrigger(triggerId) {
+  // Loop over all triggers.
+  var allTriggers = ScriptApp.getProjectTriggers();
+  for (var i = 0; i < allTriggers.length; i++) {
+    // If the current trigger is the correct one, delete it.
+    if (allTriggers[i].getUniqueId() === triggerId) {
+      ScriptApp.deleteTrigger(allTriggers[i]);
+      break;
+    }
+  }
 }

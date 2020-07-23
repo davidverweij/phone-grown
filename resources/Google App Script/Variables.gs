@@ -8,6 +8,7 @@ var script = PropertiesService.getScriptProperties();
 // - auth_token (authentication token to acces the database)
 // - refresh_token (to refresh the authentication token)
 // - databaseLive (indicating if the database connection is seemingly viable)
+// - onChangeID (trigger ID to prevent multiple instances)
 
 // Turn off if you do not want to keep collecting logs
 var activeLogging = true;
@@ -24,25 +25,25 @@ var variables = {
     home       : "2. Home",
     dataIn     : "1. Incoming Data",
     dataStored : "3. Received Data",
-    logs       : "4. Logs",
+    logs       : "[LOGS]",
     backgrounds: "[BACKGROUND]"
   },
   ranges : {
     background : "C3:G12"
   },
   A1Notations : {
-    status     : "2. Home!C1:C1",
+    status     : "2. Home!E2:E2",
     backgrounds: "[SETTINGS]!A2:A",
   },
   columns : {
-    active     : {'char':'Q', 'index' : 16 },
-    test       : {'char':'R', 'index' : 18 },
-    rule       : {'char':'E', 'index' :  5 },
-    background : {'char':'I', 'index' :  9 },
-    duration   : {'char':'L', 'index' : 12 },
-    durationUnit : {'char':'M', 'index' : 13 }
+    active     : {'char':'O', 'index' : 14 },
+    test       : {'char':'P', 'index' : 15 },
+    rule       : {'char':'E', 'index' :  4 },
+    background : {'char':'I', 'index' :  8 },
+    duration   : {'char':'L', 'index' : 11 },
+    durationUnit : {'char':'M', 'index' : 12 }
   },
   rows :{
-    firstRule  : 5
+    firstRule  : 8
   }
 };
