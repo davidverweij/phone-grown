@@ -5,8 +5,8 @@
  * @param {Array} rowData - The data to prepend
  */
 function prependRow(sheet, rowData, timestamp = false) {
-  if (timestamp) row.unshift(new Date);
-  sheet.insertRowBefore(2).getRange(1, 1, 1, rowData.length).setValues([rowData]);
+  if (timestamp) rowData.unshift(new Date);
+  sheet.insertRowBefore(2).getRange(2, 1, 1, rowData.length).setValues([rowData]);
 }
 
 /**
@@ -22,7 +22,7 @@ function sortSheets(){
     doc.setActiveSheet(sheets[i]);
     doc.moveActiveSheet(sheets.length);
   }
-  doc.setActiveSheet(doc.getSheetByName(app.home));
+  doc.setActiveSheet(doc.getSheetByName(variables.sheetNames.home));
 }
 
 /**
@@ -51,33 +51,48 @@ function findSheets(sheets, keyString, column = false){
   return foundSheets;
 }
 
+
+/**
+ * Update the cell informing the user of the phone status
+ *
+ * @param {Google Document} doc - The document reference
+ * @param {String} status - The text to update the status with
+ */
 function updatePhoneStatus(doc, status){
-  doc.getRange(homeSheetName + "!" + connectionStatusRange).setValue(status);
+  let message = script.getProperty("databaseLive") ? status : status + " // Error: Database offline!";
+  doc.getRange(variables.A1Notations.status).setValue(status);
 }
 
-function activateRule(name, doc){
-  let values = doc.getSheetByName(homeSheetName).getDataRange().getValues();
-  let activate = (activateColumn.charCodeAt(0) % 32)-1;
-  let rulename = (ruleNameColumn.charCodeAt(0) % 32)-1;
-  let backgroundName = (backgroundNameColumn.charCodeAt(0) % 32)-1;
-  let durationLength = (ruleDuration[0].charCodeAt(0) % 32)-1;
-  let durationUnit = (ruleDuration[1].charCodeAt(0) % 32)-1;
-
-  values.forEach(function(row, index){
-    // converting column names to column numbers. If the trigger name corresponds, and is active - ping the database
-    if (row[rulename] == name && row[activate]){
-      let background = row[backgroundName];
-      let duration = calcDuration(row[durationLength], row[durationUnit]);
-    }
-  });
-}
+/**
+ * A quick conversion of the dropdown list and integer to seconds
+ *
+ * @param {Integer} length - The amount of the duration
+ * @param {String} unit - The chosen unit of duration from the dropdown
+ */
 function calcDuration(length, unit){
   let convertion = {
     seconds : 1,
     minutes : 60,
     hours : 3600,
     days : 86400,
-    indefinite : -1
   }
-  return Math.max((length * convertion[unit]), -1);
+  if (unit == 'indefinite') return 31536000; // indefinite ~1 year
+  else return length * convertion[unit];
+}
+
+/**
+ * Deletes a trigger.
+ *
+ * @param {string} triggerId The Trigger ID.
+ */
+function deleteTrigger(triggerId) {
+  // Loop over all triggers.
+  var allTriggers = ScriptApp.getProjectTriggers();
+  for (var i = 0; i < allTriggers.length; i++) {
+    // If the current trigger is the correct one, delete it.
+    if (allTriggers[i].getUniqueId() === triggerId) {
+      ScriptApp.deleteTrigger(allTriggers[i]);
+      break;
+    }
+  }
 }
