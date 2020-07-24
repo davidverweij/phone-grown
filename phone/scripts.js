@@ -14,6 +14,8 @@ const db = firebase.firestore();
 document.addEventListener("DOMContentLoaded", function() {
   showUI(0);
 
+
+
   // add a listener if the user clicks on the screen
   document.getElementById("ambientdisplay").addEventListener("click", function() {
     showUI(1, (document.getElementById('menu1').style.display == "none"));
@@ -136,6 +138,8 @@ function startDatabaseListener() {
 
           // (4) if success, store the result and update the background
           if (result.result == "success") {
+            console.log("GET REQUEST");
+            console.log(result.todo);
             updateAmbientDisplay(result.todo);
           } else {
             // something went wrong.. TODO: Handle error
@@ -184,27 +188,48 @@ function updateAmbientDisplay(newInstructions = '[]') {
 
   // (3) check all current instructions and create an appropriate display.
   if (currentInstructions.length > 0) {
+    let view;
 
-    // (3b) construct the current view by filling all black 'pixels', starting by taking the first representation
-    let view = currentInstructions[0].backgrounds;
+    if (currentInstructions.length == 1) {
+      view = currentInstructions[0].backgrounds;
+    } else {
+      // (3b) construct a combined view if multiple instructions are present
+      // First, create all values as arrays, empty if color is black (to remove for mixing)
+      view = currentInstructions[0].backgrounds.map(
+        // for each row
+        function(row, rowIndex) {
+          return row.map(
+            // and each column
+            function(column, columnIndex) {
+
+              // return an array, empty if black, otherwise populated with a color
+              let resultingHEX = (column == "#000000") ? [] : [column];
+
+              // check all other instructions for more colors
+              for (let i = 1; i < currentInstructions.length; i++) {
+                if (currentInstructions[i].backgrounds[rowIndex][columnIndex] != "#000000") {
+                  resultingHEX.push(currentInstructions[i].backgrounds[rowIndex][columnIndex]);
+                }
+              }
+
+              // return black if no color has been provided, otherwise calculate average.
+              return (resultingHEX.length == 0) ? "#000000" : ((resultingHEX.length == 1) ? resultingHEX[0] : averageHex(resultingHEX));
+
+            });
+        });
+    }
+
+    console.log("resulting view:");
+    console.log(view);
+
 
     view.forEach((row, rowIndex) => {
       row.forEach((column, columnIndex) => {
-
-        // if there is an uncoloured cell (i.e. black / #000000) it may be overriden by another instruction
-        if (column == "#000000"){
-          for (let i = 1; i < currentInstructions.length; i++){
-            if (currentInstructions[i].backgrounds[rowIndex][columnIndex] != "#000000"){
-              view[rowIndex][columnIndex] = currentInstructions[i].backgrounds[rowIndex][columnIndex];
-              break;
-            }
-          }
-        }
-
-        // instantly create HTML elements
+        // create HTML elements with correct color
         html += "<div style='background-color:" + view[rowIndex][columnIndex] + "'></div>";
       });
     });
+
 
     // (3c) set a GRID layout to the correct number of columns (from the data)
     document.getElementById('ambientdisplay').style.gridTemplateColumns = "repeat(" + view[0].length + ", 1fr)";
@@ -212,10 +237,11 @@ function updateAmbientDisplay(newInstructions = '[]') {
 
     // (3d) set a timeout to redo this calculation when an the duration of an instruction ends
     let nextCheck = Infinity;
-    currentInstructions.forEach((instruction)=> {
+    currentInstructions.forEach((instruction) => {
       if (instruction.ends < nextCheck) nextCheck = instruction.ends;
     });
-    timeout = setTimeout(updateAmbientDisplay, (nextCheck-now)*1000);
+
+    timeout = setTimeout(updateAmbientDisplay, (nextCheck - now) * 1000);
   }
 
   // (4) update the html (empty if no instructions)
@@ -267,4 +293,43 @@ function getCookie(name) {
     "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
   ));
   return matches ? decodeURIComponent(matches[1]) : undefined;
+}
+
+
+
+/**
+ * Averages an array of hex colors. Returns one hex value (with leading #)
+ *
+ * @param {Array} colors - An array of hex strings, e.g. ["#001122", "#001133", ...]
+ */
+function averageHex(colors) {
+
+  // transform all hex codes to integer arrays, e.g. [[255, 0, 205], [0, 22, 50], ...]
+  let numbers = colors.map(function(hex) {
+    // split in seperate R, G and B
+    let split = hex.match(/[\da-z]{2}/gi);
+
+    // transform to integer values
+    return split.map(function(toInt) {
+      return parseInt(toInt, 16);
+    });
+  });
+
+  // average all R's, G's and B's, by iterating over the array, and adding the respective values
+  let averages = numbers.reduce(function(total, amount, index, array) {
+
+
+    return total.map(function(subcolor, subindex) {                       // per color, add the R, G and B respectively using a map
+      subcolor += amount[subindex];
+      if (index == array.length - 1) {                                    // if we reached the last color, average it out and return the hex value
+        let result = Math.round(subcolor / array.length).toString(16);
+        return result.length == 2 ? '' + result : '0' + result;           // add a leading 0 if it is only one character
+      } else {
+        return subcolor;
+      }
+    });
+  });
+
+  // return them as a single hex string
+  return "#" + averages.join('');
 }
