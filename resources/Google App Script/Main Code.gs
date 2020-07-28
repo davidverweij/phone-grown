@@ -89,12 +89,12 @@ function somethingChanged(e){
             // (4) Uncheck the checked checkbox
             sheet.getRange(index+1,variables.columns.test.index+1,1,1).uncheck();
 
-            // (5) Inform the user of the action through a popup
-            let ui = SpreadsheetApp.getUi();
-            ui.alert('Rule ' + ((((index + 1) - variables.rows.firstRule)/2)+1) + ' is now being tested ' + ((duration == -1) ? 'indefinitely' : ('for ' + row[variables.columns.duration.index] + ' ' + row[variables.columns.durationUnit.index])) + '.');
-
             // Logging
-            if (activeLogging) prependRow(doc.getSheetByName(variables.sheetNames.logs), ["Testing Rule " + ((index + 1) - variables.rows.firstRule)/2 +1], true);
+            if (activeLogging) prependRow(doc.getSheetByName(variables.sheetNames.logs), ["Test trigger Rule " + (((index + 1) - variables.rows.firstRule)/2+1) + ((row[variables.columns.durationUnit.index] == "indefinite") ? ' indefinitely' : (' for ' + row[variables.columns.duration.index] + ' ' + row[variables.columns.durationUnit.index])) + '.' ], true);
+
+            // (5) Inform the user of the action through a popup
+            // SpreadsheetApp.getUi().alert('Rule ' + ((((index + 1) - variables.rows.firstRule)/2)+1) + ' is now being tested ' + ((row[variables.columns.durationUnit.index] == "indefinite") ? 'indefinitely' : ('for ' + row[variables.columns.duration.index] + ' ' + row[variables.columns.durationUnit.index])) + '.');
+
 
             return false; // stops the values.every loop
           }
@@ -129,12 +129,12 @@ function activateRule(name, doc, timestamp){
 
   // (2) Run through all rows starting at the first rule row, and check if it complies
   values.forEach(function(row, index){
-    if (index >= variables.rows.firstRule){
+    if (index >= variables.rows.firstRule-1){
 
       // (3) if the name corresponds, AND it is 'activated', trigger a phone update
       if (row[variables.columns.rule.index] == name && row[variables.columns.active.index]){
         let instruction = {
-          backgrounds : doc.getSheetByName(row[columns.background.index]).getRange(variables.ranges.background).getBackgrounds(),
+          backgrounds : doc.getSheetByName(row[variables.columns.background.index]).getRange(variables.ranges.background).getBackgrounds(),
           duration    : calcDuration(row[variables.columns.duration.index], row[variables.columns.durationUnit.index]),
           timestamp   : timestamp,
         };
@@ -144,7 +144,7 @@ function activateRule(name, doc, timestamp){
     }
   });
 
-  addPhoneInstruction(instructions, timestamp);
+  if (triggered) addPhoneInstruction(instructions, timestamp);
   return triggered;
 }
 
@@ -156,18 +156,24 @@ function activateRule(name, doc, timestamp){
 * @param {Integer} timestamp - The current time to compare todos with
 */
 function addPhoneInstruction(instructions, timestamp){
-
   // (1) Get all current triggers
   let todo = JSON.parse(script.getProperty("todo"));
 
-  // (2) Remove past and uncollected triggers (-1 when indefinite)
+  // (2) Remove past and uncollected triggers
   if (todo == null) todo = [];
   todo.forEach(function(instruction, index, thisObject){
     if (instruction.duration > 0 && (instruction.timestamp + instruction.duration) < timestamp) thisObject.splice(index,1);
   });
+  console.log('before');
+  console.log(todo);
+  // (3) A script property value can only be max 9kb. One instruction is ~600b, so assuming max 10 instructions. FIFO. See https://developers.google.com/apps-script/guides/services/quotas#current_limitations
+  todo = todo.concat(instructions);
+  todo = todo.slice(-10);              // keeping only the last 10 elements
+  console.log('after');
+  console.log(todo);
 
-  // (3) Add the new triggers, and store all in the script properties
-  script.setProperty("todo", JSON.stringify(todo.concat(instructions)));
+  // (4) Add the new triggers, and store all in the script properties
+  script.setProperty("todo", JSON.stringify(todo));
 }
 
 /**
@@ -206,7 +212,7 @@ function addPhoneInstruction(instructions, timestamp){
 
 function doGet(e) {
   // (1) Prevent simultaneuous access to this script, 10 seconds before concedig defeat
-  var lock = LockService.getPublicLock();
+  var lock = LockService.getScriptLock();
   lock.waitLock(10000);
 
   try {
@@ -232,11 +238,9 @@ function doGet(e) {
         // (3a) Add backgrounds that need 'representing'. This could be empty. The phone will keep track of all past commands (over overlap them)
         // Note: in this implementation, the todo's will keep piling up until retreived. This needs to be addressed in the future.
         result.todo = script.getProperty("todo");
+
         // (3b) Clear the list of instructions
         script.setProperty("todo", '[]');
-
-        // Logging history
-        if (activeLogging) prependRow(doc.getSheetByName(variables.sheetNames.logs), ["Phone retreived instructions "], true);
       }
     }
     return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.JSON);
@@ -259,14 +263,16 @@ function testBackground() {
   let now = Math.floor((new Date()).getTime()/1000);
   let instruction = {
     backgrounds : sheet.getRange(variables.ranges.background).getBackgrounds(),
-    duration    : 20,
+    duration    : 30,
     timestamp   : now,
   };
-  addPhoneInstruction([instruction]);
+  addPhoneInstruction([instruction], now);
   pingDatabase(now);       // ping the database, so the phone can retreive the new instruction
 
   //Logging History
   if (activeLogging) prependRow(doc.getSheetByName(variables.sheetNames.logs), ["Testing " + sheet.getName()], true);
+
+  // SpreadsheetApp.getUi().alert(sheet.getName() + ' is now being tested for 30 seconds.');
 }
 
 /**
@@ -300,7 +306,8 @@ function addBackground() {
   let newBackground = template.copyTo(doc).setName(newName);
   doc.setActiveSheet(newBackground);
   backgrounds.push(newName);
-  doc.getRange(variables.A1Notations.backgrounds + (backgrounds.length + 1)).setValues(backgrounds.map(x => [x]));
+  backgrounds = backgrounds.concat(Array(7 - backgrounds.length).fill(""));
+  doc.getRange(variables.sheetNames.home + '!' + variables.ranges.listOfBackgrounds).setValues([backgrounds]);
 
   // Logging History
   if (activeLogging) prependRow(doc.getSheetByName(variables.sheetNames.logs), ["New Background created: " + newName], true);

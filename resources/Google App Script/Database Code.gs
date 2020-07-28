@@ -59,7 +59,8 @@ function refreshDatabaseToken() {
  * @param {Boolean} retry - allows recursion once
  */
 function pingDatabase(timestamp, retry = false) {
-
+  //Utilities.sleep(1000); // sleep for one second, to give the script time to write/process
+//  timestamp+= 1;
   // (1) Update the database with a new timestamp (a.k.a. 'ping')
   let ping_options = {
     'method' : 'patch',                // writing is a 'post' operation

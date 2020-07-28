@@ -22,18 +22,16 @@ var variables = {
     ID         : "AIzaSyCAHz6izwenF8F84SoQqRCekYhNeAe7u68"
   },
   sheetNames : {
-    home       : "2. Home",
-    dataIn     : "1. Incoming Data",
-    dataStored : "3. Received Data",
+    home       : "HOME",
+    dataIn     : "[DATA] New",
+    dataStored : "[DATA] History",
     logs       : "[LOGS]",
-    backgrounds: "[BACKGROUND]"
+    backgrounds: "[BG]"
   },
   ranges : {
-    background : "C3:G12"
-  },
-  A1Notations : {
-    status     : "2. Home!E2:E2",
-    backgrounds: "[SETTINGS]!A2:A",
+    background : "C3:G12",
+    listOfBackgrounds: "F5:L5",
+    status: "N2:N2"
   },
   columns : {
     active     : {'char':'O', 'index' : 14 },
@@ -44,6 +42,6 @@ var variables = {
     durationUnit : {'char':'M', 'index' : 12 }
   },
   rows :{
-    firstRule  : 8
+    firstRule  : 10
   }
 };
