@@ -30,7 +30,7 @@ var variables = {
   },
   ranges : {
     background : "C3:G12",
-    listOfBackgrounds: "F5:L5",
+    listOfBackgrounds: "F5:O5",
     status: "N2:N2"
   },
   columns : {
@@ -41,7 +41,8 @@ var variables = {
     duration   : {'char':'L', 'index' : 11 },
     durationUnit : {'char':'M', 'index' : 12 }
   },
-  rows :{
-    firstRule  : 10
+  fixed :{
+    firstRule  : 13,
+    totalBackgrounds: 10,
   }
 };

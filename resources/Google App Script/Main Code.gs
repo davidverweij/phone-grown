@@ -25,12 +25,11 @@ function onOpen() {
 * @param {Event} e - The event object containing details
 */
 function somethingChanged(e){
+  let doc = SpreadsheetApp.getActiveSpreadsheet();
 
   switch(e.changeType){
-
       // (A) One new row of data came in.
     case "INSERT_ROW": {
-      let doc = SpreadsheetApp.getActiveSpreadsheet();
       let sheet = doc.getSheetByName(variables.sheetNames.dataIn);
       let newRows = sheet.getLastRow();
 
@@ -64,7 +63,6 @@ function somethingChanged(e){
     }
       // (B) The user edited the spreadsheet.
     case "EDIT": {
-      let doc = SpreadsheetApp.getActiveSpreadsheet();
       let sheet = doc.getSheetByName(variables.sheetNames.home);
 
       // (1) Get all data from the Home sheet
@@ -72,7 +70,7 @@ function somethingChanged(e){
 
       // (2) Run through all rows starting at the first rule row, and check if it being tested
       values.every(function(row, index){
-        if (index >= variables.rows.firstRule-1){
+        if (index >= variables.fixed.firstRule-1){
 
           // (3) if the rule tickbox is TRUE, add the instruction
           if (row[variables.columns.test.index]){
@@ -90,10 +88,10 @@ function somethingChanged(e){
             sheet.getRange(index+1,variables.columns.test.index+1,1,1).uncheck();
 
             // Logging
-            if (activeLogging) prependRow(doc.getSheetByName(variables.sheetNames.logs), ["Test trigger Rule " + (((index + 1) - variables.rows.firstRule)/2+1) + ((row[variables.columns.durationUnit.index] == "indefinite") ? ' indefinitely' : (' for ' + row[variables.columns.duration.index] + ' ' + row[variables.columns.durationUnit.index])) + '.' ], true);
+            if (activeLogging) prependRow(doc.getSheetByName(variables.sheetNames.logs), ["Test trigger Rule " + (((index + 1) - variables.fixed.firstRule)/2+1) + ((row[variables.columns.durationUnit.index] == "indefinite") ? ' indefinitely' : (' for ' + row[variables.columns.duration.index] + ' ' + row[variables.columns.durationUnit.index])) + '.' ], true);
 
             // (5) Inform the user of the action through a popup
-            // SpreadsheetApp.getUi().alert('Rule ' + ((((index + 1) - variables.rows.firstRule)/2)+1) + ' is now being tested ' + ((row[variables.columns.durationUnit.index] == "indefinite") ? 'indefinitely' : ('for ' + row[variables.columns.duration.index] + ' ' + row[variables.columns.durationUnit.index])) + '.');
+            SpreadsheetApp.getUi().alert('Rule ' + ((((index + 1) - variables.fixed.firstRule)/2)+1) + ' is now being tested ' + ((row[variables.columns.durationUnit.index] == "indefinite") ? 'indefinitely' : ('for ' + row[variables.columns.duration.index] + ' ' + row[variables.columns.durationUnit.index])) + '.');
 
 
             return false; // stops the values.every loop
@@ -103,6 +101,15 @@ function somethingChanged(e){
       });
       break;
     }
+      // (C) The user potentially removed a sheet
+    case "REMOVE_GRID": {
+      // (1) Check if the background scheet list is correct
+      let sheets = doc.getSheets();
+      let backgrounds = findSheets(sheets, variables.sheetNames.backgrounds);
+      backgrounds = backgrounds.concat(Array(variables.fixed.totalBackgrounds - backgrounds.length).fill(""));
+      doc.getRange(variables.sheetNames.home + '!' + variables.ranges.listOfBackgrounds).setValues([backgrounds]);
+      break;
+    }
     default:
       // for all types, see https://developers.google.com/apps-script/guides/triggers/events#change
       // TODO: if a sheet is deleted, check if:
@@ -110,6 +117,9 @@ function somethingChanged(e){
       //  (2) 1. Incoming Data is the first sheet
       //  (3) Update all background sheets to get an accurate representation
       break;
+
+
+
   }
 }
 
@@ -129,7 +139,7 @@ function activateRule(name, doc, timestamp){
 
   // (2) Run through all rows starting at the first rule row, and check if it complies
   values.forEach(function(row, index){
-    if (index >= variables.rows.firstRule-1){
+    if (index >= variables.fixed.firstRule-1){
 
       // (3) if the name corresponds, AND it is 'activated', trigger a phone update
       if (row[variables.columns.rule.index] == name && row[variables.columns.active.index]){
@@ -164,13 +174,10 @@ function addPhoneInstruction(instructions, timestamp){
   todo.forEach(function(instruction, index, thisObject){
     if (instruction.duration > 0 && (instruction.timestamp + instruction.duration) < timestamp) thisObject.splice(index,1);
   });
-  console.log('before');
-  console.log(todo);
+
   // (3) A script property value can only be max 9kb. One instruction is ~600b, so assuming max 10 instructions. FIFO. See https://developers.google.com/apps-script/guides/services/quotas#current_limitations
   todo = todo.concat(instructions);
   todo = todo.slice(-10);              // keeping only the last 10 elements
-  console.log('after');
-  console.log(todo);
 
   // (4) Add the new triggers, and store all in the script properties
   script.setProperty("todo", JSON.stringify(todo));
@@ -272,7 +279,8 @@ function testBackground() {
   //Logging History
   if (activeLogging) prependRow(doc.getSheetByName(variables.sheetNames.logs), ["Testing " + sheet.getName()], true);
 
-  // SpreadsheetApp.getUi().alert(sheet.getName() + ' is now being tested for 30 seconds.');
+  // Inform the user
+  SpreadsheetApp.getUi().alert(sheet.getName() + ' is now being tested for 30 seconds.');
 }
 
 /**
@@ -283,7 +291,7 @@ function addRule() {
   let sheet = doc.getSheetByName(variables.sheetNames.home);
   let lastRow = sheet.getLastRow();
   let lastColumn = sheet.getLastColumn();
-  sheet.getRange(variables.rows.firstRule, 1, 1, lastColumn).copyTo(sheet.getRange(lastRow+2, 1, 1, lastColumn));
+  sheet.getRange(variables.fixed.firstRule, 1, 1, lastColumn).copyTo(sheet.getRange(lastRow+2, 1, 1, lastColumn));
 
   // Logging history
   if (activeLogging) prependRow(doc.getSheetByName(variables.sheetNames.logs), ["New Rule created"], true);
@@ -299,18 +307,22 @@ function addBackground() {
   // (1) Find all the background sheets, trim and search for the largets 'number'
   let backgrounds = findSheets(sheets, variables.sheetNames.backgrounds);
   let newest = Math.max(...(backgrounds).map(x => parseInt(x.replace(variables.sheetNames.backgrounds, "")))) + 1;
-  let template = doc.getSheetByName(backgrounds[0]);
-  let newName = variables.sheetNames.backgrounds + " " + newest;
+  if (newest <= variables.fixed.totalBackgrounds){
+    let template = doc.getSheetByName(backgrounds[0]);
+    let newName = variables.sheetNames.backgrounds + " " + newest;
 
-  // (2) Create a new background based on the first, and update the list of backgrounds
-  let newBackground = template.copyTo(doc).setName(newName);
-  doc.setActiveSheet(newBackground);
-  backgrounds.push(newName);
-  backgrounds = backgrounds.concat(Array(7 - backgrounds.length).fill(""));
-  doc.getRange(variables.sheetNames.home + '!' + variables.ranges.listOfBackgrounds).setValues([backgrounds]);
+    // (2) Create a new background based on the first, and update the list of backgrounds
+    let newBackground = template.copyTo(doc).setName(newName);
+    doc.setActiveSheet(newBackground);
+    backgrounds.push(newName);
+    backgrounds = backgrounds.concat(Array(variables.fixed.totalBackgrounds - backgrounds.length).fill(""));
+    doc.getRange(variables.sheetNames.home + '!' + variables.ranges.listOfBackgrounds).setValues([backgrounds]);
 
-  // Logging History
-  if (activeLogging) prependRow(doc.getSheetByName(variables.sheetNames.logs), ["New Background created: " + newName], true);
+    // Logging History
+    if (activeLogging) prependRow(doc.getSheetByName(variables.sheetNames.logs), ["New Background created: " + newName], true);
+  } else {
+    SpreadsheetApp.getUi().alert('Alert! Unfortunately, the total backgrounds is currently limited to 10. Please reuse an existing one, or delete a background sheet and create a new one. Thanks!');
+  }
 }
 
 /**
