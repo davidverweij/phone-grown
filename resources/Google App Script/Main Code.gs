@@ -345,7 +345,7 @@ function addBackground() {
 
     // (2) Create a new background based on the first, and update the list of backgrounds
     let newBackground = template.copyTo(doc).setName(newName);
-    doc.setActiveSheet(newBackground);
+    newBackground.getRange("C3:G12").setBackground("black")
     backgrounds.push(newName);
     backgrounds = backgrounds.concat(Array(variables.fixed.totalBackgrounds - backgrounds.length).fill(""));
     doc.getRange(variables.sheetNames.home + '!' + variables.ranges.listOfBackgrounds).setValues([backgrounds]);
