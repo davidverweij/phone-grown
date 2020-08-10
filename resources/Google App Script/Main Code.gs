@@ -67,7 +67,14 @@ function somethingChanged(e){
       let sheet = doc.getSheetByName(variables.sheetNames.home);
 
       // (0) update the phone sleep times, in case these were edited
-      script.setProperty("sleeptimes", JSON.stringify(getSleepTimes(doc)));
+      let need_to_ping = false;
+      let sleeptimesString = JSON.stringify(getSleepTimes(doc));
+      if (sleeptimesString != script.getProperty("sleeptimes")){
+        script.setProperty("sleeptimes", sleeptimesString);
+        need_to_ping = true;
+      }
+
+
 
       // (1) Get all data from the Home sheet
       let values = sheet.getDataRange().getValues();
@@ -86,6 +93,7 @@ function somethingChanged(e){
               timestamp   : timeNow,
             };
             addPhoneInstruction([instruction], timeNow);
+            need_to_ping = false;
             pingDatabase(timeNow);
 
             // (4) Uncheck the checked checkbox
@@ -103,6 +111,9 @@ function somethingChanged(e){
         }
         return true;
       });
+
+      // if there hasen't been a ping, but still needed, do so here.
+      if (need_to_ping) pingDatabase( Math.floor((new Date()).getTime()/1000));
 
       break;
     }

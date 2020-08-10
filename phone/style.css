@@ -58,6 +58,12 @@ a {
   background-color: black;
 }
 
+.sleepmode {
+  margin: 10% 10%;
+  font-size: 1.2rem;
+  color: gray;
+}
+
 .menu {
   display: none;
   background: #006600;

@@ -228,7 +228,7 @@ function updateAmbientDisplay(newInstructions = '[]') {
   if (isSleeping(sleeptimes, now)) {
     // This implementation does not alter the intstructions nor removes operations based on sleeptime
     // instead, just ignores the result. This allows for sudden changes in sleep times (e.g. removes that constraint)
-    html = "sleep mode on";
+    html = "<div class='sleepmode'>sleep mode on</div>";
   } else if (currentInstructions.length > 0) {
     // (3) check all current instructions and create an appropriate display.
 
