@@ -15,7 +15,13 @@ const db = firebase.firestore();
 
 // (3) when loaded, show the little form to connect to a Google sheet
 document.addEventListener("DOMContentLoaded", function() {
+
+  let oldLink = getCookie("gSheetLink");
   showUI(0);
+  if (typeof(oldLink) != "undefined"){
+    document.getElementById("scriptUrl").value = oldLink;
+    submitID(oldLink);
+  }
 
 
 
@@ -43,7 +49,10 @@ function showUI(int, bool = true, retry = false) {
 
   document.getElementById('helptext0').style.display = (retry ? "none" : "block");
   document.getElementById('helptext1').style.display = (retry ? "block" : "none");
-  if (retry) loading(false);
+  if (retry) {
+    loading(false);
+    document.getElementById("scriptUrl").value = "";
+  }
   document.getElementById('menu' + int).style.display = (bool ? "flex" : "none");
 
   // If we hide a form, show a hint for a few seconds that shows how to bring up the menu
@@ -62,6 +71,7 @@ function showUI(int, bool = true, retry = false) {
  */
 function loading(bool) {
   document.getElementById('loader').style.display = (bool ? "block" : "none");
+  document.getElementById('button').style.display = (bool ? "none" : "block");
 }
 
 
@@ -121,7 +131,7 @@ function submitID(url) {
     }
 
     // (3b) actually send the GET request
-    xhr.open("GET", "https://tinyurl.com/" + url + "?origin=phone&data=database", true); // true for asynchronous
+    xhr.open("GET", "https://tinyurl.com/" + url + "?origin=phone&data=database&now="+ (new Date).toISOString(), true); // true for asynchronous
     xhr.send();
   } else {
     showUI(0, true, true); // please try again
