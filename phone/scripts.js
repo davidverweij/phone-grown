@@ -4,6 +4,7 @@ var timeout;                        // timeout for tracking duration of backgrou
 var periodicTimeout;                // timeout to keep in touch with google sheet
 var periodicTimer = 15*60*1000;     // duration between periodicTimeout (e.g. 15 minutes)
 var sleeptimes;                     // store times for the phone to not display backgrounds (sleep mode)
+var menu0shown = true;              // do not display second menu if first is shown
 
 // (2) initiale the database object (with specific details for this projects' database) and connect
 firebase.initializeApp({
@@ -27,7 +28,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // add a listener if the user clicks on the screen
   document.getElementById("ambientdisplay").addEventListener("click", function() {
-    showUI(1, (document.getElementById('menu1').style.display == "none"));
+    if (menu0shown) showUI(1,false)
+    else showUI(1, (document.getElementById('menu1').style.display == "none"));
   });
 
   // add a listener if the user closes a menu
@@ -46,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function() {
  * @param {Boolean} retry - adjust the helptext if the connection failed
  */
 function showUI(int, bool = true, retry = false) {
-
+  if (int == 0) menu0shown = bool;
   document.getElementById('helptext0').style.display = (retry ? "none" : "block");
   document.getElementById('helptext1').style.display = (retry ? "block" : "none");
   if (retry) {
@@ -71,7 +73,7 @@ function showUI(int, bool = true, retry = false) {
  */
 function loading(bool) {
   document.getElementById('loader').style.display = (bool ? "block" : "none");
-  document.getElementById('button').style.display = (bool ? "none" : "block");
+  document.getElementById('IDbutton').style.display = (bool ? "none" : "block");
 }
 
 
@@ -150,6 +152,8 @@ function startDatabaseListener() {
     });
 }
 
+
+
 function getDataFromSheet(){
   // Prep a HTTPS REST request to get data from the Google Sheet
   let xhr = new XMLHttpRequest();
@@ -165,7 +169,13 @@ function getDataFromSheet(){
         // ensure phone is sleeping when requested
         sleeptimes = JSON.parse(result.sleeptimes);
 
-        updateAmbientDisplay(result.todo);
+        // check if the phone needs to be cleared
+        if (JSON.parse(result.clear)){
+          currentInstructions = [];
+          updateAmbientDisplay();
+        } else {
+          updateAmbientDisplay(result.todo);
+        }
 
         // clear the periodicTimeout to prevent unintentional requests
         clearTimeout(periodicTimeout);
@@ -182,7 +192,6 @@ function getDataFromSheet(){
   xhr.open("GET", "https://tinyurl.com/" + getCookie("gSheetLink") + "?origin=phone&data=update&now="+ (new Date).toISOString(), true); // true for asynchronous
   xhr.send();
 }
-
 
 /**
  * Check if the phone should be 'sleeping' right now

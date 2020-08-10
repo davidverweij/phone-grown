@@ -176,6 +176,21 @@ function activateRule(name, doc, timestamp){
   return triggered;
 }
 
+function clearPhone(){
+  let doc = SpreadsheetApp.getActiveSpreadsheet();
+  script.setProperty("todo", JSON.stringify([]));
+  script.setProperty("clearPhone", true);
+
+  pingDatabase(Math.floor((new Date()).getTime()/1000));       // ping the database, so the phone can retreive the new instruction
+
+  //Logging History
+  if (activeLogging) prependRow(doc.getSheetByName(variables.sheetNames.logs), ["Cleared phone screen"], true);
+
+  // Inform the user
+  SpreadsheetApp.getUi().alert("The phone screen should now be cleared, and free of any outstanding instructions");
+
+}
+
 /**
 * Get the set sleep mode for the phone
 * Returns integer array: [fromhour,fromminute,tohour,tominute]
@@ -268,6 +283,7 @@ function doGet(e) {
         doc.getRange(variables.sheetNames.home + '!' + variables.ranges.lastSeen).setValue(new Date(e.parameter.now));
         result.result = "success";
         result.sleeptimes = script.getProperty("sleeptimes");
+        result.clear = script.getProperty("clearPhone");
 
         // If requested, send back the database id
         if (data == "database"){
@@ -279,7 +295,10 @@ function doGet(e) {
         result.todo = script.getProperty("todo");
 
         // (3b) Clear the list of instructions
-        script.setProperty("todo", '[]');
+        script.setProperties({
+          "todo" :'[]',
+          "clearPhone" : false
+        });
       }
     }
     return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.JSON);
@@ -381,6 +400,7 @@ function setup() {
 
   script.setProperty("triggerID", triggerID);
   script.setProperty("sleeptimes", JSON.stringify(getSleepTimes(doc)));
+  script.getProperty("false");
 
   // (4) Update system status
   updatePhoneStatus(doc, "Awaiting phone connection...");
