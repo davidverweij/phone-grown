@@ -1,6 +1,9 @@
 // (1) use global variables
-var gSheetLink, databasePing, currentInstructions = [],
-  timeout, sleeptimes;
+var currentInstructions = [];       // list of background to implement
+var timeout;                        // timeout for tracking duration of backgrounds
+var periodicTimeout;                // timeout to keep in touch with google sheet
+var periodicTimer = 15*60*1000;     // duration between periodicTimeout (e.g. 15 minutes)
+var sleeptimes;                     // store times for the phone to not display backgrounds (sleep mode)
 
 // (2) initiale the database object (with specific details for this projects' database) and connect
 firebase.initializeApp({
@@ -96,6 +99,9 @@ function submitID(url) {
             startDatabaseListener();
           }, 1500)
 
+          // (7) initialize periodic connecting to sheet
+          periodicTimeout = setTimeout(getDataFromSheet, periodicTimer);  // in 30 minutes
+
         } else {
           // The connection was unsuccesful
           console.log("submitID(): unsuccesful");
@@ -130,40 +136,50 @@ function startDatabaseListener() {
     .onSnapshot(function(doc) {
 
       // (1a) onSnapShot is executed when there is a change in the database
-      // Prep a HTTPS REST request to get data from the Google Sheet
-      let xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-          let result = JSON.parse(this.responseText);
-
-          // (4) if success, store the result and update the background
-          // the script should not send
-          if (result.result == "success") {
-            console.log(result);
-
-            // ensure phone is sleeping when requested
-            sleeptimes = JSON.parse(result.sleeptimes);
-
-            updateAmbientDisplay(result.todo);
-
-          } else {
-            // something went wrong.. TODO: Handle error
-          }
-        }
-      };
-
-      // (1b) send the GET request
-      xhr.open("GET", "https://tinyurl.com/" + getCookie("gSheetLink") + "?origin=phone&data=update", true); // true for asynchronous
-      xhr.send();
+      getDataFromSheet();
     });
 }
+
+function getDataFromSheet(){
+  // Prep a HTTPS REST request to get data from the Google Sheet
+  let xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      let result = JSON.parse(this.responseText);
+
+      // if success, store the result and update the background
+      // the script should not send
+      if (result.result == "success") {
+        console.log(result);
+
+        // ensure phone is sleeping when requested
+        sleeptimes = JSON.parse(result.sleeptimes);
+
+        updateAmbientDisplay(result.todo);
+
+        // clear the periodicTimeout to prevent unintentional requests
+        clearTimeout(periodicTimeout);
+        // check again in [periodicTimer] time for new data
+        periodicTimeout = setTimeout(getDataFromSheet, periodicTimer);  // in 30 minutes
+
+      } else {
+        // something went wrong.. TODO: Handle error
+      }
+    }
+  };
+
+  // (1b) send the GET request
+  xhr.open("GET", "https://tinyurl.com/" + getCookie("gSheetLink") + "?origin=phone&data=update&now="+ (new Date).toISOString(), true); // true for asynchronous
+  xhr.send();
+}
+
+
 /**
  * Check if the phone should be 'sleeping' right now
  *
  * @param {Array} sleeptimes - 4 integers indicating: [fromhour,fromminute,tohour,tominute]
  * @param {Integer} now - unix timestamp of the time now
  */
-
 function isSleeping(times, now) {
   if (typeof(times) != "undefined") {  // if not connected to service yet..
     let from = (times[0] * 100) + times[1];

@@ -265,7 +265,7 @@ function doGet(e) {
       if (typeof(origin) != "undefined" && typeof(data) != "undefined" && origin == "phone"){
 
         // (2) Update connection status on the home sheet
-        updatePhoneStatus(doc, "Phone seen on: " + (new Date()).toLocaleDateString('en-GB', { timeZone: 'UTC' }));
+        doc.getRange(variables.sheetNames.home + '!' + variables.ranges.lastSeen).setValue(new Date(e.parameter.now));
         result.result = "success";
         result.sleeptimes = script.getProperty("sleeptimes");
 
