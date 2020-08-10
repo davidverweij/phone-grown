@@ -20,7 +20,8 @@ function onOpen() {
 
 
 /**
-* Changes were made to the Sheet. I.e. new data came in.
+* Changes were made to the Sheet. E.g.. new data came in or the spreadsheet was edited
+* Using the onChange() approach does not provide details of the change unfortunately.
 *
 * @param {Event} e - The event object containing details
 */
@@ -65,6 +66,14 @@ function somethingChanged(e){
     case "EDIT": {
       let sheet = doc.getSheetByName(variables.sheetNames.home);
 
+      // (0) update the phone sleep times, in case these were edited (using boolean to not 'ping' twice)
+      let need_to_ping = false;
+      let sleeptimesString = JSON.stringify(getSleepTimes(doc));
+      if (sleeptimesString != script.getProperty("sleeptimes")){
+        script.setProperty("sleeptimes", sleeptimesString);
+        need_to_ping = true;
+      }
+
       // (1) Get all data from the Home sheet
       let values = sheet.getDataRange().getValues();
 
@@ -82,6 +91,7 @@ function somethingChanged(e){
               timestamp   : timeNow,
             };
             addPhoneInstruction([instruction], timeNow);
+            need_to_ping = false;
             pingDatabase(timeNow);
 
             // (4) Uncheck the checked checkbox
@@ -99,6 +109,10 @@ function somethingChanged(e){
         }
         return true;
       });
+
+      // if there hasen't been a ping, but still needed, do so here.
+      if (need_to_ping) pingDatabase( Math.floor((new Date()).getTime()/1000));
+
       break;
     }
       // (C) The user potentially removed a sheet
@@ -129,6 +143,7 @@ function somethingChanged(e){
 *
 * @param {String} name - The name of the incoming data trigger
 * @param {Google Doc} doc - The Google Sheet document to search in
+* @param {Integer} timestamp - Unix timestamp of the time now
 */
 function activateRule(name, doc, timestamp){
   let triggered = false;
@@ -137,25 +152,73 @@ function activateRule(name, doc, timestamp){
   // (1) Get all data from the Home sheet
   let values = doc.getSheetByName(variables.sheetNames.home).getDataRange().getValues();
 
-  // (2) Run through all rows starting at the first rule row, and check if it complies
-  values.forEach(function(row, index){
-    if (index >= variables.fixed.firstRule-1){
+  // (2) If the phone is 'asleep', do not trigger any rules
+  if (!isSleeping(doc, timestamp)){
 
-      // (3) if the name corresponds, AND it is 'activated', trigger a phone update
-      if (row[variables.columns.rule.index] == name && row[variables.columns.active.index]){
-        let instruction = {
-          backgrounds : doc.getSheetByName(row[variables.columns.background.index]).getRange(variables.ranges.background).getBackgrounds(),
-          duration    : calcDuration(row[variables.columns.duration.index], row[variables.columns.durationUnit.index]),
-          timestamp   : timestamp,
-        };
-        instructions.push(instruction);
-        triggered = true;
+    // (3) Run through all rows starting at the first rule row, and check if it complies
+    values.forEach(function(row, index){
+      if (index >= variables.fixed.firstRule-1){
+
+        // (4) if the name corresponds, AND it is 'activated', trigger a phone update
+        if (row[variables.columns.rule.index] == name && row[variables.columns.active.index]){
+          let instruction = {
+            backgrounds : doc.getSheetByName(row[variables.columns.background.index]).getRange(variables.ranges.background).getBackgrounds(),
+            duration    : calcDuration(row[variables.columns.duration.index], row[variables.columns.durationUnit.index]),
+            timestamp   : timestamp,
+          };
+          instructions.push(instruction);
+          triggered = true;
+        }
       }
-    }
-  });
+    });
 
-  if (triggered) addPhoneInstruction(instructions, timestamp);
+    if (triggered) addPhoneInstruction(instructions, timestamp);
+  }
   return triggered;
+}
+
+/**
+* Check if the phone is currently set to be sleeping.
+*
+* @param {Google Doc} doc - The reference Google Sheet
+*/
+function isSleeping(doc, timestamp){
+  let period = getSleepTimes(doc);                        // [fromhour,fromminute,tohour,tominute]
+  let from = (period[0]*100) + period[1];
+  let to = (period[2]*100) + period[3];
+  let now = new Date(timestamp * 1000);
+  let nowtime = (now.getHours()*100) + now.getMinutes(); // e.g. 10:15 = 1010, 00:45 = 45
+
+  // (1) check if the time spans midnight (i.e. TO is lower than FROM)
+  if (to < from){
+    // (2) if it does, check if the time now is higher than FROM, or lower than TO
+    if (nowtime >= from || nowtime <= to) {
+      return true;      // SLEEPING!
+    } else {
+      return false;
+    }
+  } else if (from > to) {
+    // (3) else, must be between from and to
+    if (nowtime >= from && nowtime <= to) {
+      return true;      // SLEEPING!
+    } else {
+      return false;
+    }
+  } // else if equal, do nothing.
+}
+
+
+/**
+* Get the set sleep mode for the phone
+* Returns integer array: [fromhour,fromminute,tohour,tominute]
+*
+* @param {Google Doc} doc - The reference Google Sheet
+*/
+function getSleepTimes(doc){
+  let sleepmode = doc.getRange(variables.sheetNames.home + "!" + variables.ranges.sleepModus).getValues();
+  let from = sleepmode[0][1].split(":").map(x => parseInt(x.trim()));   // from = [hours, minutes];
+  let to = sleepmode[0][3].split(":").map(x => parseInt(x.trim()));
+  return from.concat(to);
 }
 
 /**
@@ -236,6 +299,7 @@ function doGet(e) {
         // (2) Update connection status on the home sheet
         updatePhoneStatus(doc, "Phone seen on: " + (new Date()).toLocaleDateString('en-GB', { timeZone: 'UTC' }));
         result.result = "success";
+        result.sleeptimes = script.getProperty("sleeptimes");
 
         // If requested, send back the database id
         if (data == "database"){

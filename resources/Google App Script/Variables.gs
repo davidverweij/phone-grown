@@ -9,6 +9,7 @@ var script = PropertiesService.getScriptProperties();
 // - refresh_token (to refresh the authentication token)
 // - databaseLive (indicating if the database connection is seemingly viable)
 // - onChangeID (trigger ID to prevent multiple instances)
+// - sleeptimes (user edited times for the phone to not display anything)
 
 // Turn off if you do not want to keep collecting logs
 var activeLogging = true;
@@ -31,11 +32,13 @@ var variables = {
   ranges : {
     background : "C3:G12",
     listOfBackgrounds: "F5:O5",
-    status: "N2:N2"
+    status: "N2:N2",
+    lastSeen: "F8:F8",
+    sleepModus: "L8:O8",
   },
   columns : {
-    active     : {'char':'O', 'index' : 14 },
-    test       : {'char':'P', 'index' : 15 },
+    active     : {'char':'N', 'index' : 13 },
+    test       : {'char':'O', 'index' : 14 },
     rule       : {'char':'E', 'index' :  4 },
     background : {'char':'I', 'index' :  8 },
     duration   : {'char':'L', 'index' : 11 },

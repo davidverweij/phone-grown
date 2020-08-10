@@ -139,7 +139,7 @@ function startDatabaseListener() {
           // (4) if success, store the result and update the background
           if (result.result == "success") {
             console.log("GET REQUEST");
-            console.log(result.todo);
+            console.log(result);
             updateAmbientDisplay(result.todo);
           } else {
             // something went wrong.. TODO: Handle error
@@ -249,7 +249,7 @@ function updateAmbientDisplay(newInstructions = '[]') {
 
 }
 
-
+// DOUBLE TAP? https://stackoverflow.com/a/26809354/7053198
 
 /**
  * Helper method to set a value of a Cookie
