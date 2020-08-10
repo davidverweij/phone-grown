@@ -1,10 +1,10 @@
 // (1) use global variables
-var currentInstructions = [];       // list of background to implement
-var timeout;                        // timeout for tracking duration of backgrounds
-var periodicTimeout;                // timeout to keep in touch with google sheet
-var periodicTimer = 15*60*1000;     // duration between periodicTimeout (e.g. 15 minutes)
-var sleeptimes;                     // store times for the phone to not display backgrounds (sleep mode)
-var menu0shown = true;              // do not display second menu if first is shown
+var currentInstructions = []; // list of background to implement
+var timeout; // timeout for tracking duration of backgrounds
+var periodicTimeout; // timeout to keep in touch with google sheet
+var periodicTimer = 15 * 60 * 1000; // duration between periodicTimeout (e.g. 15 minutes)
+var sleeptimes; // store times for the phone to not display backgrounds (sleep mode)
+var menu0shown = true; // do not display second menu if first is shown
 
 // (2) initiale the database object (with specific details for this projects' database) and connect
 firebase.initializeApp({
@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   let oldLink = getCookie("gSheetLink");
   showUI(0);
-  if (typeof(oldLink) != "undefined"){
+  if (typeof(oldLink) != "undefined") {
     document.getElementById("scriptUrl").value = oldLink;
     submitID(oldLink);
   }
@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // add a listener if the user clicks on the screen
   document.getElementById("ambientdisplay").addEventListener("click", function() {
-    if (menu0shown) showUI(1,false)
+    if (menu0shown) showUI(1, false)
     else showUI(1, (document.getElementById('menu1').style.display == "none"));
   });
 
@@ -112,7 +112,7 @@ function submitID(url) {
           }, 1500)
 
           // (7) initialize periodic connecting to sheet
-          periodicTimeout = setTimeout(getDataFromSheet, periodicTimer);  // in 30 minutes
+          periodicTimeout = setTimeout(getDataFromSheet, periodicTimer); // in 30 minutes
 
         } else {
           // The connection was unsuccesful
@@ -133,7 +133,7 @@ function submitID(url) {
     }
 
     // (3b) actually send the GET request
-    xhr.open("GET", "https://tinyurl.com/" + url + "?origin=phone&data=database&now="+ (new Date).toISOString(), true); // true for asynchronous
+    xhr.open("GET", "https://tinyurl.com/" + url + "?origin=phone&data=database&now=" + (new Date).toISOString(), true); // true for asynchronous
     xhr.send();
   } else {
     showUI(0, true, true); // please try again
@@ -153,8 +153,10 @@ function startDatabaseListener() {
 }
 
 
-
-function getDataFromSheet(){
+/**
+ * Perform a GET request to the Google Sheet App and act accordingl to the result
+ */
+function getDataFromSheet() {
   // Prep a HTTPS REST request to get data from the Google Sheet
   let xhr = new XMLHttpRequest();
   xhr.onreadystatechange = function() {
@@ -170,7 +172,7 @@ function getDataFromSheet(){
         sleeptimes = JSON.parse(result.sleeptimes);
 
         // check if the phone needs to be cleared
-        if (JSON.parse(result.clear)){
+        if (JSON.parse(result.clear)) {
           currentInstructions = [];
           updateAmbientDisplay();
         } else {
@@ -180,7 +182,7 @@ function getDataFromSheet(){
         // clear the periodicTimeout to prevent unintentional requests
         clearTimeout(periodicTimeout);
         // check again in [periodicTimer] time for new data
-        periodicTimeout = setTimeout(getDataFromSheet, periodicTimer);  // in 30 minutes
+        periodicTimeout = setTimeout(getDataFromSheet, periodicTimer); // in 30 minutes
 
       } else {
         // something went wrong.. TODO: Handle error
@@ -189,7 +191,7 @@ function getDataFromSheet(){
   };
 
   // (1b) send the GET request
-  xhr.open("GET", "https://tinyurl.com/" + getCookie("gSheetLink") + "?origin=phone&data=update&now="+ (new Date).toISOString(), true); // true for asynchronous
+  xhr.open("GET", "https://tinyurl.com/" + getCookie("gSheetLink") + "?origin=phone&data=update&now=" + (new Date).toISOString(), true); // true for asynchronous
   xhr.send();
 }
 
@@ -200,7 +202,7 @@ function getDataFromSheet(){
  * @param {Integer} now - unix timestamp of the time now
  */
 function isSleeping(times, now) {
-  if (typeof(times) != "undefined") {  // if not connected to service yet..
+  if (typeof(times) != "undefined") { // if not connected to service yet..
     let from = (times[0] * 100) + times[1];
     let to = (times[2] * 100) + times[3];
     let nowDate = new Date(now * 1000);

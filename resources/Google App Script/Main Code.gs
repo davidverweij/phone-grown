@@ -176,10 +176,15 @@ function activateRule(name, doc, timestamp){
   return triggered;
 }
 
+/**
+* Clear any instructions and instruct the phone to clear its screen
+*/
 function clearPhone(){
   let doc = SpreadsheetApp.getActiveSpreadsheet();
-  script.setProperty("todo", JSON.stringify([]));
-  script.setProperty("clearPhone", true);
+  script.setProperties({
+    "todo" :'[]',
+    "clearPhone" : true
+  });
 
   pingDatabase(Math.floor((new Date()).getTime()/1000));       // ping the database, so the phone can retreive the new instruction
 
@@ -188,7 +193,6 @@ function clearPhone(){
 
   // Inform the user
   SpreadsheetApp.getUi().alert("The phone screen should now be cleared, and free of any outstanding instructions");
-
 }
 
 /**
@@ -295,6 +299,7 @@ function doGet(e) {
         result.todo = script.getProperty("todo");
 
         // (3b) Clear the list of instructions
+        // WARNING: There seems to be some inconsistency in whether the 'todo' values are actually returned. Yet to investigate..
         script.setProperties({
           "todo" :'[]',
           "clearPhone" : false
