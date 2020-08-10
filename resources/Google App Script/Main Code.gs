@@ -66,13 +66,8 @@ function somethingChanged(e){
     case "EDIT": {
       let sheet = doc.getSheetByName(variables.sheetNames.home);
 
-      // (0) update the phone sleep times, in case these were edited (using boolean to not 'ping' twice)
-      let need_to_ping = false;
-      let sleeptimesString = JSON.stringify(getSleepTimes(doc));
-      if (sleeptimesString != script.getProperty("sleeptimes")){
-        script.setProperty("sleeptimes", sleeptimesString);
-        need_to_ping = true;
-      }
+      // (0) update the phone sleep times, in case these were edited
+      script.setProperty("sleeptimes", JSON.stringify(getSleepTimes(doc)));
 
       // (1) Get all data from the Home sheet
       let values = sheet.getDataRange().getValues();
@@ -91,7 +86,6 @@ function somethingChanged(e){
               timestamp   : timeNow,
             };
             addPhoneInstruction([instruction], timeNow);
-            need_to_ping = false;
             pingDatabase(timeNow);
 
             // (4) Uncheck the checked checkbox
@@ -109,9 +103,6 @@ function somethingChanged(e){
         }
         return true;
       });
-
-      // if there hasen't been a ping, but still needed, do so here.
-      if (need_to_ping) pingDatabase( Math.floor((new Date()).getTime()/1000));
 
       break;
     }
@@ -139,7 +130,7 @@ function somethingChanged(e){
 
 
 /**
-* Check if the conditions trigger a set rule.
+* Check if the conditions trigger a set rule. Sleep mode times is handled by the phone locally
 *
 * @param {String} name - The name of the incoming data trigger
 * @param {Google Doc} doc - The Google Sheet document to search in
@@ -152,61 +143,27 @@ function activateRule(name, doc, timestamp){
   // (1) Get all data from the Home sheet
   let values = doc.getSheetByName(variables.sheetNames.home).getDataRange().getValues();
 
-  // (2) If the phone is 'asleep', do not trigger any rules
-  if (!isSleeping(doc, timestamp)){
+  // (2) Run through all rows starting at the first rule row, and check if it complies
+  values.forEach(function(row, index){
+    if (index >= variables.fixed.firstRule-1){
 
-    // (3) Run through all rows starting at the first rule row, and check if it complies
-    values.forEach(function(row, index){
-      if (index >= variables.fixed.firstRule-1){
-
-        // (4) if the name corresponds, AND it is 'activated', trigger a phone update
-        if (row[variables.columns.rule.index] == name && row[variables.columns.active.index]){
-          let instruction = {
-            backgrounds : doc.getSheetByName(row[variables.columns.background.index]).getRange(variables.ranges.background).getBackgrounds(),
-            duration    : calcDuration(row[variables.columns.duration.index], row[variables.columns.durationUnit.index]),
-            timestamp   : timestamp,
-          };
-          instructions.push(instruction);
-          triggered = true;
-        }
+      // (3) if the name corresponds, AND it is 'activated', trigger a phone update
+      if (row[variables.columns.rule.index] == name && row[variables.columns.active.index]){
+        let instruction = {
+          backgrounds : doc.getSheetByName(row[variables.columns.background.index]).getRange(variables.ranges.background).getBackgrounds(),
+          duration    : calcDuration(row[variables.columns.duration.index], row[variables.columns.durationUnit.index]),
+          timestamp   : timestamp,
+        };
+        instructions.push(instruction);
+        triggered = true;
       }
-    });
+    }
+  });
 
-    if (triggered) addPhoneInstruction(instructions, timestamp);
-  }
+  if (triggered) addPhoneInstruction(instructions, timestamp);
+
   return triggered;
 }
-
-/**
-* Check if the phone is currently set to be sleeping.
-*
-* @param {Google Doc} doc - The reference Google Sheet
-*/
-function isSleeping(doc, timestamp){
-  let period = getSleepTimes(doc);                        // [fromhour,fromminute,tohour,tominute]
-  let from = (period[0]*100) + period[1];
-  let to = (period[2]*100) + period[3];
-  let now = new Date(timestamp * 1000);
-  let nowtime = (now.getHours()*100) + now.getMinutes(); // e.g. 10:15 = 1010, 00:45 = 45
-
-  // (1) check if the time spans midnight (i.e. TO is lower than FROM)
-  if (to < from){
-    // (2) if it does, check if the time now is higher than FROM, or lower than TO
-    if (nowtime >= from || nowtime <= to) {
-      return true;      // SLEEPING!
-    } else {
-      return false;
-    }
-  } else if (from > to) {
-    // (3) else, must be between from and to
-    if (nowtime >= from && nowtime <= to) {
-      return true;      // SLEEPING!
-    } else {
-      return false;
-    }
-  } // else if equal, do nothing.
-}
-
 
 /**
 * Get the set sleep mode for the phone
@@ -412,6 +369,7 @@ function setup() {
   .getUniqueId();
 
   script.setProperty("triggerID", triggerID);
+  script.setProperty("sleeptimes", JSON.stringify(getSleepTimes(doc)));
 
   // (4) Update system status
   updatePhoneStatus(doc, "Awaiting phone connection...");

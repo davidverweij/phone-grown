@@ -1,6 +1,6 @@
-// (1) use global variables for the googleSheet and database link and phone status / instructions
+// (1) use global variables
 var gSheetLink, databasePing, currentInstructions = [],
-  timeout;
+  timeout, sleeptimes;
 
 // (2) initiale the database object (with specific details for this projects' database) and connect
 firebase.initializeApp({
@@ -137,10 +137,15 @@ function startDatabaseListener() {
           let result = JSON.parse(this.responseText);
 
           // (4) if success, store the result and update the background
+          // the script should not send
           if (result.result == "success") {
-            console.log("GET REQUEST");
             console.log(result);
+
+            // ensure phone is sleeping when requested
+            sleeptimes = JSON.parse(result.sleeptimes);
+
             updateAmbientDisplay(result.todo);
+
           } else {
             // something went wrong.. TODO: Handle error
           }
@@ -152,7 +157,39 @@ function startDatabaseListener() {
       xhr.send();
     });
 }
+/**
+ * Check if the phone should be 'sleeping' right now
+ *
+ * @param {Array} sleeptimes - 4 integers indicating: [fromhour,fromminute,tohour,tominute]
+ * @param {Integer} now - unix timestamp of the time now
+ */
 
+function isSleeping(times, now) {
+  if (typeof(times) != "undefined") {  // if not connected to service yet..
+    let from = (times[0] * 100) + times[1];
+    let to = (times[2] * 100) + times[3];
+    let nowDate = new Date(now * 1000);
+    let nowtime = (nowDate.getHours() * 100) + nowDate.getMinutes(); // e.g. 10:15 = 1010, 00:45 = 45
+    // (1) check if the time spans midnight (i.e. TO is lower than FROM)
+    if (to < from) {
+      // (2) if it does, check if the time now is higher than FROM, or lower than TO
+      if (nowtime >= from || nowtime <= to) {
+        return true; // SLEEPING!
+      } else {
+        return false;
+      }
+    } else if (to > from) {
+      // (3) else, MUST be between FROM and TO
+      if (nowtime >= from && nowtime <= to) {
+        return true; // SLEEPING!
+      } else {
+        return false;
+      }
+    } // else if equal, do nothing.
+  } else {
+    return false;
+  }
+}
 
 /**
  * Create an array of <div>'s with background colors correpsonding to the Google Sheet instructions
@@ -181,13 +218,20 @@ function updateAmbientDisplay(newInstructions = '[]') {
 
   let html = ""; // the html to populate the screen with
 
-  // (3a) remove expired newInstructions
+  // (3a) remove expired instructions, or when 'sleeping'
   currentInstructions = currentInstructions.filter((instruction) => {
+    // isSleeping(sleeptimes, now);
     return (instruction.ends > now);
   });
 
-  // (3) check all current instructions and create an appropriate display.
-  if (currentInstructions.length > 0) {
+  // (3b) if the phone should be sleeping, display sleeping message, else show whatever backgrounds needed
+  if (isSleeping(sleeptimes, now)) {
+    // This implementation does not alter the intstructions nor removes operations based on sleeptime
+    // instead, just ignores the result. This allows for sudden changes in sleep times (e.g. removes that constraint)
+    html = "sleep mode on";
+  } else if (currentInstructions.length > 0) {
+    // (3) check all current instructions and create an appropriate display.
+
     let view;
 
     if (currentInstructions.length == 1) {
@@ -319,11 +363,11 @@ function averageHex(colors) {
   let averages = numbers.reduce(function(total, amount, index, array) {
 
 
-    return total.map(function(subcolor, subindex) {                       // per color, add the R, G and B respectively using a map
+    return total.map(function(subcolor, subindex) { // per color, add the R, G and B respectively using a map
       subcolor += amount[subindex];
-      if (index == array.length - 1) {                                    // if we reached the last color, average it out and return the hex value
+      if (index == array.length - 1) { // if we reached the last color, average it out and return the hex value
         let result = Math.round(subcolor / array.length).toString(16);
-        return result.length == 2 ? '' + result : '0' + result;           // add a leading 0 if it is only one character
+        return result.length == 2 ? '' + result : '0' + result; // add a leading 0 if it is only one character
       } else {
         return subcolor;
       }
