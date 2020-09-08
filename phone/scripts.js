@@ -363,6 +363,8 @@ function setCookie(name, value, options = {}) {
     path: '/',
     secure: true, // security measure
     'max-age': 31536000, // set expiry date at one year (in seconds)
+    // also add expires date, as max-age is relatively new (old browser support)
+    'expires': new Date(Date.now() + (31536000 * 1000)),
     'samesite': 'strict', // security measure
   };
 
