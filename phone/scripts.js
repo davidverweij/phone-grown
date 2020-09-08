@@ -1,5 +1,7 @@
 // (1) use global variables
 var currentInstructions = []; // list of background to implement
+var lastSeenInstruction = 0;  // timestamp of last received instruction
+var lastSeenClearPhone = 0;
 var timeout; // timeout for tracking duration of backgrounds
 var periodicTimeout; // timeout to keep in touch with google sheet
 var periodicTimer = 15 * 60 * 1000; // duration between periodicTimeout (e.g. 15 minutes)
@@ -94,6 +96,7 @@ function submitID(url) {
     xhr.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
         let result = JSON.parse(this.responseText);
+        console.log(result);
 
         // (4) if success, store the result (the link, as well as a received databaseID)
         if (result.result == "success") {
@@ -133,7 +136,7 @@ function submitID(url) {
     }
 
     // (3b) actually send the GET request
-    xhr.open("GET", "https://tinyurl.com/" + url + "?origin=phone&data=database&now=" + (new Date).toISOString(), true); // true for asynchronous
+    xhr.open("GET", "https://tinyurl.com/" + url + "?origin=phone&data=database&lastInstruction=" + lastSeenInstruction + "&now=" + (new Date).toISOString(), true); // true for asynchronous
     xhr.send();
   } else {
     showUI(0, true, true); // please try again
@@ -171,8 +174,11 @@ function getDataFromSheet() {
         // ensure phone is sleeping when requested
         sleeptimes = JSON.parse(result.sleeptimes);
 
+        clear = JSON.parse(result.clear);
         // check if the phone and instructions need to be cleared
-        if (JSON.parse(result.clear)) {
+        if (lastSeenClearPhone == 0) lastSeenClearPhone = clear;
+        if (clear > lastSeenClearPhone) {
+          lastSeenClearPhone = clear;
           currentInstructions = [];
           updateAmbientDisplay();
         } else {
@@ -191,7 +197,7 @@ function getDataFromSheet() {
   };
 
   // (1b) send the GET request
-  xhr.open("GET", "https://tinyurl.com/" + getCookie("gSheetLink") + "?origin=phone&data=update&now=" + (new Date).toISOString(), true); // true for asynchronous
+  xhr.open("GET", "https://tinyurl.com/" + getCookie("gSheetLink") + "?origin=phone&data=update&lastInstruction=" + lastSeenInstruction + "&now=" + (new Date).toISOString(), true); // true for asynchronous
   xhr.send();
 }
 
@@ -205,26 +211,29 @@ function isSleeping(times, now) {
   if (typeof(times) != "undefined") { // only continue if we are already connected to the service
 
     // get the sleeping times projected on today
-    let from = new Date(nowDate.valueOf()).setHours(times[0], times[1]).getTime() / 1000;
-    let to = new Date(nowDate.valueOf()).setHours(times[2], times[3]).getTime() / 1000;
+    let today = (new Date(now * 1000));
+    today.setHours(times[0], times[1], 0);
+    let from = today.getTime() / 1000;
+    today.setHours(times[2], times[3], 0);
+    let to = today.getTime() / 1000;
 
     if (to < from) {
       // spanning midnight
       // e.g. 00:00     to      from   00:00
       //        |---a---|    b   |---c---|
 
-      if (now < to) return to-now;                       // a
-      else if (now > from) return to + (60*60*34) - now; // c
-      else return now-from;// remaining time until sleep // b
+      if (now < to) return to;                     // a
+      else if (now > from) return to + (60*60*24); // c
+      else return -from; // negative, time left    // b
 
     } else if (to > from) {
       // not spanning midnight
       // e.g.  00:00    from       to    00:00
       //         |   a   |-----b----|   c  |
 
-      if (now < from) return now-from; // remaining time until sleep // a
-      else if (now > to) return from + (60*60*34) - now // ditto     // c
-      else return to-now //                                          // b
+      if (now < from) return -from; // negative, time left          // a
+      else if (now > to) return -(from + (60 * 60 * 24)) // ditto  // c
+      else return to                                                // b
     } // else if equal, do nothing.
   }
   // in all other cases
@@ -248,6 +257,7 @@ function updateAmbientDisplay(newInstructions = '[]') {
   let todos = JSON.parse(newInstructions);
   if (todos.length > 0) {
     todos.forEach((instruction) => {
+      if (instruction.timestamp > lastSeenInstruction) lastSeenInstruction = instruction.timestamp;
       currentInstructions.push({
         'starts': now,
         'ends': now + instruction.duration,
@@ -265,68 +275,73 @@ function updateAmbientDisplay(newInstructions = '[]') {
   });
 
   // (3b) if the phone should be sleeping, display sleeping message, else show whatever backgrounds needed
-  if (isSleeping(sleeptimes, now)) {
+  let sleeping = isSleeping(sleeptimes, now);
+  let nextTimeoutCheck = 0;
+
+  if (sleeping >= 0) {
     // This implementation does not alter the intstructions nor removes operations based on sleeptime
     // instead, just ignores the result. This allows for sudden changes in sleep times (e.g. removes that constraint)
     html = "<div class='sleepmode'>sleep mode on</div>";
-  } else if (currentInstructions.length > 0) {
-    // (3) check all current instructions and create an appropriate display.
+    // check back again once sleeptime is over (or new instructions has been sent)
+    nextTimeoutCheck = Math.max(sleeping, now + 5); // in the unlikely event of sleeping ~ 0, wait 5 seconds at least
+  } else {
+    nextTimeoutCheck = -sleeping; // revert polarity to set to future time
 
-    let view;
+    if (currentInstructions.length > 0) {
+      // (3) check all current instructions and create an appropriate display.
 
-    if (currentInstructions.length == 1) {
-      view = currentInstructions[0].backgrounds;
-    } else {
-      // (3b) construct a combined view if multiple instructions are present
-      // First, create all values as arrays, empty if color is black (to remove for mixing)
-      view = currentInstructions[0].backgrounds.map(
-        // for each row
-        function(row, rowIndex) {
-          return row.map(
-            // and each column
-            function(column, columnIndex) {
+      let view;
 
-              // return an array, empty if black, otherwise populated with a color
-              let resultingHEX = (column == "#000000") ? [] : [column];
+      if (currentInstructions.length == 1) {
+        view = currentInstructions[0].backgrounds;
+      } else {
+        // (3b) construct a combined view if multiple instructions are present
+        // First, create all values as arrays, empty if color is black (to remove for mixing)
+        view = currentInstructions[0].backgrounds.map(
+          // for each row
+          function(row, rowIndex) {
+            return row.map(
+              // and each column
+              function(column, columnIndex) {
 
-              // check all other instructions for more colors
-              for (let i = 1; i < currentInstructions.length; i++) {
-                if (currentInstructions[i].backgrounds[rowIndex][columnIndex] != "#000000") {
-                  resultingHEX.push(currentInstructions[i].backgrounds[rowIndex][columnIndex]);
+                // return an array, empty if black, otherwise populated with a color
+                let resultingHEX = (column == "#000000") ? [] : [column];
+
+                // check all other instructions for more colors
+                for (let i = 1; i < currentInstructions.length; i++) {
+                  if (currentInstructions[i].backgrounds[rowIndex][columnIndex] != "#000000") {
+                    resultingHEX.push(currentInstructions[i].backgrounds[rowIndex][columnIndex]);
+                  }
                 }
-              }
 
-              // return black if no color has been provided, otherwise calculate average.
-              return (resultingHEX.length == 0) ? "#000000" : ((resultingHEX.length == 1) ? resultingHEX[0] : averageHex(resultingHEX));
+                // return black if no color has been provided, otherwise calculate average.
+                return (resultingHEX.length == 0) ? "#000000" : ((resultingHEX.length == 1) ? resultingHEX[0] : averageHex(resultingHEX));
 
-            });
+              });
+          });
+      }
+
+      view.forEach((row, rowIndex) => {
+        row.forEach((column, columnIndex) => {
+          // create HTML elements with correct color
+          html += "<div style='background-color:" + view[rowIndex][columnIndex] + "'></div>";
         });
-    }
-
-    console.log("resulting view:");
-    console.log(view);
-
-
-    view.forEach((row, rowIndex) => {
-      row.forEach((column, columnIndex) => {
-        // create HTML elements with correct color
-        html += "<div style='background-color:" + view[rowIndex][columnIndex] + "'></div>";
       });
-    });
 
+      // (3c) set a GRID layout to the correct number of columns (from the data)
+      document.getElementById('ambientdisplay').style.gridTemplateColumns = "repeat(" + view[0].length + ", 1fr)";
+      document.getElementById('ambientdisplay').style.display = "grid";
 
-    // (3c) set a GRID layout to the correct number of columns (from the data)
-    document.getElementById('ambientdisplay').style.gridTemplateColumns = "repeat(" + view[0].length + ", 1fr)";
-    document.getElementById('ambientdisplay').style.display = "grid";
+      // (3d) set a timeout to redo this calculation when an the duration of an instruction ends
+      currentInstructions.forEach((instruction) => {
+        if (instruction.ends < nextTimeoutCheck) nextTimeoutCheck = instruction.ends;
+      });
+
+    }
   }
 
-  // (3d) set a timeout to redo this calculation when an the duration of an instruction ends
-  let nextCheck = Infinity;
-  currentInstructions.forEach((instruction) => {
-    if (instruction.ends < nextCheck) nextCheck = instruction.ends;
-  });
-
-  if (nextCheck != Infinity) timeout = setTimeout(updateAmbientDisplay, (nextCheck - now) * 1000);
+  // set timeout to check this method again
+  timeout = setTimeout(updateAmbientDisplay, (nextTimeoutCheck - now) * 1000);
 
   // (4) update the html (empty if no instructions)
   document.getElementById('ambientdisplay').innerHTML = html;

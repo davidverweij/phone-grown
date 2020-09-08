@@ -1,15 +1,13 @@
 // secure 'local' storage of values repeatadly needed (persistent cross-sessions)
 var script = PropertiesService.getScriptProperties();
 
+// This can give inconsistent results, hence a few important values are stored in the sheet.
 // inside 'local' storage, we keep:
-// - todo (an array of tasks keeping track of tests and tasks to inform the phone upon doGet())
-//    e.g. [{background: [[],[],[]], duration: 60, timestamp: 1234567}, {...}]
 // - userID (database userID)
 // - auth_token (authentication token to acces the database)
 // - refresh_token (to refresh the authentication token)
 // - databaseLive (indicating if the database connection is seemingly viable)
 // - onChangeID (trigger ID to prevent multiple instances)
-// - sleeptimes (user edited times for the phone to not display anything)
 
 // Turn off if you do not want to keep collecting logs
 var activeLogging = true;
@@ -35,6 +33,9 @@ var variables = {
     status: "N2:N2",
     lastSeen: "F8:F8",
     sleepModus: "L8:O8",
+    todos: "P2:P2",
+    clearphone: "P1:P1",
+    sleeptimes: "P3:P3",
   },
   columns : {
     active     : {'char':'N', 'index' : 13 },

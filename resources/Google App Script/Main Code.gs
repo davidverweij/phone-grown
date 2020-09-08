@@ -44,7 +44,7 @@ function somethingChanged(e){
 
         values.forEach(function(row, index) {
           // (2) Activate 'rules' where applicable
-          if (activateRule(row[0], doc, timeNow)) {
+          if (activateRule(row[0], doc, timeNow, index)) {
             ruleActivated = true;
 
             // Logging
@@ -69,8 +69,8 @@ function somethingChanged(e){
       // (0) update the phone sleep times, in case these were edited
       let need_to_ping = false;
       let sleeptimesString = JSON.stringify(getSleepTimes(doc));
-      if (sleeptimesString != script.getProperty("sleeptimes")){
-        script.setProperty("sleeptimes", sleeptimesString);
+      if (sleeptimesString != getSleepTimes(doc, true)){
+        storeSleepTimes(doc, sleeptimesString);
         need_to_ping = true;
       }
 
@@ -92,7 +92,7 @@ function somethingChanged(e){
               duration    : duration,
               timestamp   : timeNow,
             };
-            addPhoneInstruction([instruction], timeNow);
+            addPhoneInstruction(doc, [instruction], timeNow);
             need_to_ping = false;
             pingDatabase(timeNow);
 
@@ -133,12 +133,37 @@ function somethingChanged(e){
       //  (2) 1. Incoming Data is the first sheet
       //  (3) Update all background sheets to get an accurate representation
       break;
-
-
-
   }
 }
 
+
+/**
+* Store (or retreive) the instructions for the phone in the sheet
+* This was previously done in the scriptproperties, but gave inconsistent results
+*
+* @param {Google Doc} doc - The Google Sheet document to store it in
+* @param {String} instructions - a stringified JSON object
+*/
+function storeTodos(doc, instructions){
+  doc.getRange(variables.sheetNames.home + '!' + variables.ranges.todos).setValue(instructions);
+}
+function retreiveTodos(doc){
+  return doc.getRange(variables.sheetNames.home + '!' + variables.ranges.todos).getValue();
+}
+
+/**
+* Store (or retreive) the clearphone timestamp
+* This was previously done in the scriptproperties, but gave inconsistent results
+*
+* @param {Google Doc} doc - The Google Sheet document to store it in
+* @param {String} timestamp - the latest clearphone timestamp
+*/
+function storeClearPhone(doc, timestamp){
+  doc.getRange(variables.sheetNames.home + '!' + variables.ranges.clearphone).setValue(timestamp);
+}
+function retreiveClearPhone(doc){
+  return doc.getRange(variables.sheetNames.home + '!' + variables.ranges.clearphone).getValue();
+}
 
 /**
 * Check if the conditions trigger a set rule. Sleep mode times is handled by the phone locally
@@ -146,8 +171,9 @@ function somethingChanged(e){
 * @param {String} name - The name of the incoming data trigger
 * @param {Google Doc} doc - The Google Sheet document to search in
 * @param {Integer} timestamp - Unix timestamp of the time now
+* @param {Integer} data_row_index - Index from the row that contained this data
 */
-function activateRule(name, doc, timestamp){
+function activateRule(name, doc, timestamp, data_row_index){
   let triggered = false;
   let instructions = [];
 
@@ -171,7 +197,7 @@ function activateRule(name, doc, timestamp){
     }
   });
 
-  if (triggered) addPhoneInstruction(instructions, timestamp);
+  if (triggered) addPhoneInstruction(doc, instructions, timestamp);
 
   return triggered;
 }
@@ -181,12 +207,11 @@ function activateRule(name, doc, timestamp){
 */
 function clearPhone(){
   let doc = SpreadsheetApp.getActiveSpreadsheet();
-  script.setProperties({
-    "todo" :'[]',
-    "clearPhone" : true
-  });
+  let now = Math.floor((new Date()).getTime()/1000);
+  storeTodos(doc, '[]');
+  storeClearPhone(doc, now);
 
-  pingDatabase(Math.floor((new Date()).getTime()/1000));       // ping the database, so the phone can retreive the new instruction
+  pingDatabase(now);       // ping the database, so the phone can retreive the new instruction
 
   //Logging History
   if (activeLogging) prependRow(doc.getSheetByName(variables.sheetNames.logs), ["Cleared phone screen"], true);
@@ -200,37 +225,44 @@ function clearPhone(){
 * Returns integer array: [fromhour,fromminute,tohour,tominute]
 *
 * @param {Google Doc} doc - The reference Google Sheet
+* @param {Boolean} store - if true, get a stored copy of this result (to check if it changed)
 */
-function getSleepTimes(doc){
-  let sleepmode = doc.getRange(variables.sheetNames.home + "!" + variables.ranges.sleepModus).getValues();
-  let from = sleepmode[0][1].split(":").map(x => parseInt(x.trim()));   // from = [hours, minutes];
-  let to = sleepmode[0][3].split(":").map(x => parseInt(x.trim()));
-  return from.concat(to);
+function getSleepTimes(doc, store = false){
+  if (store) {
+    return doc.getRange(variables.sheetNames.home + '!' + variables.ranges.sleeptimes).getValue();
+  } else {
+    let sleepmode = doc.getRange(variables.sheetNames.home + "!" + variables.ranges.sleepModus).getValues();
+    let from = sleepmode[0][1].split(":").map(x => parseInt(x.trim()));   // from = [hours, minutes];
+    let to = sleepmode[0][3].split(":").map(x => parseInt(x.trim()));
+    return from.concat(to);
+  }
+}
+function storeSleepTimes(doc, times){
+  doc.getRange(variables.sheetNames.home + '!' + variables.ranges.sleeptimes).setValue(times);
 }
 
 /**
 * Add another instruction for the phone, and remove old uncollected triggers
 * Currently stores this in script properties. Alternative: stored in the sheet cells.
 *
+* @param {Google Doc} doc - The reference Google Sheet
 * @param {Array} instructions - An array of instructions to add. See doGet() for the structure
 * @param {Integer} timestamp - The current time to compare todos with
 */
-function addPhoneInstruction(instructions, timestamp){
+function addPhoneInstruction(doc, instructions, timestamp){
   // (1) Get all current triggers
-  let todo = JSON.parse(script.getProperty("todo"));
+  let todo = JSON.parse(retreiveTodos(doc));
 
-  // (2) Remove past and uncollected triggers
-  if (todo == null) todo = [];
-  todo.forEach(function(instruction, index, thisObject){
-    if (instruction.duration > 0 && (instruction.timestamp + instruction.duration) < timestamp) thisObject.splice(index,1);
-  });
+  // (2) Remove old and collected triggers
+  if (todo == '') todo = [];
+  todo = todo.filter(inst => ((inst.timestamp + inst.duration) > timestamp));
 
   // (3) A script property value can only be max 9kb. One instruction is ~600b, so assuming max 10 instructions. FIFO. See https://developers.google.com/apps-script/guides/services/quotas#current_limitations
   todo = todo.concat(instructions);
   todo = todo.slice(-10);              // keeping only the last 10 elements
 
   // (4) Add the new triggers, and store all in the script properties
-  script.setProperty("todo", JSON.stringify(todo));
+  storeTodos(doc, JSON.stringify(todo));
 }
 
 /**
@@ -250,7 +282,7 @@ function addPhoneInstruction(instructions, timestamp){
 *            // etc
 *        ],
 *        duration: 18000        // duration of showing in seconds
-*        triggered: 1595432159  // (unix) timestamp of when it was triggered
+*        timestamp: 1595432159  // (unix) timestamp of when it was triggered
 *      },
 *      {
 *        backgrounds: [
@@ -279,15 +311,18 @@ function doGet(e) {
       let doc = SpreadsheetApp.openById(script.getProperty("key")); // getting sheet by ID instead of 'activeSpreadsheet()'
       let origin = e.parameter.origin;
       let data = e.parameter.data;
+      let lastInstruction = e.parameter.lastInstruction;
 
       // the GET request's body must contain 'origin' (= phone) and a data parameter
       if (typeof(origin) != "undefined" && typeof(data) != "undefined" && origin == "phone"){
 
         // (2) Update connection status on the home sheet
         doc.getRange(variables.sheetNames.home + '!' + variables.ranges.lastSeen).setValue(new Date(e.parameter.now));
+
         result.result = "success";
-        result.sleeptimes = script.getProperty("sleeptimes");
-        result.clear = script.getProperty("clearPhone");
+        result.sleeptimes = getSleepTimes(doc, true); // get a stored copy of the sleeptimes
+        result.clear = retreiveClearPhone(doc);
+
 
         // If requested, send back the database id
         if (data == "database"){
@@ -295,15 +330,12 @@ function doGet(e) {
         }
 
         // (3a) Add backgrounds that need 'representing'. This could be empty. The phone will keep track of all past commands (over overlap them)
-        // Note: in this implementation, the todo's will keep piling up until retreived. This needs to be addressed in the future.
-        result.todo = script.getProperty("todo");
+        let todos = JSON.parse(retreiveTodos(doc));
+        if (todos == null) todos = [];
+        todos = JSON.stringify(todos.filter(inst => inst.timestamp > lastInstruction)); // filter old instructions
 
-        // (3b) Clear the list of instructions
-        // WARNING: There seems to be some inconsistency in whether the 'todo' values are actually returned. Yet to investigate..
-        script.setProperties({
-          "todo" :'[]',
-          "clearPhone" : false
-        });
+        result.todo = todos;
+        storeTodos(doc, todos);
       }
     }
     return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.JSON);
@@ -329,7 +361,7 @@ function testBackground() {
     duration    : 30,
     timestamp   : now,
   };
-  addPhoneInstruction([instruction], now);
+  addPhoneInstruction(doc,[instruction], now);
   pingDatabase(now);       // ping the database, so the phone can retreive the new instruction
 
   //Logging History
@@ -404,8 +436,6 @@ function setup() {
   .getUniqueId();
 
   script.setProperty("triggerID", triggerID);
-  script.setProperty("sleeptimes", JSON.stringify(getSleepTimes(doc)));
-  script.getProperty("false");
 
   // (4) Update system status
   updatePhoneStatus(doc, "Awaiting phone connection...");
