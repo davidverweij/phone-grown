@@ -171,7 +171,7 @@ function getDataFromSheet() {
         // ensure phone is sleeping when requested
         sleeptimes = JSON.parse(result.sleeptimes);
 
-        // check if the phone needs to be cleared
+        // check if the phone and instructions need to be cleared
         if (JSON.parse(result.clear)) {
           currentInstructions = [];
           updateAmbientDisplay();
@@ -196,36 +196,39 @@ function getDataFromSheet() {
 }
 
 /**
- * Check if the phone should be 'sleeping' right now
+ * Check if the phone should be 'sleeping' right now. Returns the remaining duration of sleep in seconds (negative is until going to sleep)
  *
- * @param {Array} sleeptimes - 4 integers indicating: [fromhour,fromminute,tohour,tominute]
+ * @param {Array} times - 4 integers indicating: [fromhour,fromminute,tohour,tominute]
  * @param {Integer} now - unix timestamp of the time now
  */
 function isSleeping(times, now) {
-  if (typeof(times) != "undefined") { // if not connected to service yet..
-    let from = (times[0] * 100) + times[1];
-    let to = (times[2] * 100) + times[3];
-    let nowDate = new Date(now * 1000);
-    let nowtime = (nowDate.getHours() * 100) + nowDate.getMinutes(); // e.g. 10:15 = 1010, 00:45 = 45
-    // (1) check if the time spans midnight (i.e. TO is lower than FROM)
+  if (typeof(times) != "undefined") { // only continue if we are already connected to the service
+
+    // get the sleeping times projected on today
+    let from = new Date(nowDate.valueOf()).setHours(times[0], times[1]).getTime() / 1000;
+    let to = new Date(nowDate.valueOf()).setHours(times[2], times[3]).getTime() / 1000;
+
     if (to < from) {
-      // (2) if it does, check if the time now is higher than FROM, or lower than TO
-      if (nowtime >= from || nowtime <= to) {
-        return true; // SLEEPING!
-      } else {
-        return false;
-      }
+      // spanning midnight
+      // e.g. 00:00     to      from   00:00
+      //        |---a---|    b   |---c---|
+
+      if (now < to) return to-now;                       // a
+      else if (now > from) return to + (60*60*34) - now; // c
+      else return now-from;// remaining time until sleep // b
+
     } else if (to > from) {
-      // (3) else, MUST be between FROM and TO
-      if (nowtime >= from && nowtime <= to) {
-        return true; // SLEEPING!
-      } else {
-        return false;
-      }
+      // not spanning midnight
+      // e.g.  00:00    from       to    00:00
+      //         |   a   |-----b----|   c  |
+
+      if (now < from) return now-from; // remaining time until sleep // a
+      else if (now > to) return from + (60*60*34) - now // ditto     // c
+      else return to-now //                                          // b
     } // else if equal, do nothing.
-  } else {
-    return false;
   }
+  // in all other cases
+  return 0;
 }
 
 /**
@@ -315,15 +318,15 @@ function updateAmbientDisplay(newInstructions = '[]') {
     // (3c) set a GRID layout to the correct number of columns (from the data)
     document.getElementById('ambientdisplay').style.gridTemplateColumns = "repeat(" + view[0].length + ", 1fr)";
     document.getElementById('ambientdisplay').style.display = "grid";
-
-    // (3d) set a timeout to redo this calculation when an the duration of an instruction ends
-    let nextCheck = Infinity;
-    currentInstructions.forEach((instruction) => {
-      if (instruction.ends < nextCheck) nextCheck = instruction.ends;
-    });
-
-    timeout = setTimeout(updateAmbientDisplay, (nextCheck - now) * 1000);
   }
+
+  // (3d) set a timeout to redo this calculation when an the duration of an instruction ends
+  let nextCheck = Infinity;
+  currentInstructions.forEach((instruction) => {
+    if (instruction.ends < nextCheck) nextCheck = instruction.ends;
+  });
+
+  if (nextCheck != Infinity) timeout = setTimeout(updateAmbientDisplay, (nextCheck - now) * 1000);
 
   // (4) update the html (empty if no instructions)
   document.getElementById('ambientdisplay').innerHTML = html;
