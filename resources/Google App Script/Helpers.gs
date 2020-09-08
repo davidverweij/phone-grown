@@ -60,7 +60,7 @@ function findSheets(sheets, keyString, column = false){
  */
 function updatePhoneStatus(doc, status){
   let message = script.getProperty("databaseLive") ? status : status + " // Error: Database offline!";
-  doc.getRange(variables.A1Notations.status).setValue(status);
+  doc.getRange(variables.sheetNames.home + '!' + variables.ranges.status).setValue(status);
 }
 
 /**

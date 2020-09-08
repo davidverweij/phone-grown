@@ -1,9 +1,8 @@
 // secure 'local' storage of values repeatadly needed (persistent cross-sessions)
 var script = PropertiesService.getScriptProperties();
 
+// This can give inconsistent results, hence a few important values are stored in the sheet.
 // inside 'local' storage, we keep:
-// - todo (an array of tasks keeping track of tests and tasks to inform the phone upon doGet())
-//    e.g. [{background: [[],[],[]], duration: 60, timestamp: 1234567}, {...}]
 // - userID (database userID)
 // - auth_token (authentication token to acces the database)
 // - refresh_token (to refresh the authentication token)
@@ -22,28 +21,32 @@ var variables = {
     ID         : "AIzaSyCAHz6izwenF8F84SoQqRCekYhNeAe7u68"
   },
   sheetNames : {
-    home       : "2. Home",
-    dataIn     : "1. Incoming Data",
-    dataStored : "3. Received Data",
+    home       : "HOME",
+    dataIn     : "[DATA] New",
+    dataStored : "[DATA] History",
     logs       : "[LOGS]",
-    backgrounds: "[BACKGROUND]"
+    backgrounds: "[BG]"
   },
   ranges : {
-    background : "C3:G12"
-  },
-  A1Notations : {
-    status     : "2. Home!E2:E2",
-    backgrounds: "[SETTINGS]!A2:A",
+    background : "C3:G12",
+    listOfBackgrounds: "F5:O5",
+    status: "N2:N2",
+    lastSeen: "F8:F8",
+    sleepModus: "L8:O8",
+    todos: "P2:P2",
+    clearphone: "P1:P1",
+    sleeptimes: "P3:P3",
   },
   columns : {
-    active     : {'char':'O', 'index' : 14 },
-    test       : {'char':'P', 'index' : 15 },
+    active     : {'char':'N', 'index' : 13 },
+    test       : {'char':'O', 'index' : 14 },
     rule       : {'char':'E', 'index' :  4 },
     background : {'char':'I', 'index' :  8 },
     duration   : {'char':'L', 'index' : 11 },
     durationUnit : {'char':'M', 'index' : 12 }
   },
-  rows :{
-    firstRule  : 8
+  fixed :{
+    firstRule  : 13,
+    totalBackgrounds: 10,
   }
 };

@@ -24,14 +24,14 @@
 				<h1>📱 Phone Grown</h1>
 				<p>More info on <a href="https://www.phonegrown.site" target="_blank">www.phonegrown.site</a><br/><br/><br/></p>
 				<p id="helptext0">Enter your <b>PhoneGrown ID</b> here</p>
-				<p id="helptext1">❌<br/><br/>Something went wrong.<br/>Please try again. <br/>If this problem persist, please leave us a message through the website above.</p>
+				<p id="helptext1">❌<br/><br/>Something went wrong.<br/>Please try and enter the personal ID again. <br/>If this problem persist, please leave us a message through the website above.</p>
 				<div id="loader"></div>
-				<input type="text" name="scriptUrl" id="scriptUrl"/ placeholder="Personal ID">
-				<button id="button" onClick="submitID(document.getElementById('scriptUrl').value)">Connect</button>
+				<input type="text" name="scriptUrl" id="scriptUrl" placeholder="Personal ID" />
+				<button id="IDbutton" onClick="submitID(document.getElementById('scriptUrl').value)">Click to Connect</button>
 			</div>
 			<div class="menu blue" id="menu1">
 				<a href="#" id="close" class="close">X</a>
-				<h1>📱 Connected!</h1>
+				<h1>📱 Phone Grown</h1>
 				<p>Next steps, see <a href="https://www.phonegrown.site" target="_blank">www.phonegrown.site</a><br/><br/>Close this popup when you are ready.<br/></p>
 				<div class="details">
 				<p><b>Status:</b></p>
@@ -40,6 +40,7 @@
 					 <p id="statusevent">'Weather' at 15/07/20 15:60</p>
 				</p>
 			</div>
+			<button onClick="showUI(0);showUI(1, false);">Reset Connection</button>
 			</div>
 		</div>
 			<div class="menu" id="hint"><p>At any time, touch the screen to see the menu</p></div>

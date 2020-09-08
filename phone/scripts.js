@@ -1,6 +1,12 @@
-// (1) use global variables for the googleSheet and database link and phone status / instructions
-var gSheetLink, databasePing, currentInstructions = [],
-  timeout;
+// (1) use global variables
+var currentInstructions = []; // list of background to implement
+var lastSeenInstruction = 0;  // timestamp of last received instruction
+var lastSeenClearPhone = 0;
+var timeout; // timeout for tracking duration of backgrounds
+var periodicTimeout; // timeout to keep in touch with google sheet
+var periodicTimer = 15 * 60 * 1000; // duration between periodicTimeout (e.g. 15 minutes)
+var sleeptimes; // store times for the phone to not display backgrounds (sleep mode)
+var menu0shown = true; // do not display second menu if first is shown
 
 // (2) initiale the database object (with specific details for this projects' database) and connect
 firebase.initializeApp({
@@ -12,13 +18,20 @@ const db = firebase.firestore();
 
 // (3) when loaded, show the little form to connect to a Google sheet
 document.addEventListener("DOMContentLoaded", function() {
+
+  let oldLink = getCookie("gSheetLink");
   showUI(0);
+  if (typeof(oldLink) != "undefined") {
+    document.getElementById("scriptUrl").value = oldLink;
+    submitID(oldLink);
+  }
 
 
 
   // add a listener if the user clicks on the screen
   document.getElementById("ambientdisplay").addEventListener("click", function() {
-    showUI(1, (document.getElementById('menu1').style.display == "none"));
+    if (menu0shown) showUI(1, false)
+    else showUI(1, (document.getElementById('menu1').style.display == "none"));
   });
 
   // add a listener if the user closes a menu
@@ -37,10 +50,13 @@ document.addEventListener("DOMContentLoaded", function() {
  * @param {Boolean} retry - adjust the helptext if the connection failed
  */
 function showUI(int, bool = true, retry = false) {
-
+  if (int == 0) menu0shown = bool;
   document.getElementById('helptext0').style.display = (retry ? "none" : "block");
   document.getElementById('helptext1').style.display = (retry ? "block" : "none");
-  if (retry) loading(false);
+  if (retry) {
+    loading(false);
+    document.getElementById("scriptUrl").value = "";
+  }
   document.getElementById('menu' + int).style.display = (bool ? "flex" : "none");
 
   // If we hide a form, show a hint for a few seconds that shows how to bring up the menu
@@ -59,6 +75,7 @@ function showUI(int, bool = true, retry = false) {
  */
 function loading(bool) {
   document.getElementById('loader').style.display = (bool ? "block" : "none");
+  document.getElementById('IDbutton').style.display = (bool ? "none" : "block");
 }
 
 
@@ -79,6 +96,7 @@ function submitID(url) {
     xhr.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
         let result = JSON.parse(this.responseText);
+        console.log(result);
 
         // (4) if success, store the result (the link, as well as a received databaseID)
         if (result.result == "success") {
@@ -95,6 +113,9 @@ function submitID(url) {
             updateAmbientDisplay(result.todo);
             startDatabaseListener();
           }, 1500)
+
+          // (7) initialize periodic connecting to sheet
+          periodicTimeout = setTimeout(getDataFromSheet, periodicTimer); // in 30 minutes
 
         } else {
           // The connection was unsuccesful
@@ -115,7 +136,7 @@ function submitID(url) {
     }
 
     // (3b) actually send the GET request
-    xhr.open("GET", "https://tinyurl.com/" + url + "?origin=phone&data=database", true); // true for asynchronous
+    xhr.open("GET", "https://tinyurl.com/" + url + "?origin=phone&data=database&lastInstruction=" + lastSeenInstruction + "&now=" + (new Date).toISOString(), true); // true for asynchronous
     xhr.send();
   } else {
     showUI(0, true, true); // please try again
@@ -130,29 +151,94 @@ function startDatabaseListener() {
     .onSnapshot(function(doc) {
 
       // (1a) onSnapShot is executed when there is a change in the database
-      // Prep a HTTPS REST request to get data from the Google Sheet
-      let xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-          let result = JSON.parse(this.responseText);
-
-          // (4) if success, store the result and update the background
-          if (result.result == "success") {
-            console.log("GET REQUEST");
-            console.log(result.todo);
-            updateAmbientDisplay(result.todo);
-          } else {
-            // something went wrong.. TODO: Handle error
-          }
-        }
-      };
-
-      // (1b) send the GET request
-      xhr.open("GET", "https://tinyurl.com/" + getCookie("gSheetLink") + "?origin=phone&data=update", true); // true for asynchronous
-      xhr.send();
+      getDataFromSheet();
     });
 }
 
+
+/**
+ * Perform a GET request to the Google Sheet App and act accordingl to the result
+ */
+function getDataFromSheet() {
+  // Prep a HTTPS REST request to get data from the Google Sheet
+  let xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      let result = JSON.parse(this.responseText);
+
+      // if success, store the result and update the background
+      // the script should not send
+      if (result.result == "success") {
+        console.log(result);
+
+        // ensure phone is sleeping when requested
+        sleeptimes = JSON.parse(result.sleeptimes);
+
+        clear = JSON.parse(result.clear);
+        // check if the phone and instructions need to be cleared
+        if (lastSeenClearPhone == 0) lastSeenClearPhone = clear;
+        if (clear > lastSeenClearPhone) {
+          lastSeenClearPhone = clear;
+          currentInstructions = [];
+          updateAmbientDisplay();
+        } else {
+          updateAmbientDisplay(result.todo);
+        }
+
+        // clear the periodicTimeout to prevent unintentional requests
+        clearTimeout(periodicTimeout);
+        // check again in [periodicTimer] time for new data
+        periodicTimeout = setTimeout(getDataFromSheet, periodicTimer); // in 30 minutes
+
+      } else {
+        // something went wrong.. TODO: Handle error
+      }
+    }
+  };
+
+  // (1b) send the GET request
+  xhr.open("GET", "https://tinyurl.com/" + getCookie("gSheetLink") + "?origin=phone&data=update&lastInstruction=" + lastSeenInstruction + "&now=" + (new Date).toISOString(), true); // true for asynchronous
+  xhr.send();
+}
+
+/**
+ * Check if the phone should be 'sleeping' right now. Returns the remaining duration of sleep in seconds (negative is until going to sleep)
+ *
+ * @param {Array} times - 4 integers indicating: [fromhour,fromminute,tohour,tominute]
+ * @param {Integer} now - unix timestamp of the time now
+ */
+function isSleeping(times, now) {
+  if (typeof(times) != "undefined") { // only continue if we are already connected to the service
+
+    // get the sleeping times projected on today
+    let today = (new Date(now * 1000));
+    today.setHours(times[0], times[1], 0);
+    let from = today.getTime() / 1000;
+    today.setHours(times[2], times[3], 0);
+    let to = today.getTime() / 1000;
+
+    if (to < from) {
+      // spanning midnight
+      // e.g. 00:00     to      from   00:00
+      //        |---a---|    b   |---c---|
+
+      if (now < to) return to;                     // a
+      else if (now > from) return to + (60*60*24); // c
+      else return -from; // negative, time left    // b
+
+    } else if (to > from) {
+      // not spanning midnight
+      // e.g.  00:00    from       to    00:00
+      //         |   a   |-----b----|   c  |
+
+      if (now < from) return -from; // negative, time left          // a
+      else if (now > to) return -(from + (60 * 60 * 24)) // ditto  // c
+      else return to                                                // b
+    } // else if equal, do nothing.
+  }
+  // in all other cases
+  return 0;
+}
 
 /**
  * Create an array of <div>'s with background colors correpsonding to the Google Sheet instructions
@@ -171,6 +257,7 @@ function updateAmbientDisplay(newInstructions = '[]') {
   let todos = JSON.parse(newInstructions);
   if (todos.length > 0) {
     todos.forEach((instruction) => {
+      if (instruction.timestamp > lastSeenInstruction) lastSeenInstruction = instruction.timestamp;
       currentInstructions.push({
         'starts': now,
         'ends': now + instruction.duration,
@@ -181,75 +268,87 @@ function updateAmbientDisplay(newInstructions = '[]') {
 
   let html = ""; // the html to populate the screen with
 
-  // (3a) remove expired newInstructions
+  // (3a) remove expired instructions, or when 'sleeping'
   currentInstructions = currentInstructions.filter((instruction) => {
+    // isSleeping(sleeptimes, now);
     return (instruction.ends > now);
   });
 
-  // (3) check all current instructions and create an appropriate display.
-  if (currentInstructions.length > 0) {
-    let view;
+  // (3b) if the phone should be sleeping, display sleeping message, else show whatever backgrounds needed
+  let sleeping = isSleeping(sleeptimes, now);
+  let nextTimeoutCheck = 0;
 
-    if (currentInstructions.length == 1) {
-      view = currentInstructions[0].backgrounds;
-    } else {
-      // (3b) construct a combined view if multiple instructions are present
-      // First, create all values as arrays, empty if color is black (to remove for mixing)
-      view = currentInstructions[0].backgrounds.map(
-        // for each row
-        function(row, rowIndex) {
-          return row.map(
-            // and each column
-            function(column, columnIndex) {
+  if (sleeping >= 0) {
+    // This implementation does not alter the intstructions nor removes operations based on sleeptime
+    // instead, just ignores the result. This allows for sudden changes in sleep times (e.g. removes that constraint)
+    html = "<div class='sleepmode'>sleep mode on</div>";
+    // check back again once sleeptime is over (or new instructions has been sent)
+    nextTimeoutCheck = Math.max(sleeping, now + 5); // in the unlikely event of sleeping ~ 0, wait 5 seconds at least
+  } else {
+    nextTimeoutCheck = -sleeping; // revert polarity to set to future time
 
-              // return an array, empty if black, otherwise populated with a color
-              let resultingHEX = (column == "#000000") ? [] : [column];
+    if (currentInstructions.length > 0) {
+      // (3) check all current instructions and create an appropriate display.
 
-              // check all other instructions for more colors
-              for (let i = 1; i < currentInstructions.length; i++) {
-                if (currentInstructions[i].backgrounds[rowIndex][columnIndex] != "#000000") {
-                  resultingHEX.push(currentInstructions[i].backgrounds[rowIndex][columnIndex]);
+      let view;
+
+      if (currentInstructions.length == 1) {
+        view = currentInstructions[0].backgrounds;
+      } else {
+        // (3b) construct a combined view if multiple instructions are present
+        // First, create all values as arrays, empty if color is black (to remove for mixing)
+        view = currentInstructions[0].backgrounds.map(
+          // for each row
+          function(row, rowIndex) {
+            return row.map(
+              // and each column
+              function(column, columnIndex) {
+
+                // return an array, empty if black, otherwise populated with a color
+                let resultingHEX = (column == "#000000") ? [] : [column];
+
+                // check all other instructions for more colors
+                for (let i = 1; i < currentInstructions.length; i++) {
+                  if (currentInstructions[i].backgrounds[rowIndex][columnIndex] != "#000000") {
+                    resultingHEX.push(currentInstructions[i].backgrounds[rowIndex][columnIndex]);
+                  }
                 }
-              }
 
-              // return black if no color has been provided, otherwise calculate average.
-              return (resultingHEX.length == 0) ? "#000000" : ((resultingHEX.length == 1) ? resultingHEX[0] : averageHex(resultingHEX));
+                // return black if no color has been provided, otherwise calculate average.
+                return (resultingHEX.length == 0) ? "#000000" : ((resultingHEX.length == 1) ? resultingHEX[0] : averageHex(resultingHEX));
 
-            });
+              });
+          });
+      }
+
+      view.forEach((row, rowIndex) => {
+        row.forEach((column, columnIndex) => {
+          // create HTML elements with correct color
+          html += "<div style='background-color:" + view[rowIndex][columnIndex] + "'></div>";
         });
-    }
-
-    console.log("resulting view:");
-    console.log(view);
-
-
-    view.forEach((row, rowIndex) => {
-      row.forEach((column, columnIndex) => {
-        // create HTML elements with correct color
-        html += "<div style='background-color:" + view[rowIndex][columnIndex] + "'></div>";
       });
-    });
 
+      // (3c) set a GRID layout to the correct number of columns (from the data)
+      document.getElementById('ambientdisplay').style.gridTemplateColumns = "repeat(" + view[0].length + ", 1fr)";
+      document.getElementById('ambientdisplay').style.display = "grid";
 
-    // (3c) set a GRID layout to the correct number of columns (from the data)
-    document.getElementById('ambientdisplay').style.gridTemplateColumns = "repeat(" + view[0].length + ", 1fr)";
-    document.getElementById('ambientdisplay').style.display = "grid";
+      // (3d) set a timeout to redo this calculation when an the duration of an instruction ends
+      currentInstructions.forEach((instruction) => {
+        if (instruction.ends < nextTimeoutCheck) nextTimeoutCheck = instruction.ends;
+      });
 
-    // (3d) set a timeout to redo this calculation when an the duration of an instruction ends
-    let nextCheck = Infinity;
-    currentInstructions.forEach((instruction) => {
-      if (instruction.ends < nextCheck) nextCheck = instruction.ends;
-    });
-
-    timeout = setTimeout(updateAmbientDisplay, (nextCheck - now) * 1000);
+    }
   }
+
+  // set timeout to check this method again
+  timeout = setTimeout(updateAmbientDisplay, (nextTimeoutCheck - now) * 1000);
 
   // (4) update the html (empty if no instructions)
   document.getElementById('ambientdisplay').innerHTML = html;
 
 }
 
-
+// DOUBLE TAP? https://stackoverflow.com/a/26809354/7053198
 
 /**
  * Helper method to set a value of a Cookie
@@ -319,11 +418,11 @@ function averageHex(colors) {
   let averages = numbers.reduce(function(total, amount, index, array) {
 
 
-    return total.map(function(subcolor, subindex) {                       // per color, add the R, G and B respectively using a map
+    return total.map(function(subcolor, subindex) { // per color, add the R, G and B respectively using a map
       subcolor += amount[subindex];
-      if (index == array.length - 1) {                                    // if we reached the last color, average it out and return the hex value
+      if (index == array.length - 1) { // if we reached the last color, average it out and return the hex value
         let result = Math.round(subcolor / array.length).toString(16);
-        return result.length == 2 ? '' + result : '0' + result;           // add a leading 0 if it is only one character
+        return result.length == 2 ? '' + result : '0' + result; // add a leading 0 if it is only one character
       } else {
         return subcolor;
       }
