@@ -1,2 +1,5 @@
-// temporary collecting thoughts on approaches I want to take
-todos.md
+_site
+.sass-cache
+.jekyll-cache
+.jekyll-metadata
+vendor

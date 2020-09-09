@@ -1,3 +1,5 @@
+---
+---
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,8 +12,8 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="robots" content="noindex">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="phone/style.css">
-	<link rel="icon" href="phone/phone_icon.png">
+	<link rel="stylesheet" href="{{ '/assets/css/phone.css' | absolute_url }}">
+	<link rel="icon" href="{{ '/assets/images/phone_icon.png' | absolute_url }}">
 </head>
 
 <body>
@@ -22,9 +24,9 @@
 
 			<div class="menu" id="menu0">
 				<h1>📱 Phone Grown</h1>
-				<p>More info on <a href="https://www.phonegrown.site" target="_blank">www.phonegrown.site</a><br/><br/><br/></p>
+				<p>More info on <a href="https://www.phonegrown.site" target="_blank">www.phonegrown.site</a><br /><br /><br /></p>
 				<p id="helptext0">Enter your <b>PhoneGrown ID</b> here</p>
-				<p id="helptext1">❌<br/><br/>Something went wrong.<br/>Please try and enter the personal ID again. <br/>If this problem persist, please leave us a message through the website above.</p>
+				<p id="helptext1">❌<br /><br />Something went wrong.<br />Please try and enter the personal ID again. <br />If this problem persist, please leave us a message through the website above.</p>
 				<div id="loader"></div>
 				<input type="text" name="scriptUrl" id="scriptUrl" placeholder="Personal ID" />
 				<button id="IDbutton" onClick="submitID(document.getElementById('scriptUrl').value)">Click to Connect</button>
@@ -32,21 +34,24 @@
 			<div class="menu blue" id="menu1">
 				<a href="#" id="close" class="close">X</a>
 				<h1>📱 Phone Grown</h1>
-				<p>Next steps, see <a href="https://www.phonegrown.site" target="_blank">www.phonegrown.site</a><br/><br/>Close this popup when you are ready.<br/></p>
+				<p>Next steps, see <a href="https://www.phonegrown.site" target="_blank">www.phonegrown.site</a><br /><br />Close this popup when you are ready.<br /></p>
 				<div class="details">
-				<p><b>Status:</b></p>
+					<p><b>Status:</b></p>
 					<p id="statusconnection">connected</p>
 					<p><b>Last event</b></p>
-					 <p id="statusevent">'Weather' at 15/07/20 15:60</p>
-				</p>
-			</div>
-			<button onClick="showUI(0);showUI(1, false);">Reset Connection</button>
+					<p id="statusevent">'Weather' at 15/07/20 15:60</p>
+				</div>
+				<button onClick="showUI(0);showUI(1, false);">Reset Connection</button>
 			</div>
 		</div>
-			<div class="menu" id="hint"><p>At any time, touch the screen to see the menu</p></div>
+		<div class="menu" id="hint">
+			<p>At any time, touch the screen to see the menu</p>
+		</div>
 	</main>
 	<script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-app.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-firestore.js"></script>
-	<script src="phone/scripts.js"></script>
+	<script type="text/javascript" src="{{ 'assets/js/phone.js' | absolute_url }}"></script>
+
 </body>
+
 </html>
