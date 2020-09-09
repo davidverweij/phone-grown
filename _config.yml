@@ -1,0 +1,11 @@
+title: Phone Grown
+email: d.verweij@ncl.ac.uk
+description: >-
+  Phone Grown is a tutorial to turn an unused smartphone into a smart display
+  using only Google sheets and pen and paper. This website contains information
+  about this (research) project and initial steps to begin.
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "" # the base hostname & protocol for your site, e.g. http://example.com
+
+search_enabled: false
+color_scheme: light

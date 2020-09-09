@@ -1,0 +1,28 @@
+{% include toc.html
+  html=content
+  class='nav-list'
+  item_class='nav-list-item'
+  anchor_class='nav-list-link'
+  submenu_class='nav-list'
+  h_max=3
+  h_min=2
+%}
+
+<br/>
+<div style='text-align:center'>
+  <button class="btn js-toggle-dark-mode">dark mode</button>
+</div>
+
+<script>
+const toggleDarkMode = document.querySelector('.js-toggle-dark-mode');
+
+jtd.addEvent(toggleDarkMode, 'click', function(){
+  if (jtd.getTheme() === 'dark') {
+    jtd.setTheme('light');
+    toggleDarkMode.textContent = 'dark mode';
+  } else {
+    jtd.setTheme('dark');
+    toggleDarkMode.textContent = 'light mode';
+  }
+});
+</script>
