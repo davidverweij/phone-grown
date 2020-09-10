@@ -9,15 +9,21 @@ headerimage:
 ## About
 Do you have an (old) unused smart phone? Turn it into a smart display using Google Sheets and some pen and paper, by following this easy step-by-step tutorial. Show what you can make and support our research!
 
-_This tutorial is developed on the Newcastle University (UK) by David Verweij, as part of his PhD research. He explores how you can be creative with technology at home in a less-technical way. Read more [here](#FAQ_about)_
+_This tutorial is developed by David Verweij at Newcastle University as part of his PhD research, read more [here](#about-this-research)._
 
-## Tools & Materials
-You don't need much, but you will at least need a smartphone (preferably one you don't need for a while) that can connect to your Wi-Fi.
+## What can it do?
 
-What can it do?
+
+## Tools & Materials you need
+- a smartphone that can connect to your Wi-Fi (_preferably one you don't need for a while_)
+- some pen and paper
+- a computer/laptop to set things up
+- a Google account (_for using Google Sheets_)
+- an IFTTT.com account (_for connecting it to data_)
 
 ## Where to start?
-We are proofreading the tutorial as we speak, and should be available on the 28th of September 2020. Check back again then, or get a notification when it is ready by clicking below:
+We're just testing the last bits of the tutorial and
+on the 28th of September 2020. Check back again, or get a notification when it is ready:
 
 <a class="btn btn-green" href="https://forms.gle/DuNouDBeYJBhXBcDA" target="_blank">Notify me when it is ready!</a>
 
@@ -26,8 +32,10 @@ We are proofreading the tutorial as we speak, and should be available on the 28t
 ## FAQ
 
 ### About this research
+For his PhD, David explores how you can be creative with technology at home in a less-technical way.
 
 ### The technology bit
+A Google Sheet template with a document-bound script contains a few predefined formulas and methods. Once deployed, your copy of the Sheet (and script) gives you a personal API. A phone can then connect to that Sheet through that API. Using existing web services (e.g. IFTTT.com), numerous data sources can be hooked up to the Sheet. Based on your rules set in the UI, a flag will be set on a secure external database. The phone, which is listening to this flag, will request new instructions and output the visual design on screen - providing a push notification-like service.
 
 ### Your privacy and safety
 
