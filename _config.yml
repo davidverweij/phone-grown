@@ -9,3 +9,7 @@ url: "" # the base hostname & protocol for your site, e.g. http://example.com
 
 search_enabled: false
 color_scheme: light
+
+footer_content: "A project by <a href='https://openlab.ncl.ac.uk/' target='_blank'>Open Lab</a>, Newcastle University"
+back_to_top: true
+back_to_top_text: "Back to top"

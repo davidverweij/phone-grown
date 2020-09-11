@@ -24,6 +24,7 @@
   border-radius: $border-radius;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12), 0 3px 10px rgba(0, 0, 0, 0.08);
   appearance: none;
+  vertical-align: middle;
 
   &:focus {
     text-decoration: none;
@@ -115,4 +116,8 @@
 
 .btn-green {
   @include btn-color($white, $green-100);
+}
+
+.btn-yellow {
+  @include btn-color($white, $yellow-300);
 }

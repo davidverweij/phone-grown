@@ -3,10 +3,12 @@
 //
 
 .side-bar {
-  z-index: 0;
+  position:fixed;
+  z-index: 1;
   display: flex;
   flex-wrap: wrap;
   background-color: $sidebar-color;
+  width:100%;
 
   @include mq(md) {
     flex-wrap: nowrap;
@@ -57,7 +59,7 @@
   @include mq(md) {
     display: flex;
     justify-content: space-between;
-    height: $header-height;
+    height: 0;
     background-color: $body-background-color;
     border-bottom: $border $border-color;
   }
@@ -183,6 +185,7 @@ body {
 // stylelint-enable selector-max-type
 
 .site-footer {
+  display:none;
   @include container;
   position: absolute;
   bottom: 0;
@@ -193,6 +196,7 @@ body {
   @include fs-2;
 
   @include mq(md) {
+    display:block;
     position: static;
     justify-self: end;
   }

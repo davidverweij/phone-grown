@@ -36,6 +36,7 @@ function initNav() {
   });
 
   const siteNav = document.getElementById('site-nav');
+  const siteNavLinks = siteNav.getElementsByTagName("A");
   const mainHeader = document.getElementById('main-header');
   const menuButton = document.getElementById('menu-button');
 
@@ -50,6 +51,28 @@ function initNav() {
       mainHeader.classList.remove('nav-open');
     }
   });
+
+  for (const siteNavLink of siteNavLinks){
+    jtd.addEvent(siteNavLink, 'click', function(e){
+        e.preventDefault();
+
+        siteNav.classList.remove('nav-open');
+        mainHeader.classList.remove('nav-open');
+        menuButton.classList.remove('nav-open')
+
+        target = siteNavLink.href.replace(/^[^#]*#/gi,"");
+
+        var element = document.getElementById(target);
+        var headerOffset = '80';
+    	  var elementPosition = element.getBoundingClientRect().top;
+        var offsetPosition = elementPosition - headerOffset;
+
+        window.scrollBy({
+            top: offsetPosition,
+            behavior: "smooth"
+          });
+    });
+  }
 }
 
 // Switch theme

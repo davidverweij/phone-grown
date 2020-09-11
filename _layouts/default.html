@@ -68,25 +68,15 @@ layout: table_wrappers
         </nav>
       {% endif %}
     </div>
+    {% if page.headerimage %}
+    <img alt="{{ page.headerimage.alt }}" src="{{ page.headerimage.url| absolute_url }}" width="100%"/>
+    {% endif %}
     <div id="main-content-wrap" class="main-content-wrap">
       <div id="main-content" class="main-content" role="main">
         {% if site.heading_anchors != false %}
           {% include vendor/anchor_headings.html html=content beforeHeading="true" anchorBody="<svg viewBox=\"0 0 16 16\" aria-hidden=\"true\"><use xlink:href=\"#svg-link\"></use></svg>" anchorClass="anchor-heading" %}
         {% else %}
           {{ content }}
-        {% endif %}
-
-        {% if page.has_children == true and page.has_toc != false %}
-          <hr>
-          <h2 class="text-delta">Table of contents</h2>
-          <ul>
-            {%- assign children_list = pages_list | where: "parent", page.title | where: "grand_parent", page.parent -%}
-            {% for child in children_list %}
-              <li>
-                <a href="{{ child.url | absolute_url }}">{{ child.title }}</a>{% if child.summary %} - {{ child.summary }}{% endif %}
-              </li>
-            {% endfor %}
-          </ul>
         {% endif %}
 
         {% if site.footer_content != nil or site.last_edit_timestamp or site.gh_edit_link %}
