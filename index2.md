@@ -67,18 +67,11 @@ The underlying concept here is that we build on existing platforms and familiar 
 
 -->
 ### The technology bit {#more-tech}
+In the tutorial, you will be copying a Google Sheet to use as your own. Embedded in this Sheet 'document-bound' is a Google App Script (written in Javascript) that you can publish as a web app. This effectively creates a way to read and write data into the Google Sheet using standard web protocols, which is an approach used in some 'app making' services such [glide](https://www.glideapps.com/). In the setup, your Google Sheet will also create an anonymous entry into our external database. This is fully anonymous and very lightweight (see [privacy and safety](#more-safe)), and is needed to make your phone respond quickly to changes in the Sheet - something your web app doesn't offer. Once you linked your phone to your own web app via the Phone Grown [mobile webpage](www.phonegrown.site/phone), it can retrieve instructions through your web app through its web-browser. By design, your web app only allows ([very specific](#more-safe)) information to be read from the Sheet. That is why when a 'rule' you set in the Google Sheet is triggered (e.g. it will start to rain), it will update your anonymous entry in the external database. The phone will notice that change, and ask for the latest instructions via your web app.
 
-The tutorial guides is built around a single Google Sheets template. Attached to this template is a 'container-bound' Google App Script (written in Javascript) that - following the steps - is published as a web app. This effectively creates a way to read and write data into the Google Sheet using standard web protocols, and is an approach widely used in 'app making' services such [glide](https://www.glideapps.com/).
+These 'rules' you can set in your copy of the Google Sheet are checked each time new data is added to the Sheet. Many online services can connect to Google Sheets. More specifically, they primarily do so by adding a new row to the Sheet when something happened, also called 'triggers'. This is the same for the Google Sheets integration with [IFTTT.com](https://ifttt.com/google_sheets) - which we use in this tutorial. Once you set up one or multiple 'triggers' from IFTTT, new rows are added to your Google Sheets. When that happens, the script embedded in your Sheet will (1) read it, (2) check if it triggers any of your rules set in the Sheet, and if so (3) update your anonymous entry in the external database so that (4) your phone will contact your web app to get the latest instructions.
 
 More details about the technical setup can be found on [GitHub](https://github.com/davidverweij/phone-grown).
-
-- using old phone
-- no apps
-- coping with software legacy
-- HTTPS protocol, reasonably well supported
-- google sheets, has container bound scripts that are copied along with copying a sheet itself. Publishing the sheet (or moreover the script) acts as an HTTP endpoint for information.
-
-A Google Sheet template with a document-bound script contains a few predefined formulas and methods. Once deployed, your copy of the Sheet (and script) gives you a personal API. A phone can then connect to that Sheet through that API. Using existing web services (e.g. IFTTT.com), numerous data sources can be hooked up to the Sheet. Based on your rules set in the UI, a flag will be set on a secure external database. The phone, which is listening to this flag, will request new instructions and output the visual design on screen - providing a push notification-like service.
 
 ### Privacy and safety {#more-safe}
 -
