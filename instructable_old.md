@@ -21,7 +21,7 @@ When you finished the tutorial, you will have turned your phone into 'smart disp
 ## Step 1: Copy the Google Sheet
 
 
-## 
+##
 
 
 ### Step 1: Prepare the 'obsolete' phone
