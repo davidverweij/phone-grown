@@ -2,47 +2,60 @@
 layout: default
 ---
 
-## Ingredients
-You will need:
-- An 'obsolete' phone or tablet (that can connect to the Wi-Fi)
+# **Turn an Unused Smartphone Into a Smart Display**
+
+
+![alt text](assets/images/sunshine.jpg "text1")
+
+Do you have an (old) unused smartphone? Turn it into a smart display using Google Sheets and some pen and paper, by following this easy step-by-step tutorial.
+
+When you finished the tutorial, you will have turned your phone into 'smart display'. The screen of your phone will then change colour based on some data that you choose. For example, the screen could turn _turn blue on the left when it will rain_, and _turn yellow on the right when the temperature is high_ (see also the picture at the top). Now, when you add a little drawing in front of your phone it shows you, and anyone else at home, what the colours mean.
+
+Since your choice of data and your creativity with drawing allows for countless possibilities, we just can't imagine what you will use your smart display for!
+
+[Check the video](#video){: .btn .btn-blue target="_blank"}
+
+<!-- TODO: get some help, go creative with drawing! ?? Perhaps seperate taasks?-->
+
+## Supplies
+<!-- TODO: something about parents for account, do it together! -->
+- A smartphone that can connect to your Wi-Fi (_preferably one you don't need for a while_)
+- Some pen and paper
 - A computer/laptop to set things up
-- A Google Account for Google Sheets
-- Some creativity and basic materials (e.g. paper, pencils)
+- A [Google account](https://myaccount.google.com/){:target="_blank"} (_for using Google Sheets_)
+- An [IFTTT.com](https://www.ifttt.com/){:target="_blank"} account (_for connecting it to data_)
 
-## How To
-- We are going to make
-- and to so
-picture,
-etcetc
+_If you are using an older smartphone, consider resetting it to factory settings (which will delete everything on the phone). Either way, it is always good practice to update the software and security updates to the latest version (as far as it goes). We wrote a bit more info about the safety of older phones [here](https://www.phonegrown.site/#more-safe-phones){: target="_blank"}._
 
-```shell
-DISCLAIMER!
- - Own risk, keeping a charger plugged in. Becomes / stays hot? Stop this. Secutiry as well. Stay safe. Etc. COmmon sense.
-```
+## Step 1: the Google Sheet
+
+- can set times to make the screen turn black (for example at night) (but we leave the phone on at all times)
+
+## Step 2: the Phone
+Once you found an unused phone for this project (_don't worry about cracked screens!_), we need to change some of its settings and connect it to your Google Sheet.
+
+### Adjust phone settings
+Normally, phones dim their screen in dark spaces or when you don't use it for a minute or so. But, to make it into a smart display we need to make sure its screen always stays on. This won't consume much energy, but we wrote more details about that [here](https://www.phonegrown.site/#more-sust){:target="_blank"}. Adjusting your phone's settings can be different per phone, but will most likely be something like this:
+
+For **Android** phones, enable the `developer` mode by tapping 7 times on the `build number` in _Settings > About Phone_. Then in _Settings > System > Developer Options_ turn on `Stay Awake (when charging)`. For **Apple** devices, we can set the `Auto-Lock` to `Never`, which you can find in _Settings > Display & Brightness_. Here are more details and pictures on how to do this for [Android](https://www.howto-connect.com/how-to-stay-awake-phone-screen-while-charging-on-android/){:target="_blank"} or [iOS](https://forums.tomsguide.com/faq/how-to-change-the-auto-lock-time-in-ios-11.19693/){:target="_blank"}.
+
+Where possible, also disable the `Adaptive brightness (or Auto-Brightness)` of your phone. We want to make sure the screen is visible through the paper. For **Android**, you can most likely change this in _Settings > Display_, and for **Apple** devices this is often in _Settings > Accessibility > Display & Text Size_.
+
+Don't forget to set the screen brightness to 100% and, of course, plug in a charger!
+
+### Connect it to the Google Sheet
+On the phone, go to [www.phonegrown.site/phone](http://www.phonegrown.site/phone){:target="_blank"}. Enter your _Phone Grown ID_ which you can find in the top of your Google Sheet at the 'Home' tab. That's it! Now, in Google Sheets, go to the '[BG] 1' tab, and click on _test_ in the top left. Did your phone's screen change colour?
+
+## Step 3: the Data
+
+## Step 4: the Drawing
+
+#3 Step 5: All good! Now experiment
 
 
 ### Step 1: Prepare the 'obsolete' phone
-You can follow along with a phone of any age, as long as it can connect to the Wi-Fi, can be charged and has a screen (but it can be cracked!). In any case, since we are connecting it to the Internet, we need to do ensure some level of security.
-
-#### Update to the latest security settings
-
-Most phones do not receive security updates after ~3 years<sup>[1](#security)</sup> and become vulnerable for security breaches and 'hacks'. If you are not using the phone for any other purposes, we suggest to 'factory reset' your phone. **This will delete all files, apps and data on the phone**, and can often be done from the phone's `Settings` menu. Whether you did a factory reset or not, it is always good practice to update the software and security updates to the latest version (as far as it goes). Here is how to do that for [Android](https://support.google.com/android/answer/7680439?hl=en-GB) or [iOS](https://support.apple.com/en-gb/HT204204).
 
 
-#### Keep the screen awake
-
-As we want the phone to visibly respond to incoming data, we need to keep the screen awake. On Android phones, we need to enable `developer` options by tapping 7 times on the `build number` in *Settings > About Phone*. Then in `Developer Options` turn on **Stay Awake when charging**. For iOS devices, we can set the **Auto-Lock** to `Never`, which you can find in *Settings > Display & Brightness*. See more info how to do this for [Android](https://www.howto-connect.com/how-to-stay-awake-phone-screen-while-charging-on-android/) or [iOS](https://forums.tomsguide.com/faq/how-to-change-the-auto-lock-time-in-ios-11.19693/).
-
-All that is left is to keep the charger plugged in at all times. Where possible, disable the `Adaptive brightness` (often in Settings > Display) and set the brightness to 100%. This will help in the visibility of the screen when we put some paper in front of it. Of course, keeping your phone plugged in and screen on full brightness consumes energy - though no more than 2kWh (or €1/£1) per year. Click the arrow below to read more.
-
-**<details><summary>More on the power consumption</summary>**
-<i>
-> Keeping your screen on all the time will increase the power usage of your phone. In addition to that, the processor is not going to sleep. This is different from the modern screensavers on phones, as they use processing power and energy intelligently. Unfortunately, since we use older phones and a website instead of an app, we cannot use this approach. Instead, this tutorial requires you to keep the phone on a charger, similar to how you would Chargers that are not charging use [almost no energy](https://www.howtogeek.com/231886/tested-should-you-unplug-chargers-when-youre-not-using-them/). However, leaving your phone on the charger at all times is [not the best treatment](https://www.digitaltrends.com/mobile/expert-advice-on-how-to-avoid-destroying-your-phones-battery/) for the longevity of your battery. This should be fine when using an older, obsolete, phone, but might not be best if you are using a modern phone for this tutorial in the long run.
->
-> **A rough calculation (2kWh, < €1/£1 per year)**\
-Let's take a 'new' Samsung Galaxy S6 (2015) with a battery of 2550 mAH (3.85V). If the phone would be fully drained (and charged) each day, it would take up to 5.5 Wh, or 2 kWh per year. With a current average energy cost of [less than €0,30 / £0,30](https://ec.europa.eu/eurostat/statistics-explained/index.php/Electricity_price_statistics) per kWh, it would cost no more than one euro or pound each year.
-
-</i></details>
 
 
 ## Step 2: Copy the Google Sheet and set it up  
@@ -53,14 +66,8 @@ Rather than using specially-built apps, we will set up a connection with data so
 In your copy of the Google Sheet, a few additional steps are outlined. Follow these and your phone will soon visibly respond to input from 'outside'!
 
 
-## Step 3: Connect your 'old' phone
->This step is also mentioned within your copy of the Google Sheet
 
-On your old phone, visit [phonegrown.site/phone](http://www.phonegrown.site/phone). This website (which is hosted on the open source platform GitHub) presents you with a input field. Enter the 'ID' as shown in the Google Sheet and press connect. You should see a confirmation on the phone as well as in the Google Sheet.
-
-Test your setup by clicking the tick box `☐` in the *Test Rule* in the Google Sheet. Change the *Area of the Phone* and *Color* and see how your phone changes along. Keep this Google Sheet handy, as we will come back to it in the next step.
-
-## Step 4: Connect to data sources (using IFTTT.com)
+// ## Step 4: Connect to data sources (using IFTTT.com)
 There are various ways in which we could let your phone 'listen' to various data sources. In this tutorial, we will be using *If This, Then That ( [ifttt.com](http://www.ifttt.com) )*. If This Than That is a [service that connects numerous services and devices](https://help.ifttt.com/hc/en-us/articles/115010325748), allowing you to create certain interactive rules, called `Applets`. For example, *if* you come home, *then* it can automatically turn on the lights. Most rules are bound to specific products from specific brands (e.g. Gmail, Phillips), though there are a handful of *'generic'* sources, such as the weather or RSS feeds. Setting up any IFTTT 'applet' consists of two steps. Step 1 is setting up a 'trigger' of your choice. In our case, **Step 2 will be the same for any trigger you choose** - as we will be using IFTTT's provided Google Sheet integration to connect to our Google Sheet.
 
 > If you follow this approach, you will need (to create) an IFTTT.com account. Some services require you to log in (often with your Google Account), and require access to some of your information. Read more on [IFTTT's privacy policy](https://ifttt.com/terms) and [Google's advice on third party access](https://support.google.com/accounts/answer/3466521).  
@@ -96,48 +103,3 @@ As with any data source, often the only way to see a result is to wait for it to
 
 1. Open up your copy of the Phone Grown Google Sheet again. In the menu at the top, click '♻️📱 Phone Grown > 📈 New Data Source'. In the popup, paste your copy of the `Formatted Row` (from step 6 above). Click `Ok`.
 > Although this step is technically not required, it sets the 'header' row for the incoming data. This makes it more clear what data is in each column, and allows us to test it as well.
-
-1.  In the bottom section of the `Home` sheet, formulate a rule such that you get the visualisation you are interested. For example, you can turn half of the screen green for 1- minutes if there is a new article, or turn blue for ? Here are two examples:
-| IF | this cell | (current data) | is | this value | THEN | turn this area of the phone | into this color |  | LIVE OUTPUT |
-|-|-|-|-|-|-|-|-|-|-|
-| if | J7 | (07/07/2020 16:35) | bigger than | =NOW()-"00:10" | then | top [D3:G6] | ![#c5f015](https://via.placeholder.com/15/c5f015/000000?text=+) |  | ![#c5f015](https://via.placeholder.com/15/c5f015/000000?text=+) |
-| if | L7 | (test_EntryTitle) | contains | COVID | then | bottom [D7:G10] | ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) |  | ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) |
-
-1.
-
-
-
-# How does it work?
-
-- link to GAS README
-- link to Firebase README
-- explainer,
-- etc..
-
-# Contribute
-
-# License
-
-# More examples please!
-
-##### Other examples using IFTTT.com
-<details>
-<summary>Blink 5 times each hour</summary>
-
-> Something about Date & Time trigger, additional rule
-
-</details>
-
-<details>
-<summary>Turn blue when it is going to rain, yellow if it clears up</summary>
-
-> Something about Date & Time trigger, additional rule
-
-</details>
-
-
-# Future vision
-- smart use of energy (not screen always on), detecting movement (when is it relevant?), etc.
-- explore reuse of other types of devices in a safe way
-
-<a name="security"><sup>[1]</sup></a> For iOS devices this is roughly after 5 year since its release, for Android this is often shorter (~3 years). You can read more about [the safety of using older phones here](https://www.tomsguide.com/uk/us/old-phones-unsafe,news-24846.html?region-switch=1593506477).
