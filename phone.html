@@ -24,6 +24,12 @@
 				<h2>!</h2>
 				<p>Something went wrong with the connection to the Google Sheet. Please reconnect below.</p>
 			</div>
+
+			<div class="menu" id="menu_orientation">
+				<h2>!</h2>
+				<p>Please disable the auto-rotate on Android (or enable the orientation lock on iOS)</p>
+			</div>
+
 			<div class="menu" id="menu0">
 				<h2>Phone Grown</h2>
 				<p id="helptext0">Enter your <b>PhoneGrown ID</b> here</p>
@@ -32,18 +38,24 @@
 				<input type="text" name="scriptUrl" id="scriptUrl" placeholder="PhoneGrown ID" />
 				<button id="IDbutton" onClick="submitID(document.getElementById('scriptUrl').value)">Click to Connect</button>
 			</div>
+
 			<div class="menu purple" id="menu1">
 				<h2>Phone Grown</h2>
 				<p>Success! Connected to the Google Sheet<br/><br/>Click anywhere outside this box to close the menu<br/></p>
-				<button onClick="resetConnection('');">Reset Connection</button>
+				<button onClick="resetConnection('');">Reset connection</button>
+				<button style="display:none;" id="fullscreen" onClick="toggleFullScreen();">Toggle fullscreen</button>
+				<button id="flipscreen" onClick="flipscreen();">Flip screen</button>
 			</div>
+
 		</div>
+
 		<div class="menu" id="hint">
 			<p>At any time, touch the screen to see the menu</p>
 		</div>
 	</main>
 	<script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-app.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-firestore.js"></script>
+	<script type="text/javascript" src="{{ 'assets/js/modernizr.js' | absolute_url }}"></script>
 	<script type="text/javascript" src="{{ 'assets/js/phone.js' | absolute_url }}"></script>
 
 </body>

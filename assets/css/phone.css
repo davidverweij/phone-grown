@@ -15,6 +15,13 @@ body {
   background: black;
   position:relative;
 }
+
+.flipped {
+  -moz-transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+}
+
 main {
   display:flex;
   align-items: center;
@@ -115,6 +122,7 @@ button {
   box-shadow: 2px 4px 0px #0454BE;
   border: 3px solid black;
   cursor: pointer;
+  margin:.3rem;
 }
 button:active {
   top: 3px;
@@ -134,8 +142,16 @@ button:active {
   color: black;
 }
 
+#menu_orientation {
+ background: #fbbc04;
+ color: black;
+ position:absolute;
+ z-index:3
+ 
+}
+
 .menu > * {
-  padding:1rem;
+  padding:.8rem;
   width:100%;
 }
 
