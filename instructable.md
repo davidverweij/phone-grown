@@ -85,6 +85,7 @@ There are quite some tutorials out there that go into depth, such as [this one](
 ## Step 5: All good! Now experiment
 
 functionalities:
-- coloured areas overlap! E.g. (pictures)
+- coloured areas overlap and mix! E.g. (pictures)
 - can set times to make the screen turn black (for example at night) (but we leave the phone on at all times)
 - green dot slowly blinking to show it is running (will show red if issues)
+- curious about the data that came in? Check logs and data history!

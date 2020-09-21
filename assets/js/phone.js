@@ -46,21 +46,26 @@ document.addEventListener("DOMContentLoaded", function() {
  * @param {Boolean} retry - adjust the helptext if the connection failed
  */
 function showUI(int, bool = true, retry = false) {
-  if (int == 0) menu0shown = bool;
-  document.getElementById('helptext0').style.display = (retry ? "none" : "block");
-  document.getElementById('helptext1').style.display = (retry ? "block" : "none");
-  if (retry) {
-    loading(false);
-    document.getElementById("scriptUrl").value = "";
-  }
-  document.getElementById('menu' + int).style.display = (bool ? "flex" : "none");
+  if (int == 2){
+    document.getElementById('menu_error').style.display = "block";
+  } else {
+    document.getElementById('menu_error').style.display = "none";
+    if (int == 0) menu0shown = bool;
+    document.getElementById('helptext0').style.display = (retry ? "none" : "block");
+    document.getElementById('helptext1').style.display = (retry ? "block" : "none");
+    if (retry) {
+      loading(false);
+      document.getElementById("scriptUrl").value = "";
+    }
+    document.getElementById('menu' + int).style.display = (bool ? "flex" : "none");
 
-  // If we hide a form, show a hint for a few seconds that shows how to bring up the menu
-  if (!bool) {
-    document.getElementById('hint').style.opacity = 1;
-    setTimeout(function() {
-      document.getElementById('hint').style.opacity = 0;
-    }, 5000);
+    // If we hide a form, show a hint for a few seconds that shows how to bring up the menu
+    if (!bool) {
+      document.getElementById('hint').style.opacity = 1;
+      setTimeout(function() {
+        document.getElementById('hint').style.opacity = 0;
+      }, 5000);
+    }
   }
 }
 
@@ -146,9 +151,11 @@ function submitID(url) {
 function startDatabaseListener() {
   db_unsubscribe = db.collection("anonymous").doc(getCookie("databasePing"))
     .onSnapshot(function(doc) {
-
       // (1a) onSnapShot is executed when there is a change in the database
       getDataFromSheet();
+    }, function(error) {
+        //error, let's 'shut down' by detaching all connections (current solution)
+        resetConnection('error')
     });
 }
 
@@ -188,6 +195,7 @@ function getDataFromSheet() {
         periodicTimeout = setTimeout(getDataFromSheet, periodicTimer); // in 30 minutes
 
       } else {
+        resetConnection('error')
         // something went wrong.. TODO: Handle error
       }
     }
@@ -278,7 +286,7 @@ function updateAmbientDisplay(newInstructions = '[]') {
   if (sleeping >= 0) {
     // This implementation does not alter the intstructions nor removes operations based on sleeptime
     // instead, just ignores the result. This allows for sudden changes in sleep times (e.g. removes that constraint)
-    html = "<div class='sleepmode'>sleep mode on</div>";
+    html = "<div class='sleepmode'>sleeping...</div>";
     // check back again once sleeptime is over (or new instructions has been sent)
     nextTimeoutCheck = Math.max(sleeping, now + 5); // in the unlikely event of sleeping ~ 0, wait 5 seconds at least
   } else {
@@ -396,12 +404,18 @@ function getCookie(name) {
 /**
  * Deletes the used cookies and disable the database connection to start with a clean slate
  */
-function resetCookies() {
+function resetConnection(type) {
+    showUI(0);
+    showUI(1, false);
     setCookie("gSheetLink", "");
     setCookie("databasePing", "");
     db_unsubscribe();
     currentInstructions = [];
     updateAmbientDisplay();
+
+    if (type == 'error'){
+      showUI(2); // show error message
+    }
 }
 
 
