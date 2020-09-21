@@ -64,7 +64,7 @@ That's it! Now, in Google Sheets, go to the _'[BG] 1'_ tab, and click on _test_ 
 There are various ways in which we could let your phone respond to different types of data, but in this tutorial we will be using a website called [IFTTT](http://www.ifttt.com){:target="_blank"}, or "If This, Then That". This website allows us to create connections with different types of data, which they call _Applets_. Lucky for us, they support Google Sheets! If you don't have an IFTTT account yet, now would be a good time. You can sign up at [ifttt.com/join](https://ifttt.com/join){: target="_blank"}.
 
 ### Create an 'Applet'
-On IFTTT.com we can create 'applets'. These are 
+On IFTTT.com we can create 'applets'. These are
 
 
 ###
@@ -87,3 +87,4 @@ There are quite some tutorials out there that go into depth, such as [this one](
 functionalities:
 - coloured areas overlap! E.g. (pictures)
 - can set times to make the screen turn black (for example at night) (but we leave the phone on at all times)
+- green dot slowly blinking to show it is running (will show red if issues)

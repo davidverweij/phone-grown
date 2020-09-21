@@ -16,7 +16,7 @@ When you finished the tutorial, you will have turned your phone into 'smart disp
 
 Since your choice of data and your creativity with drawing allows for countless possibilities, we just can't imagine what you will use your smart display for!
 
-<!-- [Check the video](#video){: .btn .btn-blue target="_blank"}-->
+[Check the video](#video){: .btn .btn-blue target="_blank"}
 
 ## Tools & Materials you need {#materials}
 - A smartphone that can connect to your Wi-Fi (_preferably one you don't need for a while_)
@@ -30,12 +30,11 @@ We're just testing the last bits of the tutorial and will publish the tutorial o
 
 [Notify me when the tutorial is ready](https://forms.gle/DuNouDBeYJBhXBcDA){: .btn .btn-green target="_blank"}
 
-<!--
+
 ## Share your creation! {#share}
 Although the template in the tutorial was made as part of a research project, it is fully stand-alone, [private and secure](#more-safe), and publicly available for anyone to follow. In other words, we have no clue how you are using it! Since your choice of data and your creativity with drawing allows for countless possibilities, we just can't imagine what you will use your smart display for.
 
 Let us know what you created by using the [I made it!](#imadeits){: .btn .btn-yellow target="_blank"} button [on the Instructables page](#instructable){:target="_blank"}!
--->
 
 ## Join our research {#join}
 Aside from being curious about what you have created, we are also looking for families who want to follow this tutorial, and whom we can interview about doing so. We would like to hear what they've created and how they've put their smart display to use! To show our thanks, we are giving each participating family a small monetary reward. Interested, or questions? Contact the researcher at _d.verweij2[@]newcastle.ac.uk_ or read more [about the research study](#more-study).

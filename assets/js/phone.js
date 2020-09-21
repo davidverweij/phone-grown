@@ -15,13 +15,14 @@ firebase.initializeApp({
   projectId: "phone-grown",
 });
 const db = firebase.firestore();
+var db_unsubscribe;   // a reference to stop the database listener
 
 // (3) when loaded, show the little form to connect to a Google sheet
 document.addEventListener("DOMContentLoaded", function() {
 
   let oldLink = getCookie("gSheetLink");
   showUI(0);
-  if (typeof(oldLink) != "undefined") {
+  if (typeof(oldLink) != "undefined" && oldLink != "") {
     document.getElementById("scriptUrl").value = oldLink;
     submitID(oldLink);
   }
@@ -32,11 +33,6 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("ambientdisplay").addEventListener("click", function() {
     if (menu0shown) showUI(1, false)
     else showUI(1, (document.getElementById('menu1').style.display == "none"));
-  });
-
-  // add a listener if the user closes a menu
-  document.getElementById("close").addEventListener("click", function() {
-    showUI(1, false);
   });
 
 });
@@ -76,6 +72,7 @@ function showUI(int, bool = true, retry = false) {
 function loading(bool) {
   document.getElementById('loader').style.display = (bool ? "block" : "none");
   document.getElementById('IDbutton').style.display = (bool ? "none" : "block");
+  document.getElementById('scriptUrl').style.display = (bool ? "none" : "block");
 }
 
 
@@ -147,7 +144,7 @@ function submitID(url) {
  * Start listening to changes to the database, to get notified when new information is in the GSheet.
  */
 function startDatabaseListener() {
-  db.collection("anonymous").doc(getCookie("databasePing"))
+  db_unsubscribe = db.collection("anonymous").doc(getCookie("databasePing"))
     .onSnapshot(function(doc) {
 
       // (1a) onSnapShot is executed when there is a change in the database
@@ -358,13 +355,13 @@ function updateAmbientDisplay(newInstructions = '[]') {
  * @param {Object} options - optionally override default options
  */
 
-function setCookie(name, value, options = {}) {
+function setCookie(name, value) {
   options = {
     path: '/',
     secure: true, // security measure
-    'max-age': 31536000, // set expiry date at one year (in seconds)
+    'max-age': 31530000, // set expiry date at one year (in seconds)
     // also add expires date, as max-age is relatively new (old browser support)
-    'expires': new Date(Date.now() + (31536000 * 1000)),
+    'expires': (new Date(Date.now() + (21536000 * 1000))).toUTCString(),
     'samesite': 'strict', // security measure
   };
 
@@ -394,6 +391,17 @@ function getCookie(name) {
     "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
   ));
   return matches ? decodeURIComponent(matches[1]) : undefined;
+}
+
+/**
+ * Deletes the used cookies and disable the database connection to start with a clean slate
+ */
+function resetCookies() {
+    setCookie("gSheetLink", "");
+    setCookie("databasePing", "");
+    db_unsubscribe();
+    currentInstructions = [];
+    updateAmbientDisplay();
 }
 
 
