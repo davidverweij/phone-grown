@@ -442,4 +442,8 @@ function setup() {
 
   // Logging History
   if (activeLogging) prependRow(doc.getSheetByName(variables.sheetNames.logs), ["Setup. New Anonymous User Created: " + script.getProperty("userID")], true);
+
+  // (5) Inform the user of the action through a popup
+   SpreadsheetApp.getUi().alert('Setup step 1 complete!');
+
 }

@@ -16,7 +16,7 @@ When you finished the tutorial, you will have turned your phone into 'smart disp
 
 Since your choice of data and your creativity with drawing allows for countless possibilities, we just can't imagine what you will use your smart display for!
 
-<!-- [Check the video](#video){: .btn .btn-blue target="_blank"}-->
+[Check the video](#video){: .btn .btn-blue target="_blank"}
 
 ## Tools & Materials you need {#materials}
 - A smartphone that can connect to your Wi-Fi (_preferably one you don't need for a while_)
@@ -30,12 +30,11 @@ We're just testing the last bits of the tutorial and will publish the tutorial o
 
 [Notify me when the tutorial is ready](https://forms.gle/DuNouDBeYJBhXBcDA){: .btn .btn-green target="_blank"}
 
-<!--
+
 ## Share your creation! {#share}
 Although the template in the tutorial was made as part of a research project, it is fully stand-alone, [private and secure](#more-safe), and publicly available for anyone to follow. In other words, we have no clue how you are using it! Since your choice of data and your creativity with drawing allows for countless possibilities, we just can't imagine what you will use your smart display for.
 
 Let us know what you created by using the [I made it!](#imadeits){: .btn .btn-yellow target="_blank"} button [on the Instructables page](#instructable){:target="_blank"}!
--->
 
 ## Join our research {#join}
 Aside from being curious about what you have created, we are also looking for families who want to follow this tutorial, and whom we can interview about doing so. We would like to hear what they've created and how they've put their smart display to use! To show our thanks, we are giving each participating family a small monetary reward. Interested, or questions? Contact the researcher at _d.verweij2[@]newcastle.ac.uk_ or read more [about the research study](#more-study).
@@ -77,31 +76,33 @@ When a smart 'rule' you created in the Google Sheet is activated (e.g. the data 
 To get your smart display listening to data, we use [IFTTT.com](https://ifttt.com/google_sheets){:target="_blank"} - which already supports Google Sheets. Then, each time new data is added to the Sheet, the code will check if any of your smart 'rules' (that you can create) should be activated. If it activates, the code will update your anonymous account in the database. In return, your phone will visit your web app to get the latest instructions. If you are interested, you can find more details on [GitHub](https://github.com/davidverweij/phone-grown){:target="_blank"}.
 
 ### Privacy and safety {#more-safe}
-We designed this tutorial with three things in mind. First, we want you to be able to create a smart display in such a way that you don't have to program or fiddle with complex tools. Second, you and your family should be able to do this by yourself (DIY), to work together and have fun! And lastly, we wanted this to be standalone, being able to grow and evolve without us - what others would call 'open source'. That is why we based our tutorial on existing, common and (hopefully) familiar tools, such as Google Sheets. This way, you are in control over the tools, and in cases where some functionality is a bit hidden or complex, we made things as transparent as possible, read more [below](#more-safe-details).
+We designed this tutorial with three things in mind. First, we want you to be able to create a smart display in such a way that you don't have to program or fiddle with complex tools. Second, you and your family should be able to do this by yourself (DIY), to work together and have fun! And lastly, we wanted this to be standalone, being able to grow and evolve without us - what others would call 'open source'. That is why we based our tutorial on existing, common and (hopefully) familiar tools, such as Google Sheets. This way, you are in control over the tools, and in cases where some functionality is a bit hidden or complex, we made things as transparent as possible, read more [below](#more-privacy).
 
-Aside from one 'dependency' (our external database, see also below), you have access to everything: your copy of the Google Sheet, the functionality that is attached to that via code, the IFTTT 'triggers' you set up and even the phone and its web browser. Compared to products you buy in-store, we think this approach is quite valuable and interesting, and would love to hear your thoughts on that. Of course, whilst we did our very best to be as transparent and clear as possible, we welcome any feedback, help and [contributions](#more-contr).
+Aside from one 'dependency' (our external database, see also below), you have access to everything: your copy of the Google Sheet, the functionality that is attached to that via code, the IFTTT 'triggers' you set up and even the phone and its web browser. Compared to products you buy in-store, we think this approach is quite valuable and interesting, and would love to hear your thoughts on that. Of course, whilst we did our very best to be as transparent and clear as possible, we welcome any feedback, help and [contributions](#more-help).
 
 #### **Disclaimer** {#disclaimer}
 Whilst we put a lot of effort in writing this tutorial, it remains a 'do-it-yourself' activity for which we cannot take any liability. It is your responsibility to use this tutorial as you see fit, and in doing so, you understand that this comes without any warranty. We cannot be held liable for any claim, damage or other liability from following this tutorial or using the tools referred to. More details in our [MIT License](https://github.com/davidverweij/phone-grown/blob/master/LICENSE){:target="_blank"}, the terms of service of [Instructables.com](http://usa.autodesk.com/adsk/servlet/item?siteID=123112&id=21959721){:target="_blank"} and of [IFTTT.com](https://ifttt.com/terms){:target="_blank"}.
 
 
-#### **You privacy and safety** {#more-safe-details}
-Of course, even though you do not need to do any programming, it doesn't mean some code is involved. _So how did we ensure your privacy and safety?_ We designed almost all functionality into a Google Sheet - that you can freely copy. By copying it, you can access all aspects of the Sheet including the code, which prevents it from having any active connections to other services. Only when you 'publish' the code as a web app, it becomes publicly accessible. To connect to your web app, you need to know the complex link. Besides, the code is written such that when something connects with your web app, it can only retrieve the phones instructions. These instructions include a time, duration and the colours for the background, no sensitive data at all.
+#### **You privacy and safety** {#more-privacy}
+Of course, even though you do not need to do any programming, it doesn't mean some code is involved. _So how did we ensure your privacy and safety?_ We designed almost all functionality into a Google Sheet - that you can freely copy. By copying it, you can access all aspects of the Sheet including the code, which prevents it from having any active connections to other services. Only when you 'publish' the code as a web app, it becomes publicly accessible. To connect to your web app, you need to know the complex link. Besides, the code is written such that when something connects with your web app, it can only retrieve the phones instructions. These instructions include a time, duration and the colours for the background, no sensitive data at all. When you want to undo this at a later stage, follow [these steps to disconnect everything](#more-undo){:target="_blank"}.
 
 The only functionality that we were unable to incorporate into the Google Sheet was a real-time connection between the phone and that Sheet. This is why your copy of the Google Sheet will connect to our database hosted in West Europe. When it does, it will create an anonymous account. The database has very strict and elaborate security rules (see [here](https://github.com/davidverweij/phone-grown/tree/master/resources#firestore-rules){:target="_blank"}) so that only the anonymous 'user' can store something in this database, and this can only be one single number, no more - no less. Each time your code connects with that database it will authenticate itself with a complex name and even more complex password only your code knows. Reading from this database can however be done without authentication, but only if you know the complex name of your anonymous 'user'. Even then, it only stores a single number, again no sensitive data at all.
 
 Of course, the smart display depends on incoming data, for which we use IFTTT.com. We did our best to ensure your privacy and safety on our part, but for the use of IFTTT we have to refer you to their [terms and conditions](https://ifttt.com/terms){:target="_blank"}. More details of what the code we wrote is and what it does can be found [here](https://github.com/davidverweij/phone-grown){:target="_blank"}.
 
-
-##### Using older phones {#more-safe-phones}
+##### Using older phones {#more-phones}
 Since this tutorial motivates you to use an older, unused smartphone, it is worth mentioning that most phones do not receive security updates after ~3 years<sup>*</sup> and become vulnerable for security breaches and 'hacks'. If you are not using the phone for any other purposes, we suggest to 'factory reset' your phone. Note that _this will delete all files, apps and data on the phone_. This can often be done from the phone's `Settings` menu. Whether you did a factory reset or not, it is always good practice to update the software and security updates to the latest version (as far as it goes). Here is how to do that for [Android](https://support.google.com/android/answer/7680439?hl=en-GB){:target="_blank"} or [iOS](https://support.apple.com/en-gb/HT204204){:target="_blank"}. You can read more about [the safety of using older phones here](https://www.tomsguide.com/uk/us/old-phones-unsafe,news-24846.html?region-switch=1593506477){:target="_blank"}.
 
 _<sup>*</sup>For iOS devices this is ~5 years since its first release, for Android this is often shorter (~3 years)._
+
+##### Disconnecting everything {#more-undo}
+If at any point you want to undo the (internet) connections made in this tutorial, follow these 3 steps. (1) In the Google Sheet, go to _Tools > Script Editor_. On this new tab's menu bar, go to _Publish > Deploy as web app_ and choose _Disable web app_ in the top right of the popup. (2) On your phone, go to https://www.phonegrown.site/phone. If it is connected to your Google Sheet, press _Reset Connection_. (3) For any data connections (or 'applets') you made wit IFTTT, go to [IFTTT.com](www.ifttt.com){: target="_blank"} and 'disconnect' these applets. You have now removed any connections we have set up in this tutorial.
 
 ### Sustainability {#more-sust}
 We admit that the tutorial asks you to keep a phone up and running indefinitely to create a smart display. This introduces some electricity consumption (roughly 2kWh per year, or €1/£1 per year)<sup>*</sup>, especially if that phone was previously just kept in storage. The tutorial also requires the phone to be constantly connected to a charger. Whilst this doesn't consume (much) extra electricity, leaving your phone on the charger at all times is not the best treatment for your battery. This should be fine if you are using an older, unused, phone, but might not be best if you are using a modern phone for this tutorial in the long run. Despite these effects, we think this tutorial to explore how smart displays can contribute in your life takes a reasonable sustainable approach - especially compared to producing and buying products from the store. If this tutorial made you think about sustainability, whether you built a smart display or not, we highly recommend you to turn in unused phones (and other products in general) for recycling so its [precious materials can be reused](https://www.recyclenow.com/recycling-knowledge/how-is-it-recycled/electricals){:target="_blank"}.
 
 _<sup>*</sup>Fully draining and charging a Samsung Galaxy S6 (2015 - 2550 mAH 3.85V battery) each day would take up ~5.5 Wh, or 2 kWh per year. For €0,30 / £0,30 per kWh, this would cost no more than €/£1 each year._
 
-### Contributing {#more-contr}
+### Contributing {#more-help}
 We are always looking for ways to improve our work and we welcome any suggestions, tools or tips about the tutorial. You can leave feedback on the [Instructables.com](#instructablescom){:target="_blank"} page, contact me at d.verweij2[@]newcastle.ac.uk or contribute to this project on [GitHub](https://github.com/davidverweij/phone-grown){:target="_blank"}.

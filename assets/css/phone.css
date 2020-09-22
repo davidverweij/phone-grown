@@ -15,6 +15,13 @@ body {
   background: black;
   position:relative;
 }
+
+.flipped {
+  -moz-transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+}
+
 main {
   display:flex;
   align-items: center;
@@ -45,6 +52,24 @@ a {
   border: 1px solid black;
 }
 
+#status {
+  background: #10ac7d;
+  width: 1rem;
+  height: 1rem;
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+  border-radius: 50%;
+  border: 2px solid black;
+  z-index:3;
+
+
+  -webkit-animation: flickerAnimation 15s infinite;
+  -moz-animation: flickerAnimation 15s infinite;
+  -o-animation: flickerAnimation 15s infinite;
+  animation: flickerAnimation 15s infinite;
+}
+
 
 #ambientdisplay{
   width:100vw;
@@ -59,16 +84,17 @@ a {
 }
 
 .sleepmode {
-  margin: 10% 10%;
+  margin: 1rem 3rem;
   font-size: 1.2rem;
   color: gray;
 }
 
 .menu {
   display: none;
-  background: #006600;
-  border: 1px solid black;
-  max-width: 80vw;
+  background: #227efa;
+  border: 3px solid black;
+  max-width: 100vw;
+  width: 15rem;
   flex-direction: column;
   align-items: center;
 
@@ -78,18 +104,51 @@ a {
   color: white;
   text-align: center;
 
-  padding: 2rem;
-  -webkit-border-radius: 6px;
-  -moz-border-radius: 6px;
-  -ms-border-radius: 6px;
-  -o-border-radius: 6px;
+  padding: 1rem;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -o-border-radius: 10px;
+  border-radius: 10px;
+}
+
+button {
+  color: white;
+  position: relative;
+  display: block;
   border-radius: 6px;
+  font-size: 1.2em;
+  background: #227efa;
+  box-shadow: 2px 4px 0px #0454BE;
+  border: 3px solid black;
+  cursor: pointer;
+  margin:.3rem;
 }
-.blue {
-  background: #002866;
+button:active {
+  top: 3px;
+  box-shadow: none;
 }
+
+.purple {
+  background: #7253ed;
+}
+.purple button {
+  background: #7253ed;
+  box-shadow: 2px 4px 0px #5834EA;
+}
+
+#menu_error {
+  background: #fbbc04;
+  color: black;
+}
+
+#menu_orientation {
+ background: #fbbc04;
+ color: black;
+}
+
 .menu > * {
-  padding:1rem;
+  padding:.8rem;
   width:100%;
 }
 
@@ -108,10 +167,12 @@ a {
   max-width: 100vw;
   border:none;
   font-size: 1.2rem;
+  z-index:-1;
+  pointer-events: none;
 }
 
 input {
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.3);
   color: #fff;
   text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
   display: block;
@@ -129,26 +190,13 @@ input {
   outline: none;
 }
 
-button {
-  color: white;
-  position: relative;
-  display: block;
-  border-radius: 6px;
-  font-size: 1.2em;
-  background: #005200;
-  box-shadow: 0px 3px 0px #112f25;
-  cursor: pointer;
-}
-button:active {
-  top: 3px;
-  box-shadow: none;
-}
+
 
 #loader {
   display: none;
   margin: 1rem auto;
 width: 1px;
-border: 8px solid #006600;
+border: 8px solid #227efa;
 border-radius: 50%;
 border-top: 8px solid white;
 border-bottom: 8px solid white;
@@ -164,4 +212,25 @@ animation: spin 2s linear infinite;
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+@keyframes flickerAnimation {
+  0%   { opacity:.8; }
+  50%  { opacity:.2; }
+  100% { opacity:.8; }
+}
+@-o-keyframes flickerAnimation{
+  0%   { opacity:.8; }
+  50%  { opacity:.2; }
+  100% { opacity:.8; }
+}
+@-moz-keyframes flickerAnimation{
+  0%   { opacity:.8; }
+  50%  { opacity:.2; }
+  100% { opacity:.8; }
+}
+@-webkit-keyframes flickerAnimation{
+  0%   { opacity:.8; }
+  50%  { opacity:.2; }
+  100% { opacity:.8; }
 }
