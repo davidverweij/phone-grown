@@ -1,6 +1,6 @@
 // (1) use global variables
 var currentInstructions = []; // list of background to implement
-var lastSeenInstruction = 0;  // timestamp of last received instruction
+var lastSeenInstruction = 0; // timestamp of last received instruction
 var lastSeenClearPhone = 0;
 var timeout; // timeout for tracking duration of backgrounds
 var periodicTimeout; // timeout to keep in touch with google sheet
@@ -11,6 +11,9 @@ var menu0shown = true; // do not display second menu if first is shown
 // Enable methods depending on browser. If it doesn't support cookies we can't continue..
 if (!Modernizr.cookies) {
   // supported, we can continue
+  alert("I am sorry, your browser does not seem to support cookies." +
+    " This website requires cookies to operate. Please choose another browser or change privacy settings and try again."
+  );
 } else {
 
   // (2) initiale the database object (with specific details for this projects' database) and connect
@@ -20,7 +23,7 @@ if (!Modernizr.cookies) {
     projectId: "phone-grown",
   });
   const db = firebase.firestore();
-  var db_unsubscribe;   // a reference to stop the database listener
+  var db_unsubscribe; // a reference to stop the database listener
 
   // (3) when loaded, show the little form to connect to a Google sheet
   document.addEventListener("DOMContentLoaded", function() {
@@ -35,6 +38,7 @@ if (!Modernizr.cookies) {
       // Announce the new orientation number
       if (window.orientation == -90 || window.orientation == 90) {
         document.getElementById('menu_orientation').style.display = "block"
+        showUI(1, false);
       } else {
         document.getElementById('menu_orientation').style.display = "none"
       }
@@ -66,7 +70,7 @@ if (!Modernizr.cookies) {
    * @param {Boolean} retry - adjust the helptext if the connection failed
    */
   function showUI(int, bool = true, retry = false) {
-    if (int == 2){
+    if (int == 2) {
       document.getElementById('menu_error').style.display = "block";
     } else {
       document.getElementById('menu_error').style.display = "none";
@@ -174,8 +178,8 @@ if (!Modernizr.cookies) {
         // (1a) onSnapShot is executed when there is a change in the database
         getDataFromSheet();
       }, function(error) {
-          //error, let's 'shut down' by detaching all connections (current solution)
-          resetConnection('error')
+        //error, let's 'shut down' by detaching all connections (current solution)
+        resetConnection('error')
       });
   }
 
@@ -247,8 +251,8 @@ if (!Modernizr.cookies) {
         // e.g. 00:00     to      from   00:00
         //        |---a---|    b   |---c---|
 
-        if (now < to) return to;                     // a
-        else if (now > from) return to + (60*60*24); // c
+        if (now < to) return to; // a
+        else if (now > from) return to + (60 * 60 * 24); // c
         else return -from; // negative, time left    // b
 
       } else if (to > from) {
@@ -258,7 +262,7 @@ if (!Modernizr.cookies) {
 
         if (now < from) return -from; // negative, time left          // a
         else if (now > to) return -(from + (60 * 60 * 24)) // ditto  // c
-        else return to                                                // b
+        else return to // b
       } // else if equal, do nothing.
     }
     // in all other cases
@@ -425,26 +429,26 @@ if (!Modernizr.cookies) {
    * Deletes the used cookies and disable the database connection to start with a clean slate
    */
   function resetConnection(type) {
-      showUI(0);
-      showUI(1, false);
-      setCookie("gSheetLink", "");
-      setCookie("databasePing", "");
-      db_unsubscribe();
-      currentInstructions = [];
-      updateAmbientDisplay();
+    showUI(0);
+    showUI(1, false);
+    setCookie("gSheetLink", "");
+    setCookie("databasePing", "");
+    db_unsubscribe();
+    currentInstructions = [];
+    updateAmbientDisplay();
 
-      if (type == 'error'){
-        showUI(2); // show error message
-      }
+    if (type == 'error') {
+      showUI(2); // show error message
+    }
   }
 
 
   /*
-  * Toggles full screen based on an event handler (only used when the browser supports it)
-  */
+   * Toggles full screen based on an event handler (only used when the browser supports it)
+   */
   function toggleFullScreen() {
     if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
+      document.documentElement.requestFullscreen();
     } else {
       if (document.exitFullscreen) {
         document.exitFullscreen();
@@ -452,7 +456,7 @@ if (!Modernizr.cookies) {
     }
   }
 
-  function flipscreen(){
+  function flipscreen() {
     document.body.classList.toggle('flipped');
   }
 

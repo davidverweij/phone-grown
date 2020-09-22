@@ -145,9 +145,6 @@ button:active {
 #menu_orientation {
  background: #fbbc04;
  color: black;
- position:absolute;
- z-index:3
- 
 }
 
 .menu > * {
