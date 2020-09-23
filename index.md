@@ -12,7 +12,7 @@ Do you have an (old) unused smartphone? Turn it into a smart display using Googl
 _This tutorial is developed by [David Verweij](https://openlab.ncl.ac.uk/people/david-verweij/){:target="_blank"} at Newcastle University as part of his PhD research, read more [here](#more-about)._
 
 ## What can it do? {#whatisit}
-When you finished the tutorial, you will have turned your phone into 'smart display'. The screen of your phone will then change colour based on some data that you choose. For example, the screen could turn _turn blue on the left when it will rain_, and _turn yellow on the right when the temperature is high_ (see also the picture at the top). Now, when you add a little drawing in front of your phone it shows you, and anyone else at home, what the colours mean.
+When you finished the tutorial, you will have turned your phone into 'smart display'. The screen of your phone will then change colour based on some data that you choose. For example, the screen could _turn blue on the left when it will rain_, and _turn yellow on the right when the temperature is high_ (see also the picture at the top). Now, when you add a little drawing in front of your phone it shows you, and anyone else at home, what the colours mean.
 
 Since your choice of data and your creativity with drawing allows for countless possibilities, we just can't imagine what you will use your smart display for!
 

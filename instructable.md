@@ -15,7 +15,7 @@ carousel_step1:
 
 Do you have an (old) unused smartphone? Turn it into a smart display using Google Sheets and some pen and paper, by following this easy step-by-step tutorial.
 
-When you finished the tutorial, you will have turned your phone into 'smart display'. The screen of your phone will then change colour based on some data that you choose. For example, the screen could turn _turn blue on the left when it will rain_, and _turn yellow on the right when the temperature is high_ (see also the picture at the top). Now, when you add a little drawing in front of your phone it shows you, and anyone else at home, what the colours mean.
+When you finished the tutorial, you will have turned your phone into 'smart display'. The screen of your phone will then change colour based on some data that you choose. For example, the screen could _turn blue on the left when it will rain_, and _turn yellow on the right when the temperature is high_ (see also the picture at the top). Now, when you add a little drawing in front of your phone it shows you, and anyone else at home, what the colours mean.
 
 Since your choice of data and your creativity with drawing allows for countless possibilities, we just can't imagine what you will use your smart display for!
 
@@ -34,9 +34,9 @@ Since your choice of data and your creativity with drawing allows for countless 
 _If you are using an older smartphone, consider resetting it to factory settings (warning, this will delete everything on the phone!). Either way, it is always good practice to update the software and security features to the latest version (as far as it goes). We wrote a bit more info about the safety of older phones [here](https://www.phonegrown.site/#more-phones){: target="_blank"}._
 
 ## Step 1: copy the Google Sheet
-Normally, Google Sheets is mainly used for storing numbers in large tables - but because it is online and very flexible, you can do quite interesting things with it. For this tutorial we will use it as the  'brain' of your smart display. We have prepared a Sheet for you with everything you need - which works almost like an app. With it, you can create the colourful backgrounds for your phone and easily set up rules depending on the data you'd like (for example, 'turn blue when it rains'). We need to copy this Sheet using the link below and prepare it in two quick steps.
+Normally, Google Sheets is mainly used for storing numbers in large tables - but because it is online and very flexible, you can do quite interesting things with it. For this tutorial, we will use it as the  'brain' of your smart display. We have prepared a Sheet for you with everything you need - which works almost like an app. With it, you can create the colourful backgrounds for your phone and easily set up rules depending on the data you'd like (for example, 'turn blue when it rains'). We need to copy this Sheet using the link below and prepare it in two quick steps.
 
-On a laptop/computer go, copy the [the Google Sheet from here](#copy){: target="_blank"}. _This will probably ask you to log in to a Google Account._
+On a laptop/computer go, copy the [Google Sheet from here](#copy){: target="_blank"}. _This will probably ask you to log in to a Google Account._
 
 ### 'Publish' your Google Sheet
 The following steps will connect the Sheet to the internet, which helps you to connect your phone in the next section. We only have to click a few buttons, but it might look somewhat messy. This is because we basically are turning your Sheet into a little app. Most likely you have never done this before, and that is why Google will show you a warning at some point. If you copied the Google Sheet from the link above - it is safe to continue. However, if you want to know precisely what your app will do, we explain it in more detail on our website [here](https://www.phonegrown.site/#more-tech). At any point in time, you can always undo the 'publishing' of your app by following [these steps](https://www.phonegrown.site/#more-undo).
@@ -61,7 +61,7 @@ Once you found an unused phone for this project (_don't worry about cracked scre
 Normally, phones dim their screen in dark spaces or when you don't use it for a minute or so. But, to make it into a smart display we need to make sure its screen always stays on. This won't consume much energy, but we wrote more details about that [here](https://www.phonegrown.site/#more-sust){:target="_blank"}. Adjusting your phone's settings can be different per phone, but will most likely be something like this:
 
 1. For **Android** phones, enable the _developer_ mode by tapping 7 times on the _build number_ in _Settings > About Phone_. Then in _Settings > System > Developer Options_ turn on _Stay Awake (when charging)_. For **Apple** devices, we can set the _Auto-Lock_ to _Never_, which you can find in _Settings > Display & Brightness_. Here are more details and pictures on how to do this for [Android](https://www.howto-connect.com/how-to-stay-awake-phone-screen-while-charging-on-android/){:target="_blank"} or [iOS](https://forums.tomsguide.com/faq/how-to-change-the-auto-lock-time-in-ios-11.19693/){:target="_blank"}.
-1. Where possible, also disable the _Adaptive brightness_ (or Auto-Brightness) of your phone. We want to make sure the screen is visible through the paper. For **Android**, you can most likely change this in _Settings > Display_, and for **Apple** devices this is often in _Settings > Accessibility > Display & Text Size_.
+1. Where possible, also disable the _Adaptive brightness_ (or Auto-Brightness) of your phone. We want to make sure the screen is visible through the paper. For **Android**, you can most likely change this in _Settings > Display_, and for **Apple** devices, this is often in _Settings > Accessibility > Display & Text Size_.
 1. Don't forget to set the screen brightness to 100% and, of course, plug in a charger!
 
 ### Connect it to the Google Sheet
@@ -73,12 +73,12 @@ On the phone,
 That's it! Now, in Google Sheets, go to the _[BG] 1_ tab, and click on _test_ in the top left. Did your phone's screen change colour?
 
 ## Step 3: add some data
-There are various ways in which we could let your phone respond to different types of data, but in this tutorial we will be using a website called [IFTTT](http://www.ifttt.com){:target="_blank"}, or "If This, Then That". This website allows us to create connections with different types of data, which they call _Applets_. Lucky for us, they support Google Sheets! With a free account, we can make up to three of these _Applets_. If you don't have an IFTTT account yet, you can sign up at [ifttt.com/join](https://ifttt.com/join){: target="_blank"}. _Note that through IFTTT.com you might need to log in to other services (such as Google). Read more on IFTTT's privacy policy and Google's advice on third party access._
+There are various ways in which we could let your phone respond to different types of data, but in this tutorial, we will be using a website called [IFTTT](http://www.ifttt.com){:target="_blank"}, or "If This, Then That". This website allows us to create connections with different types of data, which they call _Applets_. Lucky for us, they support Google Sheets! With a free account, we can make up to three of these _Applets_. If you don't have an IFTTT account yet, you can sign up at [ifttt.com/join](https://ifttt.com/join){: target="_blank"}. _Note that through IFTTT.com you might need to log in to other services (such as Google). Read more on IFTTT's privacy policy and Google's advice on third party access._
 
 ### Create a weather applet
-On IFTTT.com we can create _applets_. These are little recipes that tell the IFTTT service what to do. An applet consist of a _Trigger_ that 'triggers' when something happens, and an _Action_, that 'acts' when that happens.
+On IFTTT.com we can create _applets_. These are little recipes that tell the IFTTT service what to do. An applet consists of a _Trigger_ that 'triggers' when something happens, and an _Action_, that 'acts' when that happens.
 
-For this tutorial we will create two _applets_ that will both influence the phone. One will look at your local temperature, and the other will let you know when the International Space Station (ISS) passes over you. First, let's set up the weather applet.
+For this tutorial, we will create two _applets_ that will both influence the phone. One will look at your local temperature, and the other will let you know when the International Space Station (ISS) passes over you. First, let's set up the weather applet.
 
 First this:
 1. On IFTTT.com, go to [_Create > Applet_](https://ifttt.com/create/){: target="_blank"}.
@@ -91,7 +91,7 @@ Then that:
 1. Choose the _Add row to spreadsheet_ action and fill in the details. These details need to be very accurate:
     1. **_Spreadsheet name_** should be identical to the name of your copy of the Google Sheet we made earlier. You can find (and, if you want, change) this name on the very top left of your Google Sheet. _If you haven't changed it yet, it will be something like 'Copy of Phone Grown'_.
     1. Remove everything in the **_Formatted row_**, and replace it with something more readable, such as _'temperature'_. Write this name down somewhere, we will need it later.
-    1. Remove everything in the **_Drive folder path_**. If you have not 'moved' your Google Sheet within Google Drive, you can leave this empty. _If you did move the Google Sheet, it might be easier to move it back to 'top level' folder 'My Drive' and follow along._
+    1. Remove everything in the **_Drive folder path_**. If you have not 'moved' your Google Sheet within Google Drive, you can leave this empty. _If you did move the Google Sheet, it might be easier to move it back to 'top-level' folder 'My Drive' and follow along._
 1. Press _Create Action_ to save this.
 1. Click _Continue_, and then _Finish_ to finish your Applet!
 
@@ -106,16 +106,16 @@ Great! We should now have two IFTTT applet that both tell your Google Sheet when
 What we like about smart displays is that they add something visually to the home. They can tell everyone in the home when something is happening, without a loud 'beep' from someone's phone. To make sure your smart display fits your home, skills and style, we will create our own! Instead of fiddling digitally, we are going to create a drawing, physically. If you are doing this tutorial with the family, try to get everyone to add something to it! Before we draw, we first need a holder for our phone.
 
 ### Decide how to display your smart display
-To make sure that your smart display can be seen from different places in the room, we need to make it stand vertically. This is entirely up to you and depends on where you want to have it. You could for example hang the phone on the wall with some hooks and wire, attach it to your fridge or perhaps place it in a phone stand. Either way **_make sure the phone is plugged in and charging_**. If you don't have a phone stand, we found and followed a quick and easy [tutorial on folding a phone stand](https://youtu.be/mW5M6cepIBI){: target="_blank"} out of an A4 sheet of paper by Wellington Oliveira (@Easy Origami) on Youtube. It takes no more than 10 minutes and fits nicely with the paper drawing in the next step.
+To make sure that your smart display can be seen from different places in the room, we need to make it stand vertically. This is entirely up to you and depends on where you want to have it. You could for example hang the phone on the wall with some hooks and wire, attach it to your fridge or perhaps place it in a phone stand. Either way, **_make sure the phone is plugged in and charging_**. If you don't have a phone stand, we found and followed a quick and easy [tutorial on folding a phone stand](https://youtu.be/mW5M6cepIBI){: target="_blank"} out of an A4 sheet of paper by Wellington Oliveira (@Easy Origami) on Youtube. It takes no more than 10 minutes and fits nicely with the paper drawing in the next step.
 
 ### Start drawing
-At the end of this tutorial the phone will highlight areas of your drawing to indicate something happened, or in our case, when the temperature rises and when the ISS passes over. Think about a drawing that could represent both of these things at the same time, or perhaps create two separate drawings on the same paper. The drawing doesn't have to be literal, it can also be abstract - anything you want really! Since the background highlights will be quite colourful, we suggest to stick to a line drawing with pen or pencil. Don't worry about getting it right the first time, you can easily try a few drawing or change the drawing later!
+At the end of this tutorial the phone will highlight areas of your drawing to indicate something happened, or in our case, when the temperature rises and when the ISS passes over. Think about a drawing that could represent both of these things at the same time, or perhaps create two separate drawings on the same paper. The drawing doesn't have to be literal, it can also be abstract - anything you want really! Since the background highlights will be quite colourful, we suggest sticking to a line drawing with a pen or pencil. Don't worry about getting it right the first time, you can easily try a few drawing or change the drawing later!
 
 1. Cut a piece of white paper a bit larget than your phone. _Use thin, standard copier thickness (~70/80gsm) so that the phone's screen can shine through_.
 1. Place the paper over the phone in its stand, and roughly mark the corners of the screen with some dots.
 1. Take the paper off the phone, and start drawing! You can use the marked corners to know where the screen lights up later on.
 
-Once your happy with a drawing, place the drawing in front of the phone and go to the next step. You can always come back and change or redo the drawing if you feel like it!
+Once you're happy with a drawing, place the drawing in front of the phone and go to the next step. You can always come back and change or redo the drawing if you feel like it!
 
 ## Step 5: create and connect backgrounds
 All that is left to do is to highlight your drawing when the data says something is happening. Using the Google Sheet, we will now indicate which areas should light up, and in which colours, using _backgrounds_. Let's first focus on the part of your drawing that indicates the high temperature.
@@ -123,7 +123,7 @@ All that is left to do is to highlight your drawing when the data says something
 ### Design two backgrounds
 Once you have the Google Sheet in front of you:
 1. Go to the _[BG] 1_ tab (on the bottom).
-1. Change the background colour of the cells/squares within the 'phone frame' that roughly correspond with the part of your drawing that have something to do with the weather.
+1. Change the background colour of the cells/squares within the 'phone frame' that roughly corresponds with the part of your drawing that has something to do with the weather.
     1. You can do this by selecting (_click and drag_) the cells/squares, and clicking on the _fill colour tool_: the little _paint bucket_ in the toolbar.
     1. The colour is totally up to you! You can even give different cells/squares different colours.
 1. Click on the _Test_ button to test the colours on your phone.
@@ -139,8 +139,8 @@ With your backgrounds ready to go, we need to tell the Google Sheet which one to
 
 1. Go to the _HOME_ tab (on the bottom)
 1. Fill in the dotted cells/squares for rule 1.
-    1. _In the first dotted cell_, enter the name that you entered for the _Formatted row_ for your weather 'applet' in Step 3, for example 'temperature'. **This needs to be exactly the same.**
-    1. _In the second_, choose the background your created for the weather, most likely _[BG] 1_.
+    1. _In the first dotted cell_, enter the name that you entered for the _Formatted row_ for your weather 'applet' in Step 3, for example, 'temperature'. **This needs to be exactly the same.**
+    1. _In the second_, choose the background you created for the weather, most likely _[BG] 1_.
     1. _In the third and fourth_, enter how long you want this background to show on your phone when the applet 'triggers'. _For example, if 'temperature' then show '[BG] 1' for '20' 'minutes'_.
     1. _Activate_ the rule by ticking the second tick-box on the right.
     1. _Test it!_ Click on the tick-box on the right to test your rule.
@@ -158,7 +158,7 @@ There are a few additional options and features you could explore:
 - If you are curious about when something happened, the _**[DATA] History**_ tab shows you all past times when one of your IFTTT applets 'triggered'. The _**[LOGS]**_ tab shows you when a rule you created in Step 5 was activated and it shows other interactions with the Google Sheet.
 
 ### Data suggestions
-There are a lot of things you could use your smart display for, and because of that you might not see the wood for the trees. With IFTTT, some _applets_ are designed to work with specific devices and brands. We have listed a number of things that we think might be a bit more relatable and more common to use. Have a look at these, but foremost, explore, try out and be creative!
+There are a lot of things you could use your smart display for, and because of that, you might not see the wood for the trees. With IFTTT, some _applets_ are designed to work with specific devices and brands. We have listed several things that we think might be a bit more relatable and more common to use. Have a look at these, but foremost, explore, try out and be creative!
 
 _For example_, you could let your smart display show ...
 - when the [weather changes](https://ifttt.com/weather),
