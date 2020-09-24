@@ -1,50 +1,5 @@
 ---
 layout: default
-
-carousel_step1:
-  - image: /assets/images/instructable/1a.jpg
-  - image: /assets/images/instructable/1b.jpg
-  - image: /assets/images/instructable/1c.jpg
-  - image: /assets/images/instructable/1d.jpg
-  - image: /assets/images/instructable/1e.jpg
-  - image: /assets/images/instructable/1f.jpg
-  - image: /assets/images/instructable/1g.jpg
-  - image: /assets/images/instructable/1h.jpg
-  - image: /assets/images/instructable/1i.jpg
-
-carousel_step2:
-  - image: /assets/images/instructable/2a.jpg
-  - image: /assets/images/instructable/2b.jpg
-  - image: /assets/images/instructable/2c.jpg
-  - image: /assets/images/instructable/2d.jpg
-  - image: /assets/images/instructable/2e.jpg
-
-carousel_step3:
-  - image: /assets/images/instructable/3a.jpg
-  - image: /assets/images/instructable/3b.jpg
-  - image: /assets/images/instructable/3c.jpg
-  - image: /assets/images/instructable/3d.jpg
-  - image: /assets/images/instructable/3e.jpg
-  - image: /assets/images/instructable/3e.jpg
-  - image: /assets/images/instructable/3f.jpg
-  - image: /assets/images/instructable/3g.jpg
-  - image: /assets/images/instructable/3h.jpg
-  - image: /assets/images/instructable/3i.jpg
-  - image: /assets/images/instructable/3j.jpg
-  - image: /assets/images/instructable/3k.jpg
-  - image: /assets/images/instructable/3l.jpg
-  - image: /assets/images/instructable/3m.jpg
-
-carousel_step4:
-  - image: /assets/images/instructable/4a.jpg
-  - image: /assets/images/instructable/4b.jpg
-  - image: /assets/images/instructable/4c.jpg
-  - image: /assets/images/instructable/4d.jpg
-
-carousel_step5:
-  - image: /assets/images/instructable/5a.jpg
-  - image: /assets/images/instructable/5b.jpg
-  - image: /assets/images/instructable/5c.jpg
 ---
 
 ![alt text](/assets/images/sunshine.jpg "text1")
@@ -59,27 +14,28 @@ Since your choice of data and your creativity with drawing allows for countless 
 
 <!-- [Check the video](#video){: .btn .btn-blue target="_blank"}-->
 
-<!-- TODO: get some help, go creative with drawing! ?? Perhaps seperate taasks?-->
-
 ## Supplies
 <!-- TODO: something about parents for account, do it together! -->
+- Roughly 1 hour of time (_a bit longer if you want to experiment some more_)
 - A smartphone that can connect to your Wi-Fi (_preferably one you don't need for a while_)
 - Some pen and paper
 - A computer/laptop to set things up
 - A [Google account](https://myaccount.google.com/){:target="_blank"} (_for using Google Sheets_)
 - An [IFTTT.com](https://www.ifttt.com/){:target="_blank"} account (_for connecting it to data_)
 
+If you can, follow this tutorial with someone else - perhaps with the whole family. After all, if you place your smart display in, for example, the living room, everyone will be able to enjoy it! You can follow all steps together, or divide some tasks (such as drawing or setting it up). If you don't have a Google or IFTTT account (or perhaps you are a bit younger), ask someone from your household to help out. 
+
 _If you are using an older smartphone, consider resetting it to factory settings (warning, this will delete everything on the phone!). Either way, it is always good practice to update the software and security features to the latest version (as far as it goes). We wrote a bit more info about the safety of older phones [here](https://www.phonegrown.site/#more-phones){: target="_blank"}._
 
 ## Step 1: copy the Google Sheet
 Normally, Google Sheets is mainly used for storing numbers in large tables - but because it is online and very flexible, you can do quite interesting things with it. For this tutorial, we will use it as the  'brain' of your smart display. We have prepared a Sheet for you with everything you need - which works almost like an app. With it, you can create the colourful backgrounds for your phone and easily set up rules depending on the data you'd like (for example, 'turn blue when it rains'). We need to copy this Sheet using the link below and prepare it in two quick steps.
 
-{% include carousel.html images=page.carousel_step1 height="57" unit="%" name="step1" %}
-
 On a laptop/computer go, copy the [Google Sheet from here](https://docs.google.com/spreadsheets/d/1JKxSbqSCLNi_dW54rmzxBtJTrP6vYvUyQmVWFcfiG0o/copy){: target="_blank"}. _This will probably ask you to log in to a Google Account._
 
+{% include image-gallery.html folder="/assets/images/instructable/step1" %}
+
 ### 'Publish' your Google Sheet
-The following steps will connect the Sheet to the internet, which helps you to connect your phone in the next section. We only have to click a few buttons, but it might look somewhat messy. This is because we basically are turning your Sheet into a little app. Most likely you have never done this before, and that is why Google will show you a warning at some point. If you copied the Google Sheet from the link above - it is safe to continue. However, if you want to know precisely what your app will do, we explain it in more detail on our website [here](https://www.phonegrown.site/#more-tech). At any point in time, you can always undo the 'publishing' of your app by following [these steps](https://www.phonegrown.site/#more-undo).
+The following steps will connect the Sheet to the internet, which helps you to connect your phone in the next section. We only have to click a few buttons, but it might look somewhat messy. This is because we basically are turning your Sheet into a little app. Most likely you have never done this before, and that is why Google will show you a warning at some point. If you copied the Google Sheet from the link above - it is safe to continue. However, if you want to know precisely what your app will do, we explain it in more detail on our website [here](https://www.phonegrown.site/#more-tech){:target="_blank"}. At any point in time, you can always undo the 'publishing' of your app by following [these steps](https://www.phonegrown.site/#more-undo){:target="_blank"}.
 
 Once you have the Google Sheet in front of you:
 1. Press the purple _Setup_ button.
@@ -95,7 +51,7 @@ That's all set! You can now close the extra tab, but keep the Google Sheet tab h
 ## Step 2: setup the phone
 Once you found an unused phone for this project (_don't worry about cracked screens_), we need to change some of its settings and connect it to your Google Sheet.
 
-{% include carousel.html images=page.carousel_step2 height="57" unit="%" name="step2" %}
+{% include image-gallery.html folder="/assets/images/instructable/step2" %}
 
 ### Adjust phone settings
 Normally, phones dim their screen in dark spaces or when you don't use it for a minute or so. But, to make it into a smart display we need to make sure its screen always stays on. This won't consume much energy, but we wrote more details about that [here](https://www.phonegrown.site/#more-sust){:target="_blank"}. Adjusting your phone's settings can be different per phone, but will most likely be something like this:
@@ -115,7 +71,7 @@ That's it! Now, in Google Sheets, go to the _[BG] 1_ tab, and click on _test_ in
 ## Step 3: add some data
 There are various ways in which we could let your phone respond to different types of data, but in this tutorial, we will be using a website called [IFTTT](http://www.ifttt.com){:target="_blank"}, or "If This, Then That". This website allows us to create connections with different types of data, which they call _Applets_. Lucky for us, they support Google Sheets! With a free account, we can make up to three of these _Applets_. If you don't have an IFTTT account yet, you can sign up at [ifttt.com/join](https://ifttt.com/join){: target="_blank"}. _Note that through IFTTT.com you might need to log in to other services (such as Google). Read more on IFTTT's privacy policy and Google's advice on third party access._
 
-{% include carousel.html images=page.carousel_step3 height="57" unit="%" name="step3" %}
+{% include image-gallery.html folder="/assets/images/instructable/step3" %}
 
 ### Create a weather applet
 On IFTTT.com we can create _applets_. These are little recipes that tell the IFTTT service what to do. An applet consists of a _Trigger_ that 'triggers' when something happens, and an _Action_, that 'acts' when that happens.
@@ -147,7 +103,7 @@ Great! We should now have two IFTTT applet that both tell your Google Sheet when
 ## Step 4: draw a display
 What we like about smart displays is that they add something visually to the home. They can tell everyone in the home when something is happening, without a loud 'beep' from someone's phone. To make sure your smart display fits your home, skills and style, we will create our own! Instead of fiddling digitally, we are going to create a drawing, physically. If you are doing this tutorial with the family, try to get everyone to add something to it! Before we draw, we first need a holder for our phone.
 
-{% include carousel.html images=page.carousel_step4 height="57" unit="%" name="step4" %}
+{% include image-gallery.html folder="/assets/images/instructable/step4" %}
 
 ### Decide how to display your smart display
 To make sure that your smart display can be seen from different places in the room, we need to make it stand vertically. This is entirely up to you and depends on where you want to have it. You could for example hang the phone on the wall with some hooks and wire, attach it to your fridge or perhaps place it in a phone stand. Either way, **_make sure the phone is plugged in and charging_**. If you don't have a phone stand, we found and followed a quick and easy [tutorial on folding a phone stand](https://youtu.be/mW5M6cepIBI){: target="_blank"} out of an A4 sheet of paper by Wellington Oliveira (@Easy Origami) on Youtube. It takes no more than 10 minutes and fits nicely with the paper drawing in the next step.
@@ -164,7 +120,7 @@ Once you're happy with a drawing, place the drawing in front of the phone and go
 ## Step 5: create and connect backgrounds
 All that is left to do is to highlight your drawing when the data says something is happening. Using the Google Sheet, we will now indicate which areas should light up, and in which colours, using _backgrounds_. Let's first focus on the part of your drawing that indicates the high temperature.
 
-{% include carousel.html images=page.carousel_step5 height="57" unit="%" name="step5" %}
+{% include image-gallery.html folder="/assets/images/instructable/step5" %}
 
 ### Design two backgrounds
 Once you have the Google Sheet in front of you:
@@ -208,22 +164,22 @@ There are a few additional options and features you could explore:
 There are a lot of things you could use your smart display for, and because of that, you might not see the wood for the trees. With IFTTT, some _applets_ are designed to work with specific devices and brands. We have listed several things that we think might be a bit more relatable and more common to use. Have a look at these, but foremost, explore, try out and be creative!
 
 _For example_, you could let your smart display show ...
-- when the [weather changes](https://ifttt.com/weather),
-- when you leave or enter an area based on your [GPS location](https://ifttt.com/location),
-- when it is a certain [time of the day, week or month](https://ifttt.com/date_and_time),
-- if there is a new song on [Spotify](https://ifttt.com/spotify) or [Deezer](https://ifttt.com/deezer),
-- if there is a new video to watch on [Vimeo](https://ifttt.com/vimeo), [Youtube](https://ifttt.com/youtube) or [Twitch](https://ifttt.com/twitch),
-- when you have a new email with [Office365](https://ifttt.com/office_365_mail),
-- a reminder that you have 15 minutes left before an event on your [Google](https://ifttt.com/google_calendar), [Office365](https://ifttt.com/office_365_calendar), or [iOS](https://ifttt.com/ios_calendar) calendar,
-- when someone spends money on their [Monzo bank](https://ifttt.com/monzo) account,
+- when the [weather changes](https://ifttt.com/weather){:target="_blank"},
+- when you leave or enter an area based on your [GPS location](https://ifttt.com/location){:target="_blank"},
+- when it is a certain [time of the day, week or month](https://ifttt.com/date_and_time){:target="_blank"},
+- if there is a new song on [Spotify](https://ifttt.com/spotify){:target="_blank"} or [Deezer](https://ifttt.com/deezer){:target="_blank"},
+- if there is a new video to watch on [Vimeo](https://ifttt.com/vimeo){:target="_blank"}, [Youtube](https://ifttt.com/youtube){:target="_blank"} or [Twitch](https://ifttt.com/twitch){:target="_blank"},
+- when you have a new email with [Office365](https://ifttt.com/office_365_mail){:target="_blank"},
+- a reminder that you have 15 minutes left before an event on your [Google](https://ifttt.com/google_calendar){:target="_blank"}, [Office365](https://ifttt.com/office_365_calendar){:target="_blank"}, or [iOS](https://ifttt.com/ios_calendar){:target="_blank"} calendar,
+- when someone spends money on their [Monzo bank](https://ifttt.com/monzo){:target="_blank"} account,
 - when a blog or news website publishes a new article using their [RSS feed](https://ifttt.com/feed),
-- tracking sports goals using [Strava](https://ifttt.com/strava) or [FitBit](https://ifttt.com/fitbit)
-- social media activity on [Facebook](https://ifttt.com/facebook), [Twitter](https://ifttt.com/twitter), or [Instagram](https://ifttt.com/instagram),
-- messages on [Telegram](https://ifttt.com/telegram) or [Android](https://ifttt.com/android_messages) phones.
+- tracking sports goals using [Strava](https://ifttt.com/strava){:target="_blank"} or [FitBit](https://ifttt.com/fitbit){:target="_blank"}
+- social media activity on [Facebook](https://ifttt.com/facebook){:target="_blank"}, [Twitter](https://ifttt.com/twitter){:target="_blank"}, or [Instagram](https://ifttt.com/instagram){:target="_blank"},
+- messages on [Telegram](https://ifttt.com/telegram){:target="_blank"} or [Android](https://ifttt.com/android_messages){:target="_blank"} phones.
 
 If you have a smart device, you could connect your smart display to your ...
-- [Amazon Alexa](https://ifttt.com/amazon_alexa) or [Google Assistant](https://ifttt.com/google_assistant) smart speaker,
-- [Wemo](https://ifttt.com/search/query/wemo?tab=services) smart plugs or equipment,
+- [Amazon Alexa](https://ifttt.com/amazon_alexa){:target="_blank"} or [Google Assistant](https://ifttt.com/google_assistant){:target="_blank"} smart speaker,
+- [Wemo](https://ifttt.com/search/query/wemo?tab=services){:target="_blank"} smart plugs or equipment,
 - and many other things!
 
 
