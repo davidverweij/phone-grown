@@ -53,6 +53,10 @@ h6 {
   color: $body-heading-color;
 }
 
+h2 {
+  counter-reset: step-counter;
+}
+
 p {
   margin-top: 1em;
   margin-bottom: 1em;
