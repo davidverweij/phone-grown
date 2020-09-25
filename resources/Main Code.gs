@@ -18,7 +18,6 @@ function onOpen() {
   doc.setActiveSheet(doc.getSheetByName(variables.sheetNames.home));
 }
 
-
 /**
 * Changes were made to the Sheet. E.g.. new data came in or the spreadsheet was edited
 * Using the onChange() approach does not provide details of the change unfortunately.
@@ -29,6 +28,7 @@ function somethingChanged(e){
   let doc = SpreadsheetApp.getActiveSpreadsheet();
 
   switch(e.changeType){
+
       // (A) One new row of data came in.
     case "INSERT_ROW": {
       let sheet = doc.getSheetByName(variables.sheetNames.dataIn);
@@ -138,7 +138,7 @@ function somethingChanged(e){
 
 
 /**
-* Store (or retreive) the instructions for the phone in the sheet
+* Store (or retrieve) the instructions for the phone in the sheet
 * This was previously done in the scriptproperties, but gave inconsistent results
 *
 * @param {Google Doc} doc - The Google Sheet document to store it in
@@ -147,12 +147,12 @@ function somethingChanged(e){
 function storeTodos(doc, instructions){
   doc.getRange(variables.sheetNames.home + '!' + variables.ranges.todos).setValue(instructions);
 }
-function retreiveTodos(doc){
+function retrieveTodos(doc){
   return doc.getRange(variables.sheetNames.home + '!' + variables.ranges.todos).getValue();
 }
 
 /**
-* Store (or retreive) the clearphone timestamp
+* Store (or retrieve) the clearphone timestamp
 * This was previously done in the scriptproperties, but gave inconsistent results
 *
 * @param {Google Doc} doc - The Google Sheet document to store it in
@@ -161,7 +161,7 @@ function retreiveTodos(doc){
 function storeClearPhone(doc, timestamp){
   doc.getRange(variables.sheetNames.home + '!' + variables.ranges.clearphone).setValue(timestamp);
 }
-function retreiveClearPhone(doc){
+function retrieveClearPhone(doc){
   return doc.getRange(variables.sheetNames.home + '!' + variables.ranges.clearphone).getValue();
 }
 
@@ -211,7 +211,7 @@ function clearPhone(){
   storeTodos(doc, '[]');
   storeClearPhone(doc, now);
 
-  pingDatabase(now);       // ping the database, so the phone can retreive the new instruction
+  pingDatabase(now);       // ping the database, so the phone can retrieve the new instruction
 
   //Logging History
   if (activeLogging) prependRow(doc.getSheetByName(variables.sheetNames.logs), ["Cleared phone screen"], true);
@@ -251,7 +251,7 @@ function storeSleepTimes(doc, times){
 */
 function addPhoneInstruction(doc, instructions, timestamp){
   // (1) Get all current triggers
-  let todo = JSON.parse(retreiveTodos(doc));
+  let todo = JSON.parse(retrieveTodos(doc));
 
   // (2) Remove old and collected triggers
   if (todo == '') todo = [];
@@ -321,7 +321,7 @@ function doGet(e) {
 
         result.result = "success";
         result.sleeptimes = getSleepTimes(doc, true); // get a stored copy of the sleeptimes
-        result.clear = retreiveClearPhone(doc);
+        result.clear = retrieveClearPhone(doc);
 
 
         // If requested, send back the database id
@@ -330,7 +330,7 @@ function doGet(e) {
         }
 
         // (3a) Add backgrounds that need 'representing'. This could be empty. The phone will keep track of all past commands (over overlap them)
-        let todos = JSON.parse(retreiveTodos(doc));
+        let todos = JSON.parse(retrieveTodos(doc));
         if (todos == null) todos = [];
         todos = JSON.stringify(todos.filter(inst => inst.timestamp > lastInstruction)); // filter old instructions
 
@@ -362,7 +362,7 @@ function testBackground() {
     timestamp   : now,
   };
   addPhoneInstruction(doc,[instruction], now);
-  pingDatabase(now);       // ping the database, so the phone can retreive the new instruction
+  pingDatabase(now);       // ping the database, so the phone can retrieve the new instruction
 
   //Logging History
   if (activeLogging) prependRow(doc.getSheetByName(variables.sheetNames.logs), ["Testing " + sheet.getName()], true);

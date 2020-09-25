@@ -15,7 +15,6 @@ Since your choice of data and your creativity with drawing allows for countless 
 <!-- [Check the video](#video){: .btn .btn-blue target="_blank"}-->
 
 ## Supplies
-<!-- TODO: something about parents for account, do it together! -->
 - Roughly 1 hour of time (_a bit longer if you want to experiment some more_)
 - A smartphone that can connect to your Wi-Fi (_preferably one you don't need for a while_)
 - Some pen and paper
@@ -34,7 +33,7 @@ _If you are using an older smartphone, consider resetting it to factory settings
 ## Step 1: copy the Google Sheet
 Normally, Google Sheets is mainly used for storing numbers in large tables - but because it is online and very flexible, you can do quite interesting things with it. For this tutorial, we will use it as the  'brain' of your smart display. We have prepared a Sheet for you with everything you need - which works almost like an app. With it, you can create the colourful backgrounds for your phone and easily set up rules depending on the data you'd like (for example, 'turn blue when it rains'). We need to copy this Sheet using the link below and prepare it in two quick steps.
 
-1. On a laptop/computer (_unfortunately this doesn't work on a phone on the phone this doesn't work_) go, copy the [Google Sheet from here](https://docs.google.com/spreadsheets/d/1JKxSbqSCLNi_dW54rmzxBtJTrP6vYvUyQmVWFcfiG0o/copy){: target="_blank"}. _This will probably ask you to log in to a Google Account._
+1. On a laptop/computer (_unfortunately this doesn't work on a phone_) go, copy the [Google Sheet from here](https://docs.google.com/spreadsheets/d/1JKxSbqSCLNi_dW54rmzxBtJTrP6vYvUyQmVWFcfiG0o/copy){: target="_blank"}. _This will probably ask you to log in to a Google Account._
 
 {% include image-gallery.html folder="/assets/images/instructable/step1" %}
 
@@ -46,7 +45,7 @@ Once you have the Google Sheet in front of you:
 
 2. Press the purple _Setup_ button. This will ask you to _Review Permissions_. You might need to log in with your Google Account.
 3. Click _Advanced_ (in the bottom left) and then, at the bottom, click on _Go to phonegrown (unsafe)_.
-4. By clicking on _Allow_ allow (or authorise) your google Sheet to connect to other services on the internet (including your phone in the next step).
+4. By clicking on _Allow_, you allow (or authorise) your google Sheet to connect to other services on the internet (including your phone in the next step).
 5. Go to _Tools > Script Editor_ in the Google Sheet menu bar. This opens a new tab.
 6. Click on _Publish > Deploy as web app_ in the menu bar on that tab.
 7. Click _Update_, and
