@@ -4,7 +4,7 @@
 Phone Grown is an open-source, DIY tutorial that helps families transform an unused smartphone into an ambient information display. It is built on a Google Sheet template, which acts as the database and user interface. With the database 'exposed', families can configure rules and design visual outputs for your phone to respond with any incoming data. Using pen and paper, they can contextualise these visual outputs further to suit your needs.
 
 
-> This tutorial is developed by [David Verweij](https://openlab.ncl.ac.uk/people/david-verweij/) at Newcastle University as part of his PhD research. All details and instructions can be found on [www.phonegrown.site](www.phonegrown.site).
+> This tutorial is developed by [David Verweij](https://openlab.ncl.ac.uk/people/david-verweij/) at Newcastle University as part of his PhD research. All details and instructions can be found on [www.phonegrown.site](https://www.phonegrown.site).
 
 ## Content
 This project is hosted on GitHub to provide as much transparency as possible about the tutorial and how it works. As such, this repository includes:
