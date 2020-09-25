@@ -31,7 +31,7 @@ Please be aware that for the use of IFTTT.com you need to be [**at least 18 year
 _If you are using an older smartphone, consider resetting it to factory settings (warning, this will delete everything on the phone!). Either way, it is always good practice to update the software and security features to the latest version (as far as it goes). We wrote a bit more info about the safety of older phones [here](https://www.phonegrown.site/#more-phones){: target="_blank"}._
 
 ## Step 1: copy the Google Sheet
-Normally, Google Sheets is mainly used for storing numbers in large tables - but because it is online and very flexible, you can do quite interesting things with it. For this tutorial, we will use it as the  'brain' of your smart display. We have prepared a Sheet for you with everything you need - which works almost like an app. With it, you can create the colourful backgrounds for your phone and easily set up rules depending on the data you'd like (for example, 'turn blue when it rains'). We need to copy this Sheet using the link below and prepare it in two quick steps.
+Normally, Google Sheets is mainly used for storing numbers in large tables - but because it is online and very flexible, you can do quite interesting things with it. For this tutorial, we will use it as the  'brain' of your smart display. We have prepared a Sheet for you with everything you need - which works almost like an app. With it, you can create the colourful backgrounds for your phone and easily set up rules depending on the data you'd like (for example, 'turn blue when it rains'). We need to copy this Sheet using the link below and prepare it in a few quick steps.
 
 1. On a laptop/computer (_unfortunately this doesn't work on a phone_) go, copy the [Google Sheet from here](https://docs.google.com/spreadsheets/d/1JKxSbqSCLNi_dW54rmzxBtJTrP6vYvUyQmVWFcfiG0o/copy){: target="_blank"}. _This will probably ask you to log in to a Google Account._
 
@@ -159,7 +159,7 @@ With your backgrounds ready to go, we need to tell the Google Sheet which one to
 3. Go to the _HOME_ tab (on the bottom) and fill in the dotted cells/squares for rule 1.
     1. _In the first dotted cell_, enter the name that you entered for the _Formatted row_ for your weather 'applet' in Step 3, for example, 'temperature'. **This needs to be exactly the same.**
     2. _In the second_, choose the background you created for the weather, most likely _[BG] 1_.
-    3. _In the third and fourth_, enter how long you want this background to show on your phone when the applet 'triggers'. _For example, if 'temperature' then show '[BG] 1' for '20' 'minutes'_.
+    3. _In the third and fourth_, enter how long you want this background to show on your phone when the applet 'activates'. _For example, if 'temperature' then show '[BG] 1' for '20' 'minutes'_.
     4. _Activate_ the rule by ticking the left tick-box on the right.
     5. _Test it!_ Click on the right tick-box on the right to test your rule.
     6. Repeat the steps for rule 2, but now for the ISS data. _Remember that the text in the first dotted cell should be identical to the **formatted row** as you used when creating the applet with IFTTT_

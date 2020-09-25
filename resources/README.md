@@ -18,7 +18,6 @@ This file contains the primary methods used. It listens for changed in the sprea
 
 Lastly, the standard `doGet()` method provides the responses to HTTP requests from the phone. It checks if the GET request is appropriate (with certain parameters), and replies with any current instructions for the phone.
 
-
 #### [Helpers.gs](Helpers.gs)
 All methods in helpers help with small but repeatable and reusable tasks. These relate to reading and writing within the Google Sheet itself, such as moving data from one sheet to another (`prependRow()`), sorting the sheet alphabetically (`sortSheets()`), finding a particular sheet (`findSheets()`) or updating the system status on the Home sheet (`updatePhoneStatus()`). Other methods include clearing the background of an area in the sheet (`clearBackground()`) or calculating a duration based on user input (`calcDuration()`). Lastly, to prevent the `setup()` to install multiple identical listeners, the `deleteTrigger()` method clears all set listeners.
 
