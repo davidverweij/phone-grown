@@ -11,20 +11,23 @@ The [`appscript.json`](appscript.json) file contains the rules needed for this p
 1. UI - add menu buttons to the UI and create popups
 
 ### The code
-The [`Code.gs`](Code.gs) contains the code for the Google App Script which is bound to the document. It is extensively commented to explain each function, but here is a rundown:
+The Code, split into 4 files, is bound to the Google Sheet. It is extensively commented to explain each function, but here is a rundown of each of the files. The Google App Script compiler will consider all files as one big file - so the separation is solely to make it more manageable.
 
-- `onOpen()` is executed when the bound document is opened. It creates an additional menu to execute `setup()` and `addphone()`.
-- `somethingChanged()` is called when - you guessed it - something changed. Different from the standard `onEdit()`, this method is also called when changes are made by a program, not only a user. We use this to detect whether new data came in or when some tabs of the Google Sheet are altered. If there is new data, it will trigger the `pingDatabase()` method.
-- `doGet()` receives all HTTPS requests. It will validate the request and return the database identifier for the phone to listen to, as well as the background colours it should display at this moment.
-- `updateDataSheet()` is called when something changed in the sheets (e.g. a new data source was created). It will then update the dashboard to reflect the new changes.
-- `sortSheets()` will sort the sheets to ensure a logical and clean view for the user to interact with.
-- `addphone()` offers to overwrite the current *phone* view with a new template. It will check which templates there are and offer you that choice through a popup.
-- `customFormula()` can be used in the Google Sheet itself, and return the colour of a cell. This will ensure a live-preview of your created rules, and is triggered to recalculate when something changes on the referenced cells.
-- `setup()` should only be called once, and creates an anonymous user for the Google Firestore database and stores the reference. It also activated the `somethingChanged()` listener.
-- `prependRow()` is a tiny method to use instead of appendRow.
-- `refreshDatabaseToken()` refreshes the authentication for the database once it expires (each 60 minutes).
-- `pingDatabase()` updates the single field associated with the anonymous account with a new timestamp. If a phone is listening, it will see the change almost immediately and send a request for new background colours directly to the Google Sheet. In essence, it will 'contact' the `doGet()` method.
-- `findSheets()` is a little helper method to find sheets with a specific name, e.g. to find all sheets starting with *[Template]*.
+#### [Main Code.gs](Main%20Code.gs)
+This file contains the primary methods used. It listens for changed in the spreadsheet (`somethingChanged()`), and acts accordingly. For example, when new data came in, it checks whether a rule was triggered (`activateRule()`), updates the instructions accordingly (`addPhoneInstruction()`, `storeTodos()` and `retrieveTodos()`). The _Home_ tab of Google Sheet also provides four buttons: to set up the sheet (`setup()`), to clear the phone of colours and instructions (`clearPhone()`, `storeClearPhone()` and `retrieveClearPhone()`), and to add a new background tab (`addBackground()`) or another rule (`addRule()`). On a background tab, a test button allows a background to be displayed for 30 seconds on the phone (`testBackground()`) and another helper methods gets the set sleeptimes for the phone to _not_ display any colours (`getSleepTimes()`). The `onOpen()` method only ensure that the _Home_ tab is displayed first when opening the Google Sheet.
+
+Lastly, the standard `doGet()` method provides the responses to HTTP requests from the phone. It checks if the GET request is appropriate (with certain parameters), and replies with any current instructions for the phone.
+
+
+#### [Helpers.gs](Helpers.gs)
+All methods in helpers help with small but repeatable and reusable tasks. These relate to reading and writing within the Google Sheet itself, such as moving data from one sheet to another (`prependRow()`), sorting the sheet alphabetically (`sortSheets()`), finding a particular sheet (`findSheets()`) or updating the system status on the Home sheet (`updatePhoneStatus()`). Other methods include clearing the background of an area in the sheet (`clearBackground()`) or calculating a duration based on user input (`calcDuration()`). Lastly, to prevent the `setup()` to install multiple identical listeners, the `deleteTrigger()` method clears all set listeners.
+
+#### [Database Code.gs](Database%20Code.gs)
+The three methods in this file handle the communication with the [Firestore Database](#firestore-rules). When the 'Setup' button is pressed, and the `setup()` method runs, a new anonymous user is created in the database (`newAnonymousUser()`) by authenticating with Google's [Identity Platform](https://cloud.google.com/identity-platform/). It receives an refresh token that provides access to the Firestore database for one hour, and is refreshed when outdated (`refreshDatabaseToken()`). Lastly, any time a new instruction is ready for the phone, the timestamp on the database is updated (`pingDatabase()`), which alerts the phone to retreive new data from via HTTPS (`doGet()`).
+
+
+#### [Variables.gs](Variables.gs)
+A last file stores all fixed variables, such as the location of instructions or 'sleep time' settings in the Google Sheet. If the layout of the Google Sheet changes (e.g. tab names or added rows) these values need to be adjusted accordingly. Note that some, infrequently changing, variables are stored in the scripts [PropertyService](https://developers.google.com/apps-script/reference/properties/properties-service). Most frequently changing variables, such as instructions, are stored in the Google Sheet itself. After testing various approaches, its reading and writing speed outperformed the others, and additionally avoided issues with volatile access.
 
 # Firestore Rules
 Below is a copy of the security rules used in the Google Firestore database in this project. This merely shows the strictness of the database, and is copied here for reference and transparency.
