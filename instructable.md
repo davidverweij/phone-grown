@@ -33,11 +33,11 @@ _If you are using an older smartphone, consider resetting it to factory settings
 ## Step 1: copy the Google Sheet
 > _For this step, you only need a laptop/computer (unfortunately, a phone or tablet won't work)._
 
+{% include image-gallery.html folder="/assets/images/instructable/step1" %}
+
 Normally, Google Sheets is mainly used for storing numbers in large tables - but because it is online and very flexible, you can do quite interesting things with it. For this tutorial, we will use it as the  'brain' of your smart display. We have prepared a Sheet for you with everything you need - which works almost like an app. With it, you can create the colourful backgrounds for your phone and easily set up rules depending on the data you'd like (for example, 'turn blue when it rains'). We need to copy this Sheet using the link below and prepare it in a few quick steps.
 
 1. On a laptop/computer (_unfortunately this doesn't work on a phone_) go, copy the [Google Sheet from here](https://docs.google.com/spreadsheets/d/1JKxSbqSCLNi_dW54rmzxBtJTrP6vYvUyQmVWFcfiG0o/copy){: target="_blank"}. _This will probably ask you to log in to a Google Account._
-
-{% include image-gallery.html folder="/assets/images/instructable/step1" %}
 
 ### 'Publish' your Google Sheet
 The following steps will connect the Sheet to the internet, which helps you to connect your phone in the next section. We only have to click a few buttons, but it might look somewhat messy. This is because we are basically turning your Sheet into a little app. Most likely you have never done this before, and that is why Google will show you a warning at some point. If you copied the Google Sheet from the link above - it is safe to continue. However, if you want to know precisely what your app will do, we explain it in more detail on our website [here](https://www.phonegrown.site/#more-tech){:target="_blank"}. At any point in time, you can always undo the 'publishing' of your app by following [these steps](https://www.phonegrown.site/#more-undo){:target="_blank"}.
@@ -45,23 +45,25 @@ The following steps will connect the Sheet to the internet, which helps you to c
 
 Once you have the Google Sheet in front of you:
 
-2. Press the purple _Setup_ button. This will ask you to _Review Permissions_. You might need to log in with your Google Account.
-3. Click _Advanced_ (in the bottom left) and then, at the bottom, click on _Go to phonegrown (unsafe)_.
-4. By clicking on _Allow_, you allow (or authorise) your google Sheet to connect to other services on the internet (including your phone in the next step).
-5. Go to _Tools > Script Editor_ in the Google Sheet menu bar. This opens a new tab.
-6. Click on _Publish > Deploy as web app_ in the menu bar on that tab.
-7. Click _Update_, and
-8. _Copy the long URL_ link shown in the popup, and
-9. Paste this next to the _PASTE APP LINK_ on the _Home_ screen of your Google Sheet.
+2. Move the Sheet into a folder on your Google Drive, by going to _File > Move_. Enter a name for the folder, such as 'phonegrown', click the tick box and _Move Here_. _The Sheet needs to be within a folder to work appropriately with the IFTTT website._ **Write this name down somewhere, we will need it later.**
+3. Press the purple _Setup_ button. This will ask you to _Review Permissions_. You might need to log in with your Google Account.
+4. Click _Advanced_ (in the bottom left) and then, at the bottom, click on _Go to phonegrown (unsafe)_.
+5. By clicking on _Allow_, you allow (or authorise) your Google Sheet to connect to other services on the internet (including your phone in the next step).
+6. Click the purple _Setup_ button **again**. You should see a popup saying 'Setup step 1 complete!'.
+7. Go to _Tools > Script Editor_ in the Google Sheet menu bar. This opens a new tab.
+8. Click on _Publish > Deploy as web app_ in the menu bar on that tab.
+9. Click _Update_, and
+10. _Copy the long URL_ link shown in the popup, and
+11. Paste this next to the _PASTE APP LINK_ on the _Home_ screen of your Google Sheet.
 
 That's all set! You can now close the extra tab, but keep the Google Sheet tab handy.  
 
 ## Step 2: setup the phone
 > For this step, you only need a mobile phone that is connected to your Wi-Fi and its charger.
 
-Once you found an unused phone for this project (_don't worry about cracked screens_), we need to change some of its settings and connect it to your Google Sheet.
-
 {% include image-gallery.html folder="/assets/images/instructable/step2" %}
+
+Once you found an unused phone for this project (_don't worry about cracked screens_), we need to change some of its settings and connect it to your Google Sheet.
 
 ### Adjust phone settings
 Normally, phones dim their screen in dark spaces or when you don't use it for a minute or so. But, to make it into a smart display we need to make sure its screen always stays on. This won't consume much energy, but we wrote more details about that [here](https://www.phonegrown.site/#more-sust){:target="_blank"}. Adjusting your phone's settings can be different per phone, but will most likely be something like this:
@@ -82,9 +84,9 @@ That's it!
 ## Step 3: add some data
 > _For this step, we only need the laptop/computer, and possibly a parent/guardian if you are 18 or younger._
 
-There are various ways in which we could let your phone respond to different types of data, but in this tutorial, we will be using a website called [IFTTT](http://www.ifttt.com){:target="_blank"}, or "If This, Then That". This website allows us to create connections with different types of data, which they call _Applets_. Lucky for us, they support Google Sheets! With a free account, we can make up to three of these _Applets_. If you don't have an IFTTT account yet, you can sign up at [ifttt.com/join](https://ifttt.com/join){: target="_blank"}. _Note that through IFTTT.com you might need to log in to other services (such as Google). Read more on IFTTT's privacy policy and Google's advice on third party access._
-
 {% include image-gallery.html folder="/assets/images/instructable/step3" %}
+
+There are various ways in which we could let your phone respond to different types of data, but in this tutorial, we will be using a website called [IFTTT](http://www.ifttt.com){:target="_blank"}, or "If This, Then That". This website allows us to create connections with different types of data, which they call _Applets_. Lucky for us, they support Google Sheets! With a free account, we can make up to three of these _Applets_. If you don't have an IFTTT account yet, you can sign up at [ifttt.com/join](https://ifttt.com/join){: target="_blank"}. _Note that through IFTTT.com you might need to log in to other services (such as Google). Read more on IFTTT's privacy policy and Google's advice on third party access._
 
 ### Create a weather applet
 On IFTTT.com we can create _applets_. These are little recipes that tell the IFTTT service what to do. An applet consists of a _Trigger_ that 'triggers' when something happens, and an _Action_, that 'acts' when that happens.
@@ -105,7 +107,7 @@ Then that:
 9. fill in the details. These details need to be very accurate:
     1. **_Spreadsheet name_** should be identical to the name of your copy of the Google Sheet we made earlier. You can find (and, if you want, change) this name on the very top left of your Google Sheet. _If you haven't changed it yet, it will be something like 'Copy of Phone Grown'_.
     2. Remove everything in the **_Formatted row_**, and replace it with something more readable, such as _'temperature'_. **Write this name down somewhere, we will need it later.**
-    3. Remove everything in the **_Drive folder path_**. If you have not 'moved' your Google Sheet within Google Drive, you can leave this empty. _If you did move the Google Sheet, it might be easier to move it back to 'top-level' folder 'My Drive' and follow along._
+    3. Remove everything in the **_Drive folder path_**, and replace it with the name of the folder you moved the Sheet into, for example, _'phonegrown'_.
 10. Press _Create Action_, then _Continue_, and then _Finish_ to finish your Applet!
 
 It should now show you a _Connected_ Applet. Nicely done.
@@ -120,7 +122,7 @@ Then that:
 12. Click of **_Then That_** and  search (and click) for _Google Sheets_ followed by _Add row to spreadsheet_ action and fill in the details. These details need to be very accurate:
     1. **_Spreadsheet name_** should be identical to the name of your copy of the Google Sheet.
     2. Remove everything in the **_Formatted row_**, and replace it with something more readable, such as _'ISS'_. This needs to be different than the other applet you created. **Write this name down somewhere, we will need it later.**
-    3. Remove everything in the **_Drive folder path_**. If you have not 'moved' your Google Sheet within Google Drive, you can leave this empty.
+    3. Remove everything in the **_Drive folder path_**, and replace it with the name of the folder you moved the Sheet into, for example, _'phonegrown'_.
 13. Press _Create Action_, then _Continue_, and then _Finish_ to finish your Applet!
 
 Great! We should now have two IFTTT applet that both tell your Google Sheet when something happens. Unfortunately, we won't be able to see any effects from this data until the temperature actually rises or when the ISS passes over. But, we can prepare for when that happens in the next steps!
@@ -128,9 +130,9 @@ Great! We should now have two IFTTT applet that both tell your Google Sheet when
 ## Step 4: draw a display
 > _For this step, grab your phone, a piece of thin (or standard printing) paper and a pen or pencil_.
 
-What we like about smart displays is that they add something visually to the home. They can tell everyone in the home when something is happening, without a loud 'beep' from someone's phone. To make sure your smart display fits your home, skills and style, we will create our own! Instead of fiddling digitally, we are going to create a drawing, physically. If you are doing this tutorial with the family, try to get everyone to add something to it! Before we draw, we first need a holder for our phone.
-
 {% include image-gallery.html folder="/assets/images/instructable/step4" %}
+
+What we like about smart displays is that they add something visually to the home. They can tell everyone in the home when something is happening, without a loud 'beep' from someone's phone. To make sure your smart display fits your home, skills and style, we will create our own! Instead of fiddling digitally, we are going to create a drawing, physically. If you are doing this tutorial with the family, try to get everyone to add something to it! Before we draw, we first need a holder for our phone.
 
 ### Decide how to display your smart display
 To make sure that your smart display can be seen from different places in the room, we need to make it stand vertically. This is entirely up to you and depends on where you want to have it. _With permission of your parent or guardian_, you could for example hang the phone on the wall with some hooks and wire, attach it to your fridge or perhaps place it in a phone stand. Either way, **_make sure the phone is plugged in and charging_**. If you don't have a phone stand, we found and followed a quick and easy [tutorial on folding a phone stand](https://youtu.be/mW5M6cepIBI){: target="_blank"} out of an A4 sheet of paper by Wellington Oliveira (@Easy Origami) on Youtube. It takes no more than 10 minutes and fits nicely with the paper drawing in the next step.
@@ -148,9 +150,9 @@ Once you're happy with a drawing, place the drawing in front of the phone and go
 ## Step 5: create and connect backgrounds
 > _This step is on the laptop/computer, but keep your phone and drawing close by._
 
-All that is left to do is to highlight your drawing when the data says something is happening. Using the Google Sheet, we will now indicate which areas should light up, and in which colours, using _backgrounds_. Let's first focus on the part of your drawing that indicates the high temperature.
-
 {% include image-gallery.html folder="/assets/images/instructable/step5" %}
+
+All that is left to do is to highlight your drawing when the data says something is happening. Using the Google Sheet, we will now indicate which areas should light up, and in which colours, using _backgrounds_. Let's first focus on the part of your drawing that indicates the high temperature.
 
 ### Design two backgrounds
 Once you have the Google Sheet in front of you:
