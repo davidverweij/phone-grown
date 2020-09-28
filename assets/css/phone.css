@@ -112,6 +112,10 @@ a {
   border-radius: 10px;
 }
 
+.menu .small {
+  font-size: 12px;
+}
+
 button {
   color: white;
   position: relative;
@@ -137,14 +141,21 @@ button:active {
   box-shadow: 2px 4px 0px #5834EA;
 }
 
-#menu_error {
+.menu_error {
   background: #fbbc04;
   color: black;
 }
 
-#menu_orientation {
- background: #fbbc04;
- color: black;
+.menu_error button {
+  background: #fbbc04;
+  box-shadow: 2px 4px 0px #e2a904;
+  color: black;
+}
+
+.menu_error #loader {
+  border: 8px solid #fbbc04;
+  border-top: 8px solid white;
+  border-bottom: 8px solid white;
 }
 
 .menu > * {

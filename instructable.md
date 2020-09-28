@@ -31,6 +31,8 @@ Please be aware that for the use of IFTTT.com you need to be [**at least 18 year
 _If you are using an older smartphone, consider resetting it to factory settings (warning, this will delete everything on the phone!). Either way, it is always good practice to update the software and security features to the latest version (as far as it goes). We wrote a bit more info about the safety of older phones [here](https://www.phonegrown.site/#more-phones){: target="_blank"}._
 
 ## Step 1: copy the Google Sheet
+> _For this step, you only need a laptop/computer (unfortunately, a phone or tablet won't work)._
+
 Normally, Google Sheets is mainly used for storing numbers in large tables - but because it is online and very flexible, you can do quite interesting things with it. For this tutorial, we will use it as the  'brain' of your smart display. We have prepared a Sheet for you with everything you need - which works almost like an app. With it, you can create the colourful backgrounds for your phone and easily set up rules depending on the data you'd like (for example, 'turn blue when it rains'). We need to copy this Sheet using the link below and prepare it in a few quick steps.
 
 1. On a laptop/computer (_unfortunately this doesn't work on a phone_) go, copy the [Google Sheet from here](https://docs.google.com/spreadsheets/d/1JKxSbqSCLNi_dW54rmzxBtJTrP6vYvUyQmVWFcfiG0o/copy){: target="_blank"}. _This will probably ask you to log in to a Google Account._
@@ -55,6 +57,8 @@ Once you have the Google Sheet in front of you:
 That's all set! You can now close the extra tab, but keep the Google Sheet tab handy.  
 
 ## Step 2: setup the phone
+> For this step, you only need a mobile phone that is connected to your Wi-Fi and its charger.
+
 Once you found an unused phone for this project (_don't worry about cracked screens_), we need to change some of its settings and connect it to your Google Sheet.
 
 {% include image-gallery.html folder="/assets/images/instructable/step2" %}
@@ -76,6 +80,8 @@ On the phone,
 That's it!
 
 ## Step 3: add some data
+> _For this step, we only need the laptop/computer, and possibly a parent/guardian if you are 18 or younger._
+
 There are various ways in which we could let your phone respond to different types of data, but in this tutorial, we will be using a website called [IFTTT](http://www.ifttt.com){:target="_blank"}, or "If This, Then That". This website allows us to create connections with different types of data, which they call _Applets_. Lucky for us, they support Google Sheets! With a free account, we can make up to three of these _Applets_. If you don't have an IFTTT account yet, you can sign up at [ifttt.com/join](https://ifttt.com/join){: target="_blank"}. _Note that through IFTTT.com you might need to log in to other services (such as Google). Read more on IFTTT's privacy policy and Google's advice on third party access._
 
 {% include image-gallery.html folder="/assets/images/instructable/step3" %}
@@ -90,7 +96,7 @@ First this:
 2. Click on **_If This_**, and
 3. search (and click) for _Weather Underground_.
 4. Choose the _Current temperature rises above_ trigger, and
-5. fill in the details. For example a temperature of 15 degrees Celsius at your hometown. Press _Create Trigger_ to save this.
+5. fill in the details. For example a temperature of 12 degrees Celsius at your hometown. Press _Create Trigger_ to save this.
 
 Then that:   
 6. Click of **_Then That_** and
@@ -120,6 +126,8 @@ Then that:
 Great! We should now have two IFTTT applet that both tell your Google Sheet when something happens. Unfortunately, we won't be able to see any effects from this data until the temperature actually rises or when the ISS passes over. But, we can prepare for when that happens in the next steps!
 
 ## Step 4: draw a display
+> _For this step, grab your phone, a piece of thin (or standard printing) paper and a pen or pencil_.
+
 What we like about smart displays is that they add something visually to the home. They can tell everyone in the home when something is happening, without a loud 'beep' from someone's phone. To make sure your smart display fits your home, skills and style, we will create our own! Instead of fiddling digitally, we are going to create a drawing, physically. If you are doing this tutorial with the family, try to get everyone to add something to it! Before we draw, we first need a holder for our phone.
 
 {% include image-gallery.html folder="/assets/images/instructable/step4" %}
@@ -138,6 +146,8 @@ At the end of this tutorial the phone will highlight areas of your drawing to in
 Once you're happy with a drawing, place the drawing in front of the phone and go to the next step. You can always come back and change or redo the drawing if you feel like it!
 
 ## Step 5: create and connect backgrounds
+> _This step is on the laptop/computer, but keep your phone and drawing close by._
+
 All that is left to do is to highlight your drawing when the data says something is happening. Using the Google Sheet, we will now indicate which areas should light up, and in which colours, using _backgrounds_. Let's first focus on the part of your drawing that indicates the high temperature.
 
 {% include image-gallery.html folder="/assets/images/instructable/step5" %}

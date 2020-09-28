@@ -77,6 +77,21 @@ When a smart 'rule' you created in the Google Sheet is activated (e.g. the data 
 
 To get your smart display listening to data, we use [IFTTT.com](https://ifttt.com/google_sheets){:target="_blank"} - which already supports Google Sheets. Then, each time new data is added to the Sheet, the code will check if any of your smart 'rules' (that you can create) should be activated. If it activates, the code will update your anonymous account in the database. In return, your phone will visit your web app to get the latest instructions. If you are interested, you can find more details on [GitHub](https://github.com/davidverweij/phone-grown){:target="_blank"}.
 
+#### **Error codes** {#errors}
+When you follow the tutorial, it is possible that something might not work as expected. We have tried to find the most common causes, and gave these errors a 'code'. If you run into these, we have a few suggestions that might help solve these. If these suggestions did not work for you, leave [a comment on the Instructables.com page](#discuss){:target="_blank"} and describe what issue you are running into - we'll try to help!
+
+#### 400 {#error400}
+This code indicates that something unexpected happened in the browser on your phone. Although we tried our best to make sure that older phones would work with this tutorial, not all phones and browsers are created equal. To maximise your changes on your phone, _try another browser - and where possible - install/update to the latest version_. We had quite some success with using Chrome and Firefox for mobile. Unfortunately, if that doesn't work, it most likely means we can't use this phone for the tutorial. If you have, take a different phone and try again. Do leave us [a comment on the Instructables.com page](#discuss){:target="_blank"} with your phone model and type of browser so we can understand where the limitations are.
+
+#### 404 {#error404}
+This code generally only occurs when your phone cannot find your web app. This means there might be _a typo in the Phone Grown ID_, or the web app hasn't been properly 'published'. If you have double checked the Phone Grown ID, you can try to copy the 'Published' web app URL again next to the _PASTE APP LINK_, which hopefully would generate the correct Phone Grown ID. If this doesn't work, please leave [a comment on the Instructables.com page](#discuss){:target="_blank"} and we might be able to help!
+
+#### 500 {#error500}
+If a 500 code shows, something unexpected happened within the web app of your Google Sheet. To be sure, press the purple _Setup_ button on the top left of the _Home_ tab and try again. If that doesn't work, please leave us [a comment on the Instructables.com page](#discuss){:target="_blank"}, along with a screenshot of your phone, and we can take it from there!
+
+#### 503 {#error503}
+This code occurs when the connection with our database was faulty. On the Google Sheet, press the purple _Setup_ button (which will create a new anonymous account on that database), and re-enter your _Phone Grown ID_ on the phone. If that doesn't fix the issue, please leave [a comment on the Instructables.com page](#discuss){:target="_blank"} and we might be able to help!
+
 ### Privacy and safety {#more-safe}
 We designed this tutorial with three things in mind. First, we want you to be able to create a smart display in such a way that you don't have to program or fiddle with complex tools. Second, you and your family should be able to do this by yourself (DIY), to work together and have fun! And lastly, we wanted this to be standalone, being able to grow and evolve without us - what others would call 'open source'. That is why we based our tutorial on existing, common and (hopefully) familiar tools, such as Google Sheets. This way, you are in control over the tools, and in cases where some functionality is a bit hidden or complex, we made things as transparent as possible, read more [below](#more-privacy).
 
