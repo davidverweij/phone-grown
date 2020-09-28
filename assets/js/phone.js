@@ -6,39 +6,45 @@ var timeout; // timeout for tracking duration of backgrounds
 var periodicTimeout; // timeout to keep in touch with google sheet
 var periodicTimer = 15 * 60 * 1000; // duration between periodicTimeout (e.g. 15 minutes)
 var sleeptimes; // store times for the phone to not display backgrounds (sleep mode)
-var menu0shown = true; // do not display second menu if first is shown
+var connectmenushown = true; // do not display second menu if first is shown
 
+try {
+  // (2) initiale the database object (with specific details for this projects' database) and connect
+  firebase.initializeApp({
+    apiKey: "AIzaSyCAHz6izwenF8F84SoQqRCekYhNeAe7u68",
+    authDomain: "phone-grown.firebaseapp.com",
+    projectId: "phone-grown",
+  });
+}
+catch(err){
+  showConnectUI(3, true);
+}
 
-// (2) initiale the database object (with specific details for this projects' database) and connect
-firebase.initializeApp({
-  apiKey: "AIzaSyCAHz6izwenF8F84SoQqRCekYhNeAe7u68",
-  authDomain: "phone-grown.firebaseapp.com",
-  projectId: "phone-grown",
-});
 const db = firebase.firestore();
 var db_unsubscribe; // a reference to stop the database listener
 
 // (3) when loaded, show the little form to connect to a Google sheet
 document.addEventListener("DOMContentLoaded", function() {
 
-  if (Modernizr.fullscreen) {
-    document.getElementById('fullscreen').style.display = "block";
+  // Set up orientation changes listener if feature is available
+  try {
+    window.addEventListener("orientationchange", function() {
+
+      if (window.orientation == -90 || window.orientation == 90) {
+        document.getElementById('menu_orientation').style.display = "block"
+        showStatusUI(false);
+
+      } else {
+        document.getElementById('menu_orientation').style.display = "none"
+      }
+    }, false);
+  } catch(err){
+    // again no problem, let's just ignore this feature
   }
 
-  // Listen for orientation changes
-  window.addEventListener("orientationchange", function() {
-
-    // Announce the new orientation number
-    if (window.orientation == -90 || window.orientation == 90) {
-      document.getElementById('menu_orientation').style.display = "block"
-      showUI(1, false);
-    } else {
-      document.getElementById('menu_orientation').style.display = "none"
-    }
-  }, false);
 
   let oldLink = getCookie("gSheetLink");
-  showUI(0);
+  showConnectUI(0, true)
   if (typeof(oldLink) != "undefined" && oldLink != "") {
     document.getElementById("scriptUrl").value = oldLink;
     submitID(oldLink);
@@ -48,42 +54,72 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // add a listener if the user clicks on the screen
   document.getElementById("ambientdisplay").addEventListener("click", function() {
-    if (menu0shown) showUI(1, false)
-    else showUI(1, (document.getElementById('menu1').style.display == "none"));
+    if (!connectmenushown) showStatusUI(document.getElementById('statusmenu').style.display == "none");
   });
 
 });
 
+/**
+ * Control the visibility of the status menu.
+ *
+ * @param {Boolean} show - show (true) or hide (false) the form
+ */
+function showStatusUI(show = true){
+  document.getElementById('statusmenu').style.display = (show ? "flex" : "none");
+
+  // If we hide the menu, show a hint for a few seconds that shows how to bring up the menu
+  if (!show) {
+    document.getElementById('hint').style.opacity = 1;
+    setTimeout(function() {
+      document.getElementById('hint').style.opacity = 0;
+    }, 5000);
+  }
+}
 
 /**
- * Control the visibility of the form. It will show a hint when hiding
+ * Control the visibility of the connection menu.
  *
- * @param {Integer} int - 0 = the connect menu, 1 = the settings menu
- * @param {Boolean} bool - show (true) or hide (false) the form
- * @param {Boolean} retry - adjust the helptext if the connection failed
+ * @param {int} error - error message to be shown - 0 = no error
+ * @param {Boolean} show - show (true) or hide (false) the form
+ * @param {String} suberror - if more is known from the error, add it to the message
  */
-function showUI(int, bool = true, retry = false) {
-  if (int == 2) {
-    document.getElementById('menu_error').style.display = "block";
-  } else {
-    document.getElementById('menu_error').style.display = "none";
-    if (int == 0) menu0shown = bool;
-    document.getElementById('helptext0').style.display = (retry ? "none" : "block");
-    document.getElementById('helptext1').style.display = (retry ? "block" : "none");
-    if (retry) {
-      loading(false);
-      document.getElementById("scriptUrl").value = "";
-    }
-    document.getElementById('menu' + int).style.display = (bool ? "flex" : "none");
+function showConnectUI(error = 0, show=true, suberror=''){
+  let messages = [
+    "Enter your <b>PhoneGrown ID</b> here",
+    "Error <b>404</b><br/><br/>\
+        We ran into an issue with the ID or webapp. Please double check the ID and try again.\
+        <br /><br/>\
+        <span class='small'>If this problem persist, please visit our FAQ via the link below <br/>\
+        <a href='https://www.phonegrown.site/#error404' target='_blank'>www.phonegrown.site/#error404</a></span>",
+    "Error <b>500</b><br/><br/>\
+        We ran into an issue with the Google Sheet.\
+        <br /><br/>\
+        <span class='small'>Please visit our FAQ via the link below <br/>\
+        <a href='https://www.phonegrown.site/#error500' target='_blank'>www.phonegrown.site/#error500</a></span>",
+    "Error <b>400</b><br/><br/>\
+        We ran into an unexpected issue. Please reload this webpage and try again.\
+        <br /><br/>\
+        <span class='small'>If this problem persist, please visit our FAQ via the link below <br/>\
+        <a href='https://www.phonegrown.site/#error400' target='_blank'>www.phonegrown.site/#error400</a></span>",
+    "Error <b>503</b><br/><br/>\
+        We ran into an issue with the database. Please try to reconnect again by entering your ID below.\
+        <br /><br/>\
+        <span class='small'>If this problem persist, please visit our FAQ via the link below <br/>\
+        <a href='https://www.phonegrown.site/#error503' target='_blank'>www.phonegrown.site/#error503</a></span>",
+  ]
 
-    // If we hide a form, show a hint for a few seconds that shows how to bring up the menu
-    if (!bool) {
-      document.getElementById('hint').style.opacity = 1;
-      setTimeout(function() {
-        document.getElementById('hint').style.opacity = 0;
-      }, 5000);
-    }
+  if (error != 0) document.getElementById('connectmenu').classList.add('menu_error');
+  else document.getElementById('connectmenu').classList.remove('menu_error');
+
+  connectmenushown = show;
+  document.getElementById('connectmenutext').innerHTML = messages[error];
+  if (suberror != ''){
+    document.getElementById('connectmenutext').innerHTML += "<br/><br/><span class='small'>" + suberror + "</span>";
   }
+  document.getElementById('connectmenu').style.display = (show ? "flex" : "none");
+
+
+
 }
 
 /**
@@ -124,8 +160,8 @@ function submitID(url) {
 
           // (5) update UI to show the next step
           loading(false);
-          showUI(0, false);
-          showUI(1);
+          showConnectUI(0, false)
+          showStatusUI(true)
 
           // (6) update the background, with a little bit of a delay for easing in.
           setTimeout(function() {
@@ -137,28 +173,36 @@ function submitID(url) {
           periodicTimeout = setTimeout(getDataFromSheet, periodicTimer); // in 30 minutes
 
         } else {
-          // The connection was unsuccesful
-          console.log("submitID(): unsuccesful");
-          showUI(0, true, true); // please try again
+          // The connection worked, but there was an error on the 'server' side
+          console.log("submitID(): found, but unsuccesful");
+          loading(false);
+          showConnectUI(2, true, result.error);
         }
       }
     };
     xhr.onloadend = function() {
       if (this.status == 404) {
+        // The connection didn't work, the website could not be found.
+        // Possibly the web app hasn't been published yet, or the tinyurl failed
         console.log("submitID(): website not found");
-        showUI(0, true, true); // please try again
+        loading(false);
+        showConnectUI(1, true);
       }
     }
     xhr.onerror = function() {
+      // The connection didn't work, and the error is unclear.
+      // Last resort is to reload this webpage?
       console.log("submitID(): website inaccesible");
-      showUI(0, true, true); // please try again
+      loading(false);
+      showConnectUI(3, true);
     }
 
     // (3b) actually send the GET request
     xhr.open("GET", "https://tinyurl.com/" + url + "?origin=phone&data=database&lastInstruction=" + lastSeenInstruction + "&now=" + (new Date).toISOString(), true); // true for asynchronous
     xhr.send();
   } else {
-    showUI(0, true, true); // please try again
+    loading(false);
+    showConnectUI(1, true);
   }
 }
 
@@ -212,11 +256,29 @@ function getDataFromSheet() {
         periodicTimeout = setTimeout(getDataFromSheet, periodicTimer); // in 30 minutes
 
       } else {
-        resetConnection('error')
-        // something went wrong.. TODO: Handle error
+        // The connection worked, but there was an error on the 'server' side
+        console.log("submitID(): found, but unsuccesful");
+        showConnectUI(2, true);
+        showStatusUI(false);
       }
     }
   };
+  xhr.onloadend = function() {
+    if (this.status == 404) {
+      // The connection didn't work, the website could not be found.
+      // Possibly the web app hasn't been published yet, or the tinyurl failed
+      console.log("submitID(): website not found");
+      showConnectUI(1, true);
+      showStatusUI(false);
+    }
+  }
+  xhr.onerror = function() {
+    // The connection didn't work, and the error is unclear.
+    // Last resort is to reload this webpage?
+    console.log("submitID(): website inaccesible");
+    showConnectUI(3, true);
+    showStatusUI(false);
+  }
 
   // (1b) send the GET request
   xhr.open("GET", "https://tinyurl.com/" + getCookie("gSheetLink") + "?origin=phone&data=update&lastInstruction=" + lastSeenInstruction + "&now=" + (new Date).toISOString(), true); // true for asynchronous
@@ -422,8 +484,7 @@ function getCookie(name) {
  * Deletes the used cookies and disable the database connection to start with a clean slate
  */
 function resetConnection(type) {
-  showUI(0);
-  showUI(1, false);
+  showStatusUI(false);
   setCookie("gSheetLink", "");
   setCookie("databasePing", "");
   db_unsubscribe();
@@ -431,7 +492,9 @@ function resetConnection(type) {
   updateAmbientDisplay();
 
   if (type == 'error') {
-    showUI(2); // show error message
+    showConnectUI(4, true);
+  } else {
+    showConnectUI(0, true);
   }
 }
 
@@ -440,8 +503,14 @@ function resetConnection(type) {
  * Toggles full screen based on an event handler (only used when the browser supports it)
  */
 function toggleFullScreen() {
+
+  let elem = document.documentElement;
+
+  elem.requestFullscreen = elem.requestFullscreen || elem.mozRequestFullscreen
+          || elem.msRequestFullscreen || elem.webkitRequestFullscreen;
+
   if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen();
+    elem.requestFullscreen();
   } else {
     if (document.exitFullscreen) {
       document.exitFullscreen();
