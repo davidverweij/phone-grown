@@ -28,7 +28,7 @@ Since your choice of data and your creativity with drawing allows for countless 
 - An [IFTTT.com](https://www.ifttt.com/){:target="_blank"} account (_for connecting it to data - you need to be 18 years or older_)
 
 ## Where to start? {#letsgo}
-We're just testing the last bits of the tutorial and will publish the tutorial on the **~28th~ 29th of September 2020** latest. Check back again then, or get a notification when it is ready by clicking on the button below.
+We're just testing the last bits of the tutorial and will publish the tutorial on the **~~28th~~ 29th of September 2020** latest. Check back again then, or get a notification when it is ready by clicking on the button below.
 
 [Notify me when the tutorial is ready](https://forms.gle/DuNouDBeYJBhXBcDA){: .btn .btn-green target="_blank"}
 
