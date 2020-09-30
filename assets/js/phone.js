@@ -362,7 +362,7 @@ function updateAmbientDisplay(newInstructions = '[]') {
   let sleeping = isSleeping(sleeptimes, now);
   let nextTimeoutCheck = 0;
 
-  if (sleeping >= 0) {
+  if (sleeping > 60) {
     // This implementation does not alter the intstructions nor removes operations based on sleeptime
     // instead, just ignores the result. This allows for sudden changes in sleep times (e.g. removes that constraint)
     html = "<div class='sleepmode'>sleeping...</div>";
