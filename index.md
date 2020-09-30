@@ -17,8 +17,6 @@ When you have finished the tutorial, you will have turned your phone into 'smart
 Since your choice of data and your creativity with drawing allows for countless possibilities, we just can't imagine what you will use your smart display for!
 
 
-<!-- [Check the video](#video){: .btn .btn-blue target="_blank"}-->
-
 ## Tools & Materials you need {#materials}
 - Roughly 1 hour of time (_a bit longer if you want to experiment some more_)
 - A smartphone that can connect to your Wi-Fi (_preferably one you don't need for a while_)
@@ -28,18 +26,18 @@ Since your choice of data and your creativity with drawing allows for countless 
 - An [IFTTT.com](https://www.ifttt.com/){:target="_blank"} account (_for connecting it to data - you need to be 18 years or older_)
 
 ## Where to start? {#letsgo}
-We're just testing the last bits of the tutorial and will publish the tutorial on the **~~28th~~ 29th of September 2020** latest. Check back again then, or get a notification when it is ready by clicking on the button below.
+We have posted the tutorial as an 'instructable' on Instructables.com, where you can also comment if you have questions, and show what you have made as well!
 
-[Notify me when the tutorial is ready](https://forms.gle/DuNouDBeYJBhXBcDA){: .btn .btn-green target="_blank"}
+[Go to the Instructable!](https://www.instructables.com/id/Turn-an-Unused-Smartphone-Into-a-Smart-Display/){: .btn .btn-green target="_blank"}
 
-<!--
+
 ## Share your creation! {#share}
 Although the template in the tutorial was made as part of a research project, it is fully stand-alone, [private and secure](#more-safe), and publicly available for anyone to follow. In other words, we have no clue how you are using it! Since your choice of data and your creativity with drawing allows for countless possibilities, we just can't imagine what you will use your smart display for.
 
-Let us know what you created by using the [I made it!](#imadeits){: .btn .btn-yellow target="_blank"} button [on the Instructables page](#instructable){:target="_blank"}!
--->
+Let us know what you created by using the [I made it!](https://www.instructables.com/id/Turn-an-Unused-Smartphone-Into-a-Smart-Display/#imadeits){: .btn .btn-yellow target="_blank"} button [on the Instructables page](https://www.instructables.com/id/Turn-an-Unused-Smartphone-Into-a-Smart-Display/){:target="_blank"}!
+
 ## Join our research {#join}
-Aside from being curious about what you have created, we are also looking for families who want to follow this tutorial, and whom we can interview about doing so. We would like to hear what they've created and how they've put their smart display to use! To show our thanks, we are giving each participating family a small monetary reward. Interested, or questions? Contact the researcher at _d.verweij2[@]newcastle.ac.uk_ or read more [about the research study](#more-study).
+Aside from being curious about what you have created, we are also looking for families who want to follow this tutorial, and whom we can interview about doing so. We would like to hear what they've created and how they've put their smart display to use! To show our thanks, we are giving each participating family an amazon voucher as reward. Interested, or questions? Contact the researcher at _d.verweij2[@]newcastle.ac.uk_ or read more [about the research study](#more-study).
 
 [Email David](mailto:d.verweij2@newcastle.ac.uk?subject=Phone%20Grown%20Research%20Tutorial&body=Hi%20David){: .btn .btn-purple}
 
@@ -62,7 +60,7 @@ As part of David's PhD, we explore how you can be creative with technology at ho
 To understand how we can do this structurally, we started to develop and test different ideas. One idea we previously tested focused on using _creativity before skill_, which was quite successful in engaging more people in the household with technology. We now want to continue this idea and see how it works in a family setting. Due to the current 2020 pandemic, we are doing so through a tutorial, which allows us to test our concept without endangering anyone. Besides, a tutorial is much easier to share publicly than a physical prototype, reaching more people who might be interested and want to give it a try!
 
 ### The research study {#more-study}
-Aside from being curious about what you have created, we are also running a research study about this tutorial. In this study, we ask families to create a smart display following this tutorial _four times_, once each week. We would then like to hear how they got along, and how they've put their smart display to use! To do so, we will have two virtual interviews of ~1.5 hours - one at the beginning and one at the end - and keep in touch through weekly (and short) video calls. We are looking for **UK-based families**  with at least one child (~4-16 years old) living at home, and would like to **start on the 10th of October 2020**. To show our thanks, we are giving each participating family a monetary reward. Interested, or questions? Please contact the researcher at _d.verweij2[@]newcastle.ac.uk_.
+Aside from being curious about what you have created, we are also running a research study about this tutorial. In this study, we ask families to create a smart display following this tutorial _four times_, once each week. We would then like to hear how they got along, and how they've put their smart display to use! To do so, we will have two virtual interviews of ~1.5 hours - one at the beginning and one at the end - and keep in touch through weekly (and short) video calls. We are looking for **UK-based families**  with at least one child (~4-16 years old) living at home, and would like to **start on the 10th of October 2020**. To show our thanks, we are giving each participating family a £100,- Amazon Voucher. Interested, or questions? Please contact the researcher at _d.verweij2[@]newcastle.ac.uk_.
 
 [Email David](mailto:d.verweij2@newcastle.ac.uk?subject=Phone%20Grown%20Research%20Tutorial&body=Hi%20David){: .btn .btn-purple}
 
@@ -78,19 +76,19 @@ When a smart 'rule' you created in the Google Sheet is activated (e.g. the data 
 To get your smart display listening to data, we use [IFTTT.com](https://ifttt.com/google_sheets){:target="_blank"} - which already supports Google Sheets. Then, each time new data is added to the Sheet, the code will check if any of your smart 'rules' (that you can create) should be activated. If it activates, the code will update your anonymous account in the database. In return, your phone will visit your web app to get the latest instructions. If you are interested, you can find more details on [GitHub](https://github.com/davidverweij/phone-grown){:target="_blank"}.
 
 #### **Error codes** {#errors}
-When you follow the tutorial, it is possible that something might not work as expected. We have tried to find the most common causes, and gave these errors a 'code'. If you run into these, we have a few suggestions that might help solve these. If these suggestions did not work for you, leave [a comment on the Instructables.com page](#discuss){:target="_blank"} and describe what issue you are running into - we'll try to help!
+When you follow the tutorial, it is possible that something might not work as expected. We have tried to find the most common causes, and gave these errors a 'code'. If you run into these, we have a few suggestions that might help solve these. If these suggestions did not work for you, leave [a comment on the Instructables.com page](https://www.instructables.com/id/Turn-an-Unused-Smartphone-Into-a-Smart-Display/#discuss){:target="_blank"} and describe what issue you are running into - we'll try to help!
 
 #### 400 {#error400}
-This code indicates that something unexpected happened in the browser on your phone. Although we tried our best to make sure that older phones would work with this tutorial, not all phones and browsers are created equal. To maximise your changes on your phone, _try another browser - and where possible - install/update to the latest version_. We had quite some success with using Chrome and Firefox for mobile. Unfortunately, if that doesn't work, it most likely means we can't use this phone for the tutorial. If you have, take a different phone and try again. Do leave us [a comment on the Instructables.com page](#discuss){:target="_blank"} with your phone model and type of browser so we can understand where the limitations are.
+This code indicates that something unexpected happened in the browser on your phone. Although we tried our best to make sure that older phones would work with this tutorial, not all phones and browsers are created equal. To maximise your changes on your phone, _try another browser - and where possible - install/update to the latest version_. We had quite some success with using Chrome and Firefox for mobile. Unfortunately, if that doesn't work, it most likely means we can't use this phone for the tutorial. If you have, take a different phone and try again. Do leave us [a comment on the Instructables.com page](https://www.instructables.com/id/Turn-an-Unused-Smartphone-Into-a-Smart-Display/#discuss){:target="_blank"} with your phone model and type of browser so we can understand where the limitations are.
 
 #### 404 {#error404}
-This code generally only occurs when your phone cannot find your web app. This means there might be _a typo in the Phone Grown ID_, or the web app hasn't been properly 'published'. If you have double checked the Phone Grown ID, you can try to copy the 'Published' web app URL again next to the _PASTE APP LINK_, which hopefully would generate the correct Phone Grown ID. If this doesn't work, please leave [a comment on the Instructables.com page](#discuss){:target="_blank"} and we might be able to help!
+This code generally only occurs when your phone cannot find your web app. This means there might be _a typo in the Phone Grown ID_, or the web app hasn't been properly 'published'. If you have double checked the Phone Grown ID, you can try to copy the 'Published' web app URL again next to the _PASTE APP LINK_, which hopefully would generate the correct Phone Grown ID. If this doesn't work, please leave [a comment on the Instructables.com page](https://www.instructables.com/id/Turn-an-Unused-Smartphone-Into-a-Smart-Display/#discuss){:target="_blank"} and we might be able to help!
 
 #### 500 {#error500}
-If a 500 code shows, something unexpected happened within the web app of your Google Sheet. To be sure, press the purple _Setup_ button on the top left of the _Home_ tab and try again. If that doesn't work, please leave us [a comment on the Instructables.com page](#discuss){:target="_blank"}, along with a screenshot of your phone, and we can take it from there!
+If a 500 code shows, something unexpected happened within the web app of your Google Sheet. To be sure, press the purple _Setup_ button on the top left of the _Home_ tab and try again. If that doesn't work, please leave us [a comment on the Instructables.com page](https://www.instructables.com/id/Turn-an-Unused-Smartphone-Into-a-Smart-Display/#discuss){:target="_blank"}, along with a screenshot of your phone, and we can take it from there!
 
 #### 503 {#error503}
-This code occurs when the connection with our database was faulty. On the Google Sheet, press the purple _Setup_ button (which will create a new anonymous account on that database), and re-enter your _Phone Grown ID_ on the phone. If that doesn't fix the issue, please leave [a comment on the Instructables.com page](#discuss){:target="_blank"} and we might be able to help!
+This code occurs when the connection with our database was faulty. On the Google Sheet, press the purple _Setup_ button (which will create a new anonymous account on that database), and re-enter your _Phone Grown ID_ on the phone. If that doesn't fix the issue, please leave [a comment on the Instructables.com page](https://www.instructables.com/id/Turn-an-Unused-Smartphone-Into-a-Smart-Display/#discuss){:target="_blank"} and we might be able to help!
 
 ### Privacy and safety {#more-safe}
 We designed this tutorial with three things in mind. First, we want you to be able to create a smart display in such a way that you don't have to program or fiddle with complex tools. Second, you and your family should be able to do this by yourself (DIY), to work together and have fun! And lastly, we wanted this to be standalone, being able to grow and evolve without us - what others would call 'open source'. That is why we based our tutorial on existing, common and (hopefully) familiar tools, such as Google Sheets. This way, you are in control over the tools, and in cases where some functionality is a bit hidden or complex, we made things as transparent as possible, read more [below](#more-privacy).
@@ -122,4 +120,4 @@ We admit that the tutorial asks you to keep a phone up and running indefinitely 
 _<sup>*</sup>Fully draining and charging a Samsung Galaxy S6 (2015 - 2550 mAH 3.85V battery) each day would take up ~5.5 Wh, or 2 kWh per year. For €0,30 / £0,30 per kWh, this would cost no more than €/£1 each year._
 
 ### Contributing {#more-help}
-We are always looking for ways to improve our work and we welcome any suggestions, tools or tips about the tutorial. You can leave feedback on the [Instructables.com](#instructablescom){:target="_blank"} page, contact me at d.verweij2[@]newcastle.ac.uk or contribute to this project on [GitHub](https://github.com/davidverweij/phone-grown){:target="_blank"}.
+We are always looking for ways to improve our work and we welcome any suggestions, tools or tips about the tutorial. You can leave feedback on the [Instructables.com](https://www.instructables.com/id/Turn-an-Unused-Smartphone-Into-a-Smart-Display/#discuss){:target="_blank"} page, contact me at d.verweij2[@]newcastle.ac.uk or contribute to this project on [GitHub](https://github.com/davidverweij/phone-grown){:target="_blank"}.

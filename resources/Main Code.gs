@@ -320,8 +320,12 @@ function doGet(e) {
         doc.getRange(variables.sheetNames.home + '!' + variables.ranges.lastSeen).setValue(new Date(e.parameter.now));
 
         result.result = "success";
-        result.sleeptimes = getSleepTimes(doc, true); // get a stored copy of the sleeptimes
-        result.clear = retrieveClearPhone(doc);
+        try {
+          result.sleeptimes = getSleepTimes(doc, true); // get a stored copy of the sleeptimes
+          result.clear = retrieveClearPhone(doc);
+        } catch(err){
+          throw "500: retrieving data from sheet";
+        }
 
 
         // If requested, send back the database id
@@ -330,13 +334,21 @@ function doGet(e) {
         }
 
         // (3a) Add backgrounds that need 'representing'. This could be empty. The phone will keep track of all past commands (over overlap them)
-        let todos = JSON.parse(retrieveTodos(doc));
-        if (todos == null) todos = [];
-        todos = JSON.stringify(todos.filter(inst => inst.timestamp > lastInstruction)); // filter old instructions
+        try {
+          let todos = JSON.parse(retrieveTodos(doc));
+          if (todos == null) todos = [];
+          todos = JSON.stringify(todos.filter(inst => inst.timestamp > lastInstruction)); // filter old instructions
 
-        result.todo = todos;
-        storeTodos(doc, todos);
+          result.todo = todos;
+          storeTodos(doc, todos);
+        } catch (err){
+          throw "500: phone instruction retrieval or storage";
+        }
+      } else {
+        throw "500: Bad server request";
       }
+    } else {
+      throw "500: Bad server request";
     }
     return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.JSON);
   }
@@ -428,6 +440,12 @@ function setup() {
 
   // (3) Install a trigger that listen to spreadsheet changes by the user (e.g. adding/removing sheets or deleting columns)
   deleteTrigger(script.getProperty("triggerID"));
+
+  // reset variables stored inside the sheet
+  storeTodos(doc, '[]');
+  storeSleepTimes(doc, "[0,0,0,0]");
+  storeClearPhone(doc, 0);
+
 
   let triggerID = ScriptApp.newTrigger("somethingChanged")
   .forSpreadsheet(doc)

@@ -32,6 +32,18 @@ function clearBackground(){
   SpreadsheetApp.getActiveSpreadsheet().getActiveSheet().getRange("C3:G12").setBackground("black");
 }
 
+
+/**
+ * Presents a popup with some info about this project and additional resources
+ */
+function about(){
+  var html = HtmlService.createHtmlOutputFromFile('About')
+  .setTitle('About / Help')
+  .setWidth(300);
+  SpreadsheetApp.getUi() // Or DocumentApp or SlidesApp or FormApp.
+  .showSidebar(html);
+}
+
 /**
  * Find all the sheet following a specific naming convention
  *
