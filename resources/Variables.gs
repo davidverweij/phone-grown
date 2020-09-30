@@ -30,7 +30,7 @@ var variables = {
   ranges : {
     background : "C3:G12",
     listOfBackgrounds: "F5:O5",
-    status: "N2:N2",
+    status: "L2:L2",
     lastSeen: "F8:F8",
     sleepModus: "L8:O8",
     todos: "P2:P2",
