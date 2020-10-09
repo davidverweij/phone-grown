@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // add a listener if the user clicks on the screen
   document.getElementById("ambientdisplay").addEventListener("click", function() {
-    if (!connectmenushown) showStatusUI(document.getElementById('statusmenu').style.display == "none");
+    if (!connectmenushown) showStatusUI(!document.getElementById('statusmenu').classList.contains("flexmenu"));
   });
 
 });
@@ -65,7 +65,9 @@ document.addEventListener("DOMContentLoaded", function() {
  * @param {Boolean} show - show (true) or hide (false) the form
  */
 function showStatusUI(show = true){
-  document.getElementById('statusmenu').style.display = (show ? "flex" : "none");
+  let element = document.getElementById('statusmenu');
+  if (show) element.classList.add("flexmenu");
+  else element.classList.remove("flexmenu");
 
   // If we hide the menu, show a hint for a few seconds that shows how to bring up the menu
   if (!show) {
@@ -116,7 +118,9 @@ function showConnectUI(error = 0, show=true, suberror=''){
   if (suberror != ''){
     document.getElementById('connectmenutext').innerHTML += "<br/><br/><span class='small'>" + suberror + "</span>";
   }
-  document.getElementById('connectmenu').style.display = (show ? "flex" : "none");
+  let element = document.getElementById('connectmenu');
+  if (show) element.classList.add("flexmenu");
+  else element.classList.remove("flexmenu");
 
 
 
