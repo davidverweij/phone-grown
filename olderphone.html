@@ -1,0 +1,57 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Phone Grown</title>
+	<meta name="author" content="David Verweij">
+	<meta name="description" content="A simple webpage to connect to your Google Sheets app">
+	<meta name="keywords" content="phone, upcycle, Google Sheets, IoT, IFTTT">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="robots" content="noindex">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="{{ '/assets/css/phone.css' | absolute_url }}">
+</head>
+
+<body>
+	<main class="content">
+		<div id="status"></div>
+		<div id="ambientdisplay"></div>
+		<div class="container">
+			<div class="menu menu_error" id="menu_orientation">
+				<h2>!</h2>
+				<p>Please disable the auto-rotate on Android (or enable the orientation lock on iOS)</p>
+			</div>
+
+			<div class="menu" id="connectmenu">
+				<h2>Phone Grown</h2>
+				<p id="connectmenutext">Enter your <b>PhoneGrown ID</b> here</p>
+				<div id="loader"></div>
+				<input type="text" name="scriptUrl" id="scriptUrl" placeholder="PhoneGrown ID" />
+				<button type="button" id="IDbutton" onClick="submitID(document.getElementById('scriptUrl').value)">Click to Connect</button>
+			</div>
+
+			<div class="menu purple" id="statusmenu">
+				<h2>Phone Grown</h2>
+				<p>Success! Connected to the Google Sheet<br/><br/>Click anywhere outside this box to close the menu<br/></p>
+				<button type="button" onClick="resetConnection('');">Reset connection</button>
+				<button type="button" id="fullscreen" onClick="toggleFullScreen();">Toggle fullscreen<br/><span class="small">(Experimental)</span></button>
+				<button type="button" id="flipscreen" onClick="flipscreen();">Flip screen</button>
+			</div>
+
+		</div>
+
+		<div class="menu" id="hint">
+			<p>At any time, touch the screen to see the menu</p>
+		</div>
+	</main>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/3.6.5/minified.js" integrity="sha512-il4gs09hawMRQdgVPe9NUODC2gBmQ3lX15lMK1y/WWAkfRRd94yET47NgghJZBSJcPW6ZrqyIziQIT6dI7I3KA==" crossorigin="anonymous"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.22.1/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.22.1/firebase-firestore.js"></script>
+	<script type="text/javascript" src="{{ 'assets/js/phone.js' | absolute_url }}"></script>
+
+</body>
+
+</html>
