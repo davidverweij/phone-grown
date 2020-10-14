@@ -68,14 +68,20 @@ Once you found an unused phone for this project (_don't worry about cracked scre
 ### Adjust phone settings
 Normally, phones dim their screen in dark spaces or when you don't use it for a minute or so. But, to make it into a smart display we need to make sure its screen always stays on. This won't consume much energy, but we wrote more details about that [here](https://www.phonegrown.site/#more-sust){:target="_blank"}. Adjusting your phone's settings can be different per phone, but will most likely be something like this:
 
-1. For **Android** phones, enable the _developer_ mode by tapping 7 times on the _build number_ in _Settings > About Phone_. Then in _Settings > System > Developer Options_ turn on _Stay Awake (when charging)_. For **Apple** devices, we can set the _Auto-Lock_ to _Never_, which you can find in _Settings > Display & Brightness_ for newer models, or _Settings > General > Auto Lock_ for older ones. Here are more details and pictures on how to do this for [Android](https://www.howto-connect.com/how-to-stay-awake-phone-screen-while-charging-on-android/){:target="_blank"} or [iOS](https://forums.tomsguide.com/faq/how-to-change-the-auto-lock-time-in-ios-11.19693/){:target="_blank"}.
-2. Where possible, also disable the _Adaptive brightness_ (or Auto-Brightness) of your phone. We want to make sure the screen is visible through the paper. For **Android**, you can most likely change this in _Settings > Display_, and for **Apple** devices, this is often in _Settings > General > Accessibility > Display > Auto Brightness_.
+1.
+  - For **Android** phones, enable the _developer_ mode by tapping 7 times on the _build number_ in _Settings > About Phone_. Then in _Settings > System > Developer Options_ turn on _Stay Awake (when charging)_.
+  - For **Apple** devices, we can set the _Auto-Lock_ to _Never_, which you can find in _Settings > Display & Brightness_ for newer models, or _Settings > General > Auto Lock_ for older ones.
+  - Here are more details and pictures on how to do this for [Android](https://www.howto-connect.com/how-to-stay-awake-phone-screen-while-charging-on-android/){:target="_blank"} or [iOS](https://forums.tomsguide.com/faq/how-to-change-the-auto-lock-time-in-ios-11.19693/){:target="_blank"}.
+2. Make sure you disable the _Adaptive brightness_ (or Auto-Brightness) of your phone. We want to make sure the screen is always visible through the paper.
+  - For **Android**, you can most likely change this in _Settings > Display > Sleep_. **On newer devices, you can't set the sleep time to 'never'. In that case:** download a simple app to keep your screen on and bright, we used this [Keep Screen On](https://play.google.com/store/apps/details?id=fr.lkstudios.keepscreenon&hl=en_GB){:target="_blank"} app that worked for us!  
+  - For **Apple** devices, this is often in _Settings > General > Accessibility > Display > Auto Brightness_.
 
 Don't forget to set the screen brightness to 100% and, of course, plug in a charger!
 
 ### Connect it to the Google Sheet
 On the phone,
 3. Go to [www.phonegrown.site/phone](http://www.phonegrown.site/phone){:target="_blank"} and enter your _Phone Grown ID_ which you can find in the top of your Google Sheet at the _Home_ tab.
+    - _If you don't see a blue popup to enter your ID, try to go to www.phonegrown.site/olderphone or try a different web browser. If these don't work we, unfortunately, can't use this phone._
 4. You should now be connected! If your phone supports it, you can click on _Toggle Fullscreen_ to go fullscreen.
 5. On the Google Sheet on your laptop/computer, go to the _[BG] 1_ tab (see bottom of the webpage), and click on _test_ in the top left. Did your phone's screen change colour?
 
