@@ -2,7 +2,10 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=Edge">
 
-
+  {% assign pages=site.pages | where:"ref", page.ref | sort: 'lang' %}
+  {% for page in pages %}
+    <link rel="alternate" hreflang="{{ page.lang }}" href="{{ page.url }}" />
+  {% endfor %}
 
   <title>{{ site.shorttitle }}</title>
 

@@ -2,6 +2,15 @@
 // The basic two column layout
 //
 
+.language-link{
+  text-align: right;
+  margin: -1rem 0;
+
+  a {
+    text-decoration: none;
+  }
+}
+
 .side-bar {
   position:fixed;
   z-index: 1;
