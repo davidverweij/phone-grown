@@ -1,13 +1,13 @@
 ---
 ---
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 
 <head>
 	<title>Phone Grown</title>
 	<meta name="author" content="David Verweij">
-	<meta name="description" content="A simple webpage to connect to your Google Sheets app">
-	<meta name="keywords" content="phone, upcycle, Google Sheets, IoT, IFTTT">
+	<meta name="description" content="Een simpele webpagina om een verbinding te maken met de Google Sheets app">
+	<meta name="keywords" content="mobiel, upcycle, Google Sheets, IoT, IFTTT">
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="robots" content="noindex">
@@ -22,34 +22,34 @@
 		<div class="container">
 			<div class="menu menu_error" id="menu_orientation">
 				<h2>!</h2>
-				<p>Please disable the auto-rotate on Android (or enable the orientation lock on iOS)</p>
+				<p>Als het kan, zet het automatisch draaien van het scherm uit.</p>
 			</div>
 
 			<div class="menu" id="connectmenu">
 				<h2>Phone Grown</h2>
-				<p id="connectmenutext">Enter your <b>PhoneGrown ID</b> here</p>
+				<p id="connectmenutext">Vul hier jouw <b>PhoneGrown ID</b> in</p>
 				<div id="loader"></div>
 				<input type="text" name="scriptUrl" id="scriptUrl" placeholder="PhoneGrown ID" />
-				<button type="button" id="IDbutton" onClick="submitID(document.getElementById('scriptUrl').value)">Click to Connect</button>
+				<button type="button" id="IDbutton" onClick="submitID(document.getElementById('scriptUrl').value)">Verbinding maken</button>
 			</div>
 
 			<div class="menu purple" id="statusmenu">
 				<h2>Phone Grown</h2>
-				<p>Success! Connected to the Google Sheet<br/><br/>Click anywhere outside this box to close the menu<br/></p>
-				<button type="button" onClick="resetConnection('');">Reset connection</button>
-				<button type="button" id="fullscreen" onClick="toggleFullScreen();">Toggle fullscreen<br/><span class="small">(Experimental)</span></button>
-				<button type="button" id="flipscreen" onClick="flipscreen();">Flip screen</button>
+				<p>Success! De telefoon is verbonden met je Google Sheet<br/><br/>Tik ergens buiten deze popup om het menu te sluiten<br/></p>
+				<button type="button" onClick="resetConnection('');">Reset verbinding</button>
+				<button type="button" id="fullscreen" onClick="toggleFullScreen();">Schakel volledig scherm in/uit<br/><span class="small">(Experimenteel)</span></button>
+				<button type="button" id="flipscreen" onClick="flipscreen();">Flip scherm</button>
 			</div>
 
 		</div>
 
 		<div class="menu" id="hint">
-			<p>At any time, touch the screen to see the menu</p>
+			<p>Raak het scherm aan om het menu te zien</p>
 		</div>
 	</main>
 	<script type="text/javascript" src="{{ 'assets/js/firebase-app.js' | absolute_url }}"></script>
 	<script type="text/javascript" src="{{ 'assets/js/firebase-firestore.js' | absolute_url }}"></script>
-	<script type="text/javascript" src="{{ 'assets/js/phone.js' | absolute_url }}"></script>
+	<script type="text/javascript" src="{{ 'assets/js/mobiel.js' | absolute_url }}"></script>
 
 </body>
 
