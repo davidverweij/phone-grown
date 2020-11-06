@@ -1,0 +1,57 @@
+---
+---
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+	<title>Phone Grown</title>
+	<meta name="author" content="David Verweij">
+	<meta name="description" content="Een simpele webpagina om een verbinding te maken met de Google Sheets app">
+	<meta name="keywords" content="mobiel, upcycle, Google Sheets, IoT, IFTTT">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="robots" content="noindex">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="{{ '/assets/css/phone.css' | absolute_url }}">
+</head>
+
+<body>
+	<main class="content">
+		<div id="status"></div>
+		<div id="ambientdisplay"></div>
+		<div class="container">
+			<div class="menu menu_error" id="menu_orientation">
+				<h2>!</h2>
+				<p>Als het kan, zet het automatisch draaien van het scherm uit.</p>
+			</div>
+
+			<div class="menu" id="connectmenu">
+				<h2>Phone Grown</h2>
+				<p id="connectmenutext">Vul hier jouw <b>PhoneGrown ID</b> in</p>
+				<div id="loader"></div>
+				<input type="text" name="scriptUrl" id="scriptUrl" placeholder="PhoneGrown ID" />
+				<button type="button" id="IDbutton" onClick="submitID(document.getElementById('scriptUrl').value)">Verbinding maken</button>
+			</div>
+
+			<div class="menu purple" id="statusmenu">
+				<h2>Phone Grown</h2>
+				<p>Success! De telefoon is verbonden met je Google Sheet<br/><br/>Tik ergens buiten deze popup om het menu te sluiten<br/></p>
+				<button type="button" onClick="resetConnection('');">Reset verbinding</button>
+				<button type="button" id="fullscreen" onClick="toggleFullScreen();">Schakel volledig scherm in/uit<br/><span class="small">(Experimenteel)</span></button>
+				<button type="button" id="flipscreen" onClick="flipscreen();">Flip scherm</button>
+			</div>
+
+		</div>
+
+		<div class="menu" id="hint">
+			<p>Raak het scherm aan om het menu te zien</p>
+		</div>
+	</main>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/3.6.5/minified.js" integrity="sha512-il4gs09hawMRQdgVPe9NUODC2gBmQ3lX15lMK1y/WWAkfRRd94yET47NgghJZBSJcPW6ZrqyIziQIT6dI7I3KA==" crossorigin="anonymous"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.22.1/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.22.1/firebase-firestore.js"></script>
+	<script type="text/javascript" src="{{ 'assets/js/oudermobiel.js' | absolute_url }}"></script>
+
+</body>
+
+</html>
