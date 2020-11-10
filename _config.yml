@@ -1,10 +1,13 @@
 title: Phone Grown - turn an old phone into a smart display
+title_nl: Phone Grown - verander een ongebruikte smartphone in een slim display
 shorttitle: Phone Grown
 email: d.verweij@ncl.ac.uk
 description: >-
-  Do you have an (old) unused smartphone?
-  Turn it into a smart display using Google Sheets and some pen and paper,
-  by following this easy step-by-step tutorial.
+  Turn an old smartphone into a smart display using Google
+  Sheets and some pen and paper by following this easy tutorial.
+description_nl: >-
+  Maak er een slim display van met een ongebruikte smartphone, Google
+  Spreadsheets en wat pen en papier.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 
