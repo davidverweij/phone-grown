@@ -12,6 +12,24 @@
   {% if page.description %}
     <meta name="Description" content="{{ site.description }}">
   {% endif %}
+
+  {% if page.lang == 'nl' %}
+
+  <!-- Facebook Meta Tags -->
+  <meta property="og:url" content="https://www.phonegrown.site/nl">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{ site.title_nl }}">
+  <meta property="og:description" content="{{ site.description_nl }}">
+  <meta property="og:image" content="https://www.phonegrown.site/assets/images/sunshine.jpg">
+
+  <!-- Twitter Meta Tags -->
+  <meta property="twitter:url" content="https://www.phonegrown.site/nl">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ site.title_nl }}">
+  <meta name="twitter:description" content="{{ site.description_nl }}">
+  <meta name="twitter:image" content="https://www.phonegrown.site/assets/images/sunshine.jpg">
+
+  {% else %}
   <!-- Facebook Meta Tags -->
   <meta property="og:url" content="https://www.phonegrown.site/">
   <meta property="og:type" content="website">
@@ -25,6 +43,8 @@
   <meta name="twitter:title" content="{{ site.title }}">
   <meta name="twitter:description" content="{{ site.description }}">
   <meta name="twitter:image" content="https://www.phonegrown.site/assets/images/sunshine.jpg">
+
+  {% endif %}
 
 
   <link rel="icon" type="image/x-icon" href="{{ '/favicon.ico' | absolute_url }}">
