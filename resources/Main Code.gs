@@ -27,10 +27,18 @@ function onOpen() {
 function somethingChanged(e){
   let doc = SpreadsheetApp.getActiveSpreadsheet();
 
+ // console.log(e);
+ // console.log(e.changeType);
+
   switch(e.changeType){
 
+      // IFTTT or Google changed how adding a row to the sheet is triggered. Before was insert row, now edit.
+      // Unsure how this affects previous users of the google sheets.
+    case "INSERT_ROW":
+    case "EDIT":
+      {
+
       // (A) One new row of data came in.
-    case "INSERT_ROW": {
       let sheet = doc.getSheetByName(variables.sheetNames.dataIn);
       let newRows = sheet.getLastRow();
 
@@ -60,11 +68,10 @@ function somethingChanged(e){
         // (5) Clear all confirmed data
         sheet.deleteRows(1, newRows);
       }
-      break;
-    }
+
+
       // (B) The user edited the spreadsheet.
-    case "EDIT": {
-      let sheet = doc.getSheetByName(variables.sheetNames.home);
+      sheet = doc.getSheetByName(variables.sheetNames.home);
 
       // (0) update the phone sleep times, in case these were edited
       let need_to_ping = false;
